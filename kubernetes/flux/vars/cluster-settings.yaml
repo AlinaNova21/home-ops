@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
   name: cluster-settings
 data:
-  METALLB_RANGE: 192.168.3.192/26
+  METALLB_LB_RANGE: 192.168.3.192/26
   METALLB_INGRESS_ADDR: 192.168.3.192
   LOCAL_LAN: 192.168.0.0/22
   LOCAL_LAN_TARDIS: 192.168.2.193
