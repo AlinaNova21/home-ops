@@ -1,0 +1,9 @@
+apiVersion: v2
+appVersion: v0.2.4
+description: Kubelet CSR Approver
+maintainers:
+- name: clementnuss
+- name: treydock
+name: kubelet-csr-approver
+type: application
+version: 0.2.4

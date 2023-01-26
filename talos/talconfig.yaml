@@ -1,0 +1,80 @@
+clusterName: whoverse
+talosVersion: v1.3.3
+kubernetesVersion: v1.26.0
+endpoint: https://kube.${domainName}:6443
+domain: home-cluster.local
+allowSchedulingOnMasters: true
+additionalMachineCertSans:
+  - 192.168.3.2
+  - kube.${domainName}
+additionalApiServerCertSans:
+  - home-cluster.local
+clusterPodNets:
+  - 10.244.0.0/16
+clusterSvcNets:
+  - 10.96.0.0/12
+cniConfig:
+  name: none
+nodes:
+  - hostname: rory
+    ipAddress: 192.168.3.3
+    controlPlane: true
+    installDisk: /dev/mmcblk0
+    patches:
+    - '@./net-patch.yaml'
+    - |-
+      - op: add
+        path: /machine/network/interfaces/0/vlans/0/addresses
+        value:
+        - 192.168.3.3/24
+  - hostname: amy
+    ipAddress: 192.168.3.4
+    controlPlane: true
+    installDisk: /dev/mmcblk0
+    patches:
+    - '@./net-patch.yaml'
+    - |-
+      - op: add
+        path: /machine/network/interfaces/0/vlans/0/addresses
+        value:
+        - 192.168.3.4/24
+  - hostname: river
+    ipAddress: 192.168.3.5
+    controlPlane: true
+    installDisk: /dev/mmcblk0
+    patches:
+    - '@./net-patch.yaml'
+    - |-
+      - op: add
+        path: /machine/network/interfaces/0/vlans/0/addresses
+        value:
+        - 192.168.3.5/24
+
+controlPlane:
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraArgs
+        value:
+          feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
+          rotate-server-certificates: "true"
+          "node-labels": "openebs.io/engine=mayastor"
+      - op: add
+        path: /machine/kubelet/nodeIP
+        value:
+          validSubnets:
+          - 192.168.3.0/24
+worker:
+  patches:
+    - |-
+      - op: add
+        path: /machine/kubelet/extraArgs
+        value:
+          feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
+          rotate-server-certificates: "true"
+          "node-labels": "openebs.io/engine=mayastor"
+      - op: add
+        path: /machine/kubelet/nodeIP
+        value:
+          validSubnets:
+          - 192.168.3.0/24

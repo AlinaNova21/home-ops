@@ -1,0 +1,16 @@
+---
+version: "3"
+
+tasks:
+
+  init:
+    desc: Initialize talos config
+    dir: "talos"
+    cmds:
+      - talhelper genconfig
+
+  bootstrap:
+    desc: Bootstrap cluster
+    dir: "talos/clusterconfig"
+    cmds:
+      - talosctl --talosconfig ./talosconfig bootstrap {{.CLI_ARGS}}
