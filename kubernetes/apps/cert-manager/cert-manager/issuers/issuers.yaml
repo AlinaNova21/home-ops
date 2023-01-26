@@ -13,7 +13,7 @@ spec:
           route53:
             region: "${AWS_REGION}"
             hostedZoneID: "${AWS_HOSTEDZONE_ID}"
-            accessKeyId: "${AWS_ACCESS_KEY}"
+            accessKeyID: "${AWS_ACCESS_KEY}"
             apiKeySecretRef:
               name: letsencrypt-issuer-secret
               key: awsSecretKey
@@ -36,7 +36,7 @@ spec:
           route53:
             region: "${AWS_REGION}"
             hostedZoneID: "${AWS_HOSTEDZONE_ID}"
-            accessKeyId: "${AWS_ACCESS_KEY}"
+            accessKeyID: "${AWS_ACCESS_KEY}"
             apiKeySecretRef:
               name: letsencrypt-issuer-secret
               key: awsSecretKey
