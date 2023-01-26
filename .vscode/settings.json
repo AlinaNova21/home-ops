@@ -8,8 +8,10 @@
         "**/kubernetes/**/*.sops.toml": "plaintext"
     },
     "yaml.schemas": {
+        "file:///c%3A/Users/ashum/.vscode/extensions/atlassian.atlascode-3.0.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
         "talos": "talos/*.yml",
-        "Kubernetes": "kubernetes/*.yaml"
+        "Kubernetes": "kubernetes/*.yaml",
+        "https://raw.githubusercontent.com/dcermak/vscode-rke-cluster-config/main/schemas/cluster.yml.json": "file:///home/alina/projects/k8s/home-ops/kubernetes/flux/config/cluster.yaml"
     },
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": true,
