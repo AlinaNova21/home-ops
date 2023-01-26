@@ -64,6 +64,10 @@ controlPlane:
         value:
           validSubnets:
           - 192.168.3.0/24
+      - op: add
+        path: /cluster/proxy
+        value:
+          disabled: true
 worker:
   patches:
     - |-
@@ -78,3 +82,7 @@ worker:
         value:
           validSubnets:
           - 192.168.3.0/24
+      - op: add
+        path: /cluster/proxy
+        value:
+          disabled: true
