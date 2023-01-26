@@ -14,7 +14,7 @@ spec:
             region: "${AWS_REGION}"
             hostedZoneID: "${AWS_HOSTEDZONE_ID}"
             accessKeyID: "${AWS_ACCESS_KEY}"
-            apiKeySecretRef:
+            secretAccessKeySecretRef:
               name: letsencrypt-issuer-secret
               key: awsSecretKey
         selector:
@@ -37,7 +37,7 @@ spec:
             region: "${AWS_REGION}"
             hostedZoneID: "${AWS_HOSTEDZONE_ID}"
             accessKeyID: "${AWS_ACCESS_KEY}"
-            apiKeySecretRef:
+            secretAccessKeySecretRef:
               name: letsencrypt-issuer-secret
               key: awsSecretKey
         selector:
