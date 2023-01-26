@@ -2,13 +2,14 @@ clusterName: whoverse
 talosVersion: v1.3.3
 kubernetesVersion: v1.26.0
 endpoint: https://kube.${domainName}:6443
-domain: home-cluster.local
 allowSchedulingOnMasters: true
 additionalMachineCertSans:
   - 192.168.3.2
   - kube.${domainName}
 additionalApiServerCertSans:
-  - home-cluster.local
+  - 192.168.3.2
+  - kube.${domainName}
+  # - home-cluster.local
 clusterPodNets:
   - 10.244.0.0/16
 clusterSvcNets:
