@@ -9,7 +9,11 @@ helmCharts:
     releaseName: kubelet-csr-approver
     namespace: kube-system
     valuesInline:
-      providerIpPrefixes: '192.168.3.0/24'
+      providerIpPrefixes:
+      - 192.168.0.0/16
+      bypassDnsResolution: true
+      providerRegex: |
+        ^(rory|amy|river|donna|k9)$
 commonAnnotations:
   meta.helm.sh/release-name: kubelet-csr-approver
   meta.helm.sh/release-namespace: kube-system

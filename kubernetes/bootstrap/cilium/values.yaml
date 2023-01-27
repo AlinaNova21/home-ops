@@ -9,15 +9,15 @@ containerRuntime:
 endpointRoutes:
   enabled: true
 hubble:
-  enabled: true
-  ui:
-    enabled: true
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: nginx
-      hosts:
-      - hubble-ui
+  enabled: false
+  # ui:
+  #   enabled: true
+  #   ingress:
+  #     enabled: true
+  #     annotations:
+  #       kubernetes.io/ingress.class: nginx
+  #     hosts:
+  #     - hubble-ui
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.244.0.0/16

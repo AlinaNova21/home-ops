@@ -14,6 +14,8 @@ spec:
     - sh
     - -c
     - while true; do sleep 50000; done
+    securityContext:
+       privileged: true
     resources:
       limits:
         memory: "128Mi"

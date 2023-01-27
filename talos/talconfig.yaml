@@ -17,7 +17,7 @@ clusterSvcNets:
 cniConfig:
   name: none
 nodes:
-  - hostname: rory
+  - hostname: rory.cluster.whoverse.dev
     ipAddress: 192.168.3.3
     controlPlane: true
     installDisk: /dev/mmcblk0
@@ -28,7 +28,7 @@ nodes:
         path: /machine/network/interfaces/0/vlans/0/addresses
         value:
         - 192.168.3.3/24
-  - hostname: amy
+  - hostname: amy.cluster.whoverse.dev
     ipAddress: 192.168.3.4
     controlPlane: true
     installDisk: /dev/mmcblk0
@@ -39,7 +39,7 @@ nodes:
         path: /machine/network/interfaces/0/vlans/0/addresses
         value:
         - 192.168.3.4/24
-  - hostname: river
+  - hostname: river.cluster.whoverse.dev
     ipAddress: 192.168.3.5
     controlPlane: true
     installDisk: /dev/mmcblk0
