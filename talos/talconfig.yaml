@@ -72,7 +72,7 @@ controlPlane:
       - op: add
         path: /machine/sysctls
         value:
-          vm.nr_hugepages: '2048'
+          vm.nr_hugepages: '1024'
 worker:
   patches:
     - |-
@@ -94,4 +94,4 @@ worker:
       - op: add
         path: /machine/sysctls
         value:
-          vm.nr_hugepages: '2048'
+          vm.nr_hugepages: '1024'
