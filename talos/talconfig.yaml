@@ -69,6 +69,10 @@ controlPlane:
         path: /cluster/proxy
         value:
           disabled: true
+      - op: add
+        path: /machine/sysctls
+        value:
+          vm.nr_hugepages: '2048'
 worker:
   patches:
     - |-
@@ -87,3 +91,7 @@ worker:
         path: /cluster/proxy
         value:
           disabled: true
+      - op: add
+        path: /machine/sysctls
+        value:
+          vm.nr_hugepages: '2048'
