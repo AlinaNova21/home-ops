@@ -8,9 +8,9 @@ helmCharts:
     version: 0.2.4
     releaseName: kubelet-csr-approver
     namespace: kube-system
-    # valuesInline:
-      # providerRegex: |
-        # ^talos-node-[1-9]$
+    valuesInline:
+      providerRegex: |
+        ^.*$
 commonAnnotations:
   meta.helm.sh/release-name: kubelet-csr-approver
   meta.helm.sh/release-namespace: kube-system
