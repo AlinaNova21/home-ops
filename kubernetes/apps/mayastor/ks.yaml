@@ -35,6 +35,11 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 3m
+  healthChecks:
+  - apiVersion: apps/v1
+    kind: StatefulSet
+    name: mayastor-etcd
+    namespace: mayastor
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
@@ -52,3 +57,8 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 3m
+  healthChecks:
+  - apiVersion: apps/v1
+    kind: StatefulSet
+    name: nats
+    namespace: mayastor
