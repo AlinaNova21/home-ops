@@ -13,6 +13,10 @@
         "Kubernetes": "kubernetes/*.yaml",
         "https://raw.githubusercontent.com/dcermak/vscode-rke-cluster-config/main/schemas/cluster.yml.json": "file:///home/alina/projects/k8s/home-ops/kubernetes/flux/config/cluster.yaml"
     },
+    "yaml.format.enable": true,
+    "[yaml]": {
+      "editor.formatOnSave": true
+    },
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": true,
     "editor.guides.bracketPairsHorizontal": true,
