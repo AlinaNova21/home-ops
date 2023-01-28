@@ -26,12 +26,13 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    name: test
-    pools:
-      - servers: 2
-        name: pool-0
-        volumesPerServer: 2
-        storageClassName: mayastor-3
+    tenant:
+      name: test
+      pools:
+        - servers: 2
+          name: pool-0
+          volumesPerServer: 2
+          storageClassName: mayastor-3
     ingress:
       api:
         enabled: true
