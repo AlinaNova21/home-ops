@@ -30,7 +30,7 @@ spec:
   postRenderers:
     - kustomize:
         patchesJson6902:
-          - patch: |-
+          - patch:
               - op: replace
                 path: /spec/type
                 value: LoadBalancer
