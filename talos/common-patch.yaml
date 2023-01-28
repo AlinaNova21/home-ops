@@ -1,0 +1,23 @@
+---
+machine:
+  network:
+    nameservers:
+      - 192.168.2.9
+      - 192.168.3.1
+    interfaces:
+      - interface: eth0
+        dhcp: true
+        vip:
+          ip: 192.168.3.2
+  install:
+    extensions:
+      - image: ghcr.io/siderolabs/iscsi-tools:v0.1.4
+  kubelet:
+    nodeIP:
+      validSubnets:
+        - 192.168.3.0/24
+  sysctls:
+    vm.nr_hugepages: '1024'
+cluster:
+  proxy:
+    disabled: true
