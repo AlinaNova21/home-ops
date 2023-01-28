@@ -22,9 +22,9 @@ spec:
   timeout: 3m
   patches:
   - patch: |-
-     - op: add
-       path: /spec/type
-       value: LoadBalancer
+      - op: add
+        path: /spec/type
+        value: LoadBalancer
       - op: add
         path: /metadata/annotations
         value:
