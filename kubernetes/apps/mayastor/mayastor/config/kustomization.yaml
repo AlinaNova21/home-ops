@@ -5,3 +5,4 @@ resources:
   - ./rory.yaml
   - ./amy.yaml
   - ./river.yaml
+  - ./storageclass.yaml
