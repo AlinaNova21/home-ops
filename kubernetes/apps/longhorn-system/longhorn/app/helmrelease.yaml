@@ -25,4 +25,20 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  values: {}
+  values:
+    defaultSettings:deleting-confirmation-flag: true
+  postRenderers:
+    - kustomize:
+        patchesJson6902:
+          - patch: |-
+              - op: replace
+                path: /spec/type
+                value: LoadBalancer
+              - op: add
+                path: /metadata/annotations
+                value:
+                  metallb.universe.tf/loadBalancerIPs: 192.168.3.129
+            target:
+              kind: Service
+              name: longhorn-frontend
+              namespace: longhorn-system
