@@ -8,7 +8,7 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: minio/tenant
+      chart: tenant
       version: 4.5.8
       sourceRef:
         kind: HelmRepository
