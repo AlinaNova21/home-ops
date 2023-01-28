@@ -20,7 +20,7 @@ nodes:
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./net-patch.yaml'
+    - '@./common-patch.yaml'
     - |-
       - op: add
         path: /machine/network/interfaces/0/addresses
@@ -29,12 +29,13 @@ nodes:
       - op: add
         path: /machine/type
         value: init
+    # machine type to init bootstraps automatically
   - hostname: amy
     ipAddress: 192.168.3.4
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./net-patch.yaml'
+    - '@./common-patch.yaml'
     - |-
       - op: add
         path: /machine/network/interfaces/0/addresses
@@ -45,7 +46,7 @@ nodes:
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./net-patch.yaml'
+    - '@./common-patch.yaml'
     - |-
       - op: add
         path: /machine/network/interfaces/0/addresses
@@ -60,20 +61,6 @@ controlPlane:
         value:
           feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
-          "node-labels": "openebs.io/engine=mayastor"
-      - op: add
-        path: /machine/kubelet/nodeIP
-        value:
-          validSubnets:
-          - 192.168.3.0/24
-      - op: add
-        path: /cluster/proxy
-        value:
-          disabled: true
-      - op: add
-        path: /machine/sysctls
-        value:
-          vm.nr_hugepages: '1024'
 worker:
   patches:
     - |-
@@ -82,17 +69,3 @@ worker:
         value:
           feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
           rotate-server-certificates: "true"
-          "node-labels": "openebs.io/engine=mayastor"
-      - op: add
-        path: /machine/kubelet/nodeIP
-        value:
-          validSubnets:
-          - 192.168.3.0/24
-      - op: add
-        path: /cluster/proxy
-        value:
-          disabled: true
-      - op: add
-        path: /machine/sysctls
-        value:
-          vm.nr_hugepages: '1024'
