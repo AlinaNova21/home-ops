@@ -8,6 +8,10 @@ tasks:
     dir: "talos"
     cmds:
       - talhelper genconfig
+      - talosctl --talosconfig=clusterconfig/talosconfig apply-config -n 192.168.2.2 --file clusterconfig/whoverse-rory.cluster.whoverse.dev.yaml
+      - talosctl --talosconfig=clusterconfig/talosconfig apply-config -n 192.168.2.3 --file clusterconfig/whoverse-amy.cluster.whoverse.dev.yaml
+      - talosctl --talosconfig=clusterconfig/talosconfig apply-config -n 192.168.2.6 --file clusterconfig/whoverse-river.cluster.whoverse.dev.yaml
+
 
   bootstrap:
     desc: Bootstrap cluster

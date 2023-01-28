@@ -1,12 +1,10 @@
 machine:
   network:
+    nameservers:
+    - 192.168.2.9
+    - 192.168.3.1
     interfaces:
     - interface: eth0
-      vlans:
-        - routes: []
-          dhcp: false
-          vlanId: 3
-          vip:
-            ip: 192.168.3.2
-      mtu: 0
       dhcp: true
+      vip:
+        ip: 192.168.3.2

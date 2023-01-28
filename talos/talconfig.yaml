@@ -5,11 +5,9 @@ endpoint: https://kube.${domainName}:6443
 allowSchedulingOnMasters: true
 additionalMachineCertSans:
   - 192.168.3.2
-  - kube.${domainName}
 additionalApiServerCertSans:
   - 192.168.3.2
   - kube.${domainName}
-  # - home-cluster.local
 clusterPodNets:
   - 10.244.0.0/16
 clusterSvcNets:
@@ -17,7 +15,7 @@ clusterSvcNets:
 cniConfig:
   name: none
 nodes:
-  - hostname: rory.cluster.whoverse.dev
+  - hostname: rory
     ipAddress: 192.168.3.3
     controlPlane: true
     installDisk: /dev/mmcblk0
@@ -25,10 +23,13 @@ nodes:
     - '@./net-patch.yaml'
     - |-
       - op: add
-        path: /machine/network/interfaces/0/vlans/0/addresses
+        path: /machine/network/interfaces/0/addresses
         value:
         - 192.168.3.3/24
-  - hostname: amy.cluster.whoverse.dev
+      - op: add
+        path: /machine/type
+        value: init
+  - hostname: amy
     ipAddress: 192.168.3.4
     controlPlane: true
     installDisk: /dev/mmcblk0
@@ -36,10 +37,10 @@ nodes:
     - '@./net-patch.yaml'
     - |-
       - op: add
-        path: /machine/network/interfaces/0/vlans/0/addresses
+        path: /machine/network/interfaces/0/addresses
         value:
         - 192.168.3.4/24
-  - hostname: river.cluster.whoverse.dev
+  - hostname: river
     ipAddress: 192.168.3.5
     controlPlane: true
     installDisk: /dev/mmcblk0
@@ -47,7 +48,7 @@ nodes:
     - '@./net-patch.yaml'
     - |-
       - op: add
-        path: /machine/network/interfaces/0/vlans/0/addresses
+        path: /machine/network/interfaces/0/addresses
         value:
         - 192.168.3.5/24
 
