@@ -1,0 +1,8 @@
+apiVersion: "openebs.io/v1alpha1"
+kind: MayastorPool
+metadata:
+  name: pool-amy-sda
+  namespace: mayastor
+spec:
+  node: amy
+  disks: ["/dev/sda"]

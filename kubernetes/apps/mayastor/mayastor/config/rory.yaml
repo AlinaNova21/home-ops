@@ -1,0 +1,18 @@
+---
+apiVersion: "openebs.io/v1alpha1"
+kind: MayastorPool
+metadata:
+  name: pool-rory-sda
+  namespace: mayastor
+spec:
+  node: rory
+  disks: ["/dev/sda"]
+---
+apiVersion: "openebs.io/v1alpha1"
+kind: MayastorPool
+metadata:
+  name: pool-rory-sdb
+  namespace: mayastor
+spec:
+  node: rory
+  disks: ["/dev/sdb"]
