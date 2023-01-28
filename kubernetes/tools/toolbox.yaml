@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -8,22 +9,22 @@ metadata:
 spec:
   nodeName: rory
   containers:
-  - name: toolbox
-    image: ubuntu
-    args:
-    - sh
-    - -c
-    - while true; do sleep 50000; done
-    securityContext:
-       privileged: true
-    resources:
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
-    volumeMounts:
-      - mountPath: /host
-        name: host
+    - name: toolbox
+      image: ubuntu
+      args:
+        - sh
+        - -c
+        - while true; do sleep 50000; done
+      securityContext:
+        privileged: true
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      volumeMounts:
+        - mountPath: /host
+          name: host
   volumes:
-  - name: host
-    hostPath:
-      path: /
+    - name: host
+      hostPath:
+        path: /

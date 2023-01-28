@@ -1,3 +1,4 @@
+---
 clusterName: whoverse
 talosVersion: v1.3.3
 kubernetesVersion: v1.26.0
@@ -20,38 +21,38 @@ nodes:
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./common-patch.yaml'
-    - |-
-      - op: add
-        path: /machine/network/interfaces/0/addresses
-        value:
-        - 192.168.3.3/24
-      - op: add
-        path: /machine/type
-        value: init
+      - '@./common-patch.yaml'
+      - |-
+        - op: add
+          path: /machine/network/interfaces/0/addresses
+          value:
+          - 192.168.3.3/24
+        - op: add
+          path: /machine/type
+          value: init
     # machine type to init bootstraps automatically
   - hostname: amy
     ipAddress: 192.168.3.4
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./common-patch.yaml'
-    - |-
-      - op: add
-        path: /machine/network/interfaces/0/addresses
-        value:
-        - 192.168.3.4/24
+      - '@./common-patch.yaml'
+      - |-
+        - op: add
+          path: /machine/network/interfaces/0/addresses
+          value:
+          - 192.168.3.4/24
   - hostname: river
     ipAddress: 192.168.3.5
     controlPlane: true
     installDisk: /dev/mmcblk0
     patches:
-    - '@./common-patch.yaml'
-    - |-
-      - op: add
-        path: /machine/network/interfaces/0/addresses
-        value:
-        - 192.168.3.5/24
+      - '@./common-patch.yaml'
+      - |-
+        - op: add
+          path: /machine/network/interfaces/0/addresses
+          value:
+          - 192.168.3.5/24
 
 controlPlane:
   patches:

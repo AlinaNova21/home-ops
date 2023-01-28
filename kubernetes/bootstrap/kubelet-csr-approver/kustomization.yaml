@@ -10,7 +10,7 @@ helmCharts:
     namespace: kube-system
     valuesInline:
       providerIpPrefixes:
-      - 192.168.0.0/16
+        - 192.168.0.0/16
       bypassDnsResolution: true
       providerRegex: |
         ^(rory|amy|river|donna|k9)$
