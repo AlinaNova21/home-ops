@@ -8,7 +8,7 @@ metadata:
     substitution.flux.home.arpa/enabled: "true"
 spec:
   path: ./kubernetes/apps/longhorn-system/longhorn/app
-  prune: true
+  prune: false
   sourceRef:
     kind: GitRepository
     name: home-kubernetes
@@ -22,7 +22,7 @@ spec:
   timeout: 3m
   patches:
     - patch: |-
-        - op: add
+        - op: replace
           path: /spec/type
           value: LoadBalancer
         - op: add
