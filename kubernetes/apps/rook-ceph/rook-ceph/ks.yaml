@@ -54,7 +54,7 @@ metadata:
     substitution.flux.home.arpa/enabled: "true"
 spec:
   interval: 10m
-  path: "./kubernetes/cluster-0/apps/rook-ceph/rook-ceph/add-ons"
+  path: "./kubernetes/apps/rook-ceph/rook-ceph/add-ons"
   prune: true
   sourceRef:
     kind: GitRepository
