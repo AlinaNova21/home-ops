@@ -59,7 +59,6 @@ controlPlane:
         value:
           feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
-          node-labels: "openebs.io/engine=mayastor"
 worker:
   patches:
     - |-
@@ -68,4 +67,3 @@ worker:
         value:
           feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
           rotate-server-certificates: "true"
-          node-labels: "openebs.io/engine=mayastor"
