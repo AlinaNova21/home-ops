@@ -114,7 +114,7 @@ spec:
             resources:
               requests:
                 cpu: 200m
-                memory: 256Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
         storageClass:
@@ -150,7 +150,7 @@ spec:
             resources:
               requests:
                 cpu: 200m
-                memory: 256Mi
+                memory: 128Mi
               limits:
                 memory: 512Mi
             instances: 1
