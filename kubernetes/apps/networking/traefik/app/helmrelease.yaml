@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: 4.4.2
+      version: 2.9.6
       sourceRef:
         kind: HelmRepository
         name: traefik
@@ -36,3 +36,7 @@ spec:
     tlsOptions:
       default:
         minVersion: VersionTLS12
+    endpoints:
+      websecure:
+        middleware:
+          - networking-errors@kubernetescrd
