@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: 2.9.6
+      version: 20.8.0
       sourceRef:
         kind: HelmRepository
         name: traefik
@@ -26,6 +26,9 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    image:
+      name: traefik
+      tag: 2.9.6
     service:
       annotations:
         metallb.universe.tf/loadBalancerIPs: "${METALLB_INGRESS_ADDR}"
