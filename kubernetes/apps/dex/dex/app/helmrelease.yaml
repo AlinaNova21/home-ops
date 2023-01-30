@@ -34,6 +34,11 @@ spec:
         config:
           inCluster: true
       enablePasswordDB: true
+      frontend:
+        issuer: dex
+        logoURL: theme/logo.png
+        dir: web/
+        theme: dark
     ingress:
       enabled: true
       className: traefik
