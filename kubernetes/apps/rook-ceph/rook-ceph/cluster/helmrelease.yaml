@@ -78,25 +78,25 @@ spec:
       resources:
         mgr:
           limits:
-            cpu: "1000m"
+            cpu: "500m"
             memory: "1Gi"
           requests:
-            cpu: "500m"
+            cpu: "200m"
             memory: "256Mi"
         mon:
           limits:
             cpu: "2000m"
             memory: "1Gi"
           requests:
-            cpu: "1000m"
+            cpu: "500m"
             memory: "256Mi"
         osd:
           limits:
             cpu: "2000m"
             memory: "2Gi"
           requests:
-            cpu: "1000m"
-            memory: "512Gi"
+            cpu: "500m"
+            memory: "512Mi"
         prepareosd:
           # limits: It is not recommended to set limits on the OSD prepare job
           #         since it's a one-time burst for memory that must be allowed to
@@ -107,7 +107,7 @@ spec:
           #         OSDs ; for larger devices 2Gi may be required.
           #         cf. https://github.com/rook/rook/pull/11103
           requests:
-            cpu: "500m"
+            cpu: "200m"
             memory: "50Mi"
         mgr-sidecar:
           limits:
@@ -135,7 +135,7 @@ spec:
             cpu: "500m"
             memory: "1Gi"
           requests:
-            cpu: "500m"
+            cpu: "200m"
             memory: "100Mi"
     cephBlockPools:
       - name: ceph-blockpool
@@ -175,7 +175,7 @@ spec:
             activeStandby: true
             resources:
               requests:
-                cpu: 200m
+                cpu: 100m
                 memory: 128Mi
               limits:
                 memory: 256Mi
@@ -211,7 +211,7 @@ spec:
             port: 80
             resources:
               requests:
-                cpu: 200m
+                cpu: 100m
                 memory: 128Mi
               limits:
                 memory: 256Mi
