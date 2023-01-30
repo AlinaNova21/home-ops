@@ -50,6 +50,17 @@ nodes:
           path: /machine/network/interfaces/0/addresses
           value:
           - 192.168.3.5/24
+  - hostname: rose
+    ipAddress: 192.168.3.6
+    controlPlane: false
+    installDisk: /dev/sda
+    patches:
+      - "@./common-patch.yaml"
+      - |-
+        - op: add
+          path: /machine/network/interfaces/0/addresses
+          value:
+          - 192.168.3.6/24
 
 controlPlane:
   patches:
@@ -59,11 +70,16 @@ controlPlane:
         value:
           feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
+    - |-
+      - op: add
+        path: /machine/network/interfaces/0/vip
+        value:
+          ip: 192.168.3.2
 worker:
   patches:
     - |-
       - op: add
         path: /machine/kubelet/extraArgs
         value:
-          feature-gates: GracefulNodeShutdown=false,MixedProtocolLBService=false
+          feature-gates: GracefulNodeShutdown=true,MixedProtocolLBService=true
           rotate-server-certificates: "true"
