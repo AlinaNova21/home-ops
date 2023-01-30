@@ -33,6 +33,7 @@ spec:
         type: kubernetes
         config:
           inCluster: true
+      enablePasswordDB: true
     ingress:
       enabled: true
       className: traefik
