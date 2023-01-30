@@ -27,8 +27,8 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    issuer: https://auth.whoverse.dev/
     config:
+      issuer: https://auth.whoverse.dev/
       storage:
         type: kubernetes
         config:
