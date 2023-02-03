@@ -5,7 +5,7 @@ resources:
   - ./prometheus-operator-crd
   - ./cilium
   - ./kubelet-csr-approver
-  - github.com/fluxcd/flux2/manifests/install?ref=v0.38.3
+  - github.com/fluxcd/flux2/manifests/install?ref=v0.39.0
 patches:
   - patch: |-
       $patch: delete
