@@ -2,7 +2,6 @@
 version: "3"
 
 tasks:
-
   init:
     desc: Initialize talos config
     dir: "talos"
@@ -12,9 +11,24 @@ tasks:
       - talosctl --talosconfig=clusterconfig/talosconfig apply-config -n 192.168.2.3 --file clusterconfig/whoverse-amy.cluster.whoverse.dev.yaml
       - talosctl --talosconfig=clusterconfig/talosconfig apply-config -n 192.168.2.6 --file clusterconfig/whoverse-river.cluster.whoverse.dev.yaml
 
-
   bootstrap:
     desc: Bootstrap cluster
     dir: "talos/clusterconfig"
     cmds:
       - talosctl --talosconfig ./talosconfig bootstrap {{.CLI_ARGS}}
+  upgrade:
+    desc: Upgrade cluster
+    dir: "talos/clusterconfig"
+    cmds:
+      - |
+        set -e
+        for YML in ./*.yaml; do
+            IP=$(yq '.machine.network.interfaces[0].addresses[0]' $YML)
+            IP=${IP/\/24/}
+            echo Upgrading $IP to {{.TALOS_VERSION}}
+            talosctl --talosconfig ./talosconfig \
+              upgrade \
+              --nodes $IP \
+              --wait \
+              --image ghcr.io/siderolabs/installer:{{.TALOS_VERSION}}
+        done
