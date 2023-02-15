@@ -37,3 +37,12 @@ spec:
         labelSelector:
           matchLabels:
             app.kubernetes.io/instance: kyverno
+    resources:
+      requests:
+        cpu: null
+
+    initResources:
+      limits:
+        cpu: null
+      requests:
+        cpu: null
