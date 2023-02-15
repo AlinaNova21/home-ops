@@ -81,21 +81,21 @@ spec:
             cpu: "500m"
             memory: "512Mi"
           requests:
-            cpu: "200m"
+            cpu: "10m"
             memory: "256Mi"
         mon:
           limits:
             cpu: "2000m"
             memory: "1Gi"
           requests:
-            cpu: "500m"
+            cpu: "10m"
             memory: "256Mi"
         osd:
           limits:
             cpu: "2000m"
             memory: "2Gi"
           requests:
-            cpu: "500m"
+            cpu: "10m"
             memory: "512Mi"
         prepareosd:
           # limits: It is not recommended to set limits on the OSD prepare job
@@ -107,32 +107,32 @@ spec:
           #         OSDs ; for larger devices 2Gi may be required.
           #         cf. https://github.com/rook/rook/pull/11103
           requests:
-            cpu: "200m"
+            cpu: "10m"
             memory: "50Mi"
         mgr-sidecar:
           limits:
             cpu: "500m"
             memory: "100Mi"
           requests:
-            cpu: "100m"
+            cpu: "10m"
             memory: "40Mi"
         crashcollector:
           limits:
             cpu: "500m"
             memory: "60Mi"
           requests:
-            cpu: "100m"
+            cpu: "10m"
             memory: "60Mi"
         logcollector:
           limits:
             cpu: "500m"
             memory: "1Gi"
           requests:
-            cpu: "100m"
+            cpu: "10m"
             memory: "100Mi"
         cleanup:
           limits:
-            cpu: "500m"
+            cpu: "10m"
             memory: "1Gi"
           requests:
             cpu: "200m"
@@ -175,7 +175,7 @@ spec:
             activeStandby: true
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
                 memory: 128Mi
               limits:
                 memory: 256Mi
@@ -211,7 +211,7 @@ spec:
             port: 80
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
                 memory: 128Mi
               limits:
                 memory: 256Mi
