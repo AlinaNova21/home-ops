@@ -8,6 +8,15 @@
       "automergeType": "pr",
       "ignoreTests": true,
       "matchUpdateTypes": ["minor", "patch", "digest"]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
     }
   ]
 }
