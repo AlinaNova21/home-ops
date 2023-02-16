@@ -1,9 +1,5 @@
 ---
 autoDirectNodeRoutes: true
-bgp:
-  announce:
-    loadbalancerIP: true
-  enabled: false
 containerRuntime:
   integration: containerd
 endpointRoutes:
@@ -34,3 +30,11 @@ rollOutCiliumPods: true
 securityContext:
   privileged: true
 tunnel: disabled
+ingressController:
+  enabled: true
+  loadBalancerMode: shared
+  service:
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: "192.168.3.130"
+bgpControlPlane:
+  enabled: true
