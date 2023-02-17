@@ -5,15 +5,17 @@ containerRuntime:
 endpointRoutes:
   enabled: true
 hubble:
-  enabled: false
-  # ui:
-  #   enabled: true
-  #   ingress:
-  #     enabled: true
-  #     annotations:
-  #       kubernetes.io/ingress.class: nginx
-  #     hosts:
-  #     - hubble-ui
+  ui:
+    enabled: true
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: cilium
+        io.cilium/lb-ipam-ips: 10.0.10.1
+      hosts:
+        - hubble.wg0.dev
+  relay:
+    enabled: true
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.0.0.0/8
@@ -35,6 +37,6 @@ ingressController:
   loadBalancerMode: shared
   service:
     annotations:
-      metallb.universe.tf/loadBalancerIPs: "192.168.3.130"
+      io.cilium/lb-ipam-ips: 10.0.10.2
 bgpControlPlane:
   enabled: true
