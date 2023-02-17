@@ -1,0 +1,49 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: networking
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: external-dns
+      version: 1.12.0
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+        namespace: flux-system
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    interval: 2m
+    # logLevel: debug
+    provider: aws
+    env:
+      - name: AWS_DEFAULT_REGION
+        valueFrom:
+          secretKeyRef:
+            name: external-dns-secret
+            key: region
+    extraArgs:
+      - --fqdn-template={{.Name}}.wg0.dev
+    #   - --annotation-filter=external-dns.home.arpa/enabled in (true)
+    policy: sync
+    sources: ["ingress", "service"]
+    txtPrefix: k8s.
+    txtOwnerId: default
+    domainFilters: ["whoverse.dev", "wg0.dev", "alinanova.dev"]
+    serviceMonitor:
+      enabled: true
+    podAnnotations:
+      secret.reloader.stakater.com/reload: external-dns-secret
