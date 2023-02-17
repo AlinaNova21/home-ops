@@ -23,5 +23,17 @@ metadata:
   name: "primary-pool"
 spec:
   cidrs:
-    - cidr: "10.0.10.0/24"
-    - cidr: "2004::0/64"
+    - cidr: "10.0.10.128/25"
+    # - cidr: "2004::0/64"
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "static-pool"
+spec:
+  cidrs:
+    - cidr: "10.0.10.0/25"
+  serviceSelector:
+    matchLabels:
+      pool: static
+    # - cidr: "2004::1:0/64"
