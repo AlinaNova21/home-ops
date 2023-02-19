@@ -11,11 +11,11 @@ hubble:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: cilium
-        io.cilium/lb-ipam-ips: 10.0.10.3
+        # io.cilium/lb-ipam-ips: 10.0.10.3
       hosts:
         - hubble.ags131.com
-      labels:
-        pool: static
+      # labels:
+      #   pool: static
   relay:
     enabled: true
 ipam:
@@ -35,12 +35,14 @@ securityContext:
   privileged: true
 tunnel: disabled
 ingressController:
-  enabled: true
-  loadBalancerMode: shared
+  enabled: false
+  loadbalancerMode: shared
   service:
     annotations:
       io.cilium/lb-ipam-ips: 10.0.10.2
     labels:
       pool: static
 bgpControlPlane:
+  enabled: true
+gatewayAPI:
   enabled: true
