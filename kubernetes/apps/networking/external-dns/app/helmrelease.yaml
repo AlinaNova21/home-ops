@@ -35,6 +35,17 @@ spec:
           secretKeyRef:
             name: external-dns-secret
             key: region
+      - name: AWS_SHARED_CREDENTIALS_FILE
+        value: /.aws/credentials
+
+    extraVolumeMounts:
+      - name: aws-credentials
+        mountPath: /.aws
+        readOnly: true
+    extraVolumes:
+      - name: aws-credentials
+        secret:
+          secretName: external-dns-secret
     extraArgs:
       - --fqdn-template={{ "{{" }}.Name{{ "}}" }}.ags131.com
     #   - --annotation-filter=external-dns.home.arpa/enabled in (true)
