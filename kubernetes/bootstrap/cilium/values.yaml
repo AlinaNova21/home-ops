@@ -13,7 +13,7 @@ hubble:
         kubernetes.io/ingress.class: cilium
         io.cilium/lb-ipam-ips: 10.0.10.3
       hosts:
-        - hubble.wg0.dev
+        - hubble.ags131.com
       labels:
         pool: static
   relay:
