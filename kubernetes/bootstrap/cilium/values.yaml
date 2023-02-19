@@ -11,9 +11,11 @@ hubble:
       enabled: true
       annotations:
         kubernetes.io/ingress.class: cilium
-        io.cilium/lb-ipam-ips: 10.0.10.1
+        io.cilium/lb-ipam-ips: 10.0.10.3
       hosts:
         - hubble.wg0.dev
+      labels:
+        pool: static
   relay:
     enabled: true
 ipam:
@@ -38,5 +40,7 @@ ingressController:
   service:
     annotations:
       io.cilium/lb-ipam-ips: 10.0.10.2
+    labels:
+      pool: static
 bgpControlPlane:
   enabled: true
