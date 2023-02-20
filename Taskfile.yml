@@ -5,6 +5,7 @@ vars:
   KUBERNETES_DIR: "{{.ROOT_DIR}}/kubernetes"
   TERRAFORM_DIR: "{{.ROOT_DIR}}/terraform"
   TALOS_DIR: "{{.ROOT_DIR}}/talos"
+  TALOS_IMAGE: "ghcr.io/siderolabs/installer:v1.3.5"
 
 dotenv: [".config.env"]
 
@@ -17,7 +18,6 @@ includes:
   talos: .taskfiles/TalosTasks.yml
 
 tasks:
-
   init:
     desc: Initialize workstation dependencies with Brew
     cmds:

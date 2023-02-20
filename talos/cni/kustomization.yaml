@@ -13,6 +13,3 @@ commonAnnotations:
   meta.helm.sh/release-namespace: kube-system
 commonLabels:
   app.kubernetes.io/managed-by: Helm
-resources:
-  - https://github.com/kubernetes-sigs/gateway-api/releases/download/v0.5.1/standard-install.yaml
-  - peering.yaml
