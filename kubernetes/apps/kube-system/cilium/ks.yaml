@@ -6,6 +6,7 @@ metadata:
   namespace: flux-system
   labels:
     substitution.flux.home.arpa/enabled: "true"
+    depend-on-cilium: false
 spec:
   dependsOn:
     - name: cluster-apps-gateway-api
