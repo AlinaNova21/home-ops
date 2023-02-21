@@ -26,7 +26,7 @@ spec:
         - op: add
           path: /spec/dependsOn
           value:
-            name: cluster-apps-cilium
+            - name: cluster-apps-cilium
       target:
         group: kustomize.toolkit.fluxcd.io
         version: v1beta2
