@@ -3,6 +3,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
   name: web
+  namespace: networking
   annotations:
     io.cilium/lb-ipam-ips: 10.0.10.2
 spec:
