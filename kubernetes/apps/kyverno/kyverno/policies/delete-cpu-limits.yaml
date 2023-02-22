@@ -44,9 +44,9 @@ spec:
               - (name): "*"
                 resources:
                   limits:
-                    cpu: "10000m"
+                    cpu: null
             containers:
               - (name): "*"
                 resources:
                   limits:
-                    cpu: "10000m"
+                    cpu: null
