@@ -54,7 +54,7 @@ spec:
 
     ingress:
       enabled: true
-      className: traefik
+      className: nginx
       annotations:
         external-dns.home.arpa/enabled: "true"
         hajimari.io/icon: mdi:code-json
