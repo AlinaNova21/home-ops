@@ -16,3 +16,21 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: internal
+  namespace: networking
+  annotations:
+    io.cilium/lb-ipam-ips: 10.0.10.3
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - protocol: HTTP
+      port: 80
+      name: web-gw
+      hostname: "*.ags131.com"
+      allowedRoutes:
+        namespaces:
+          from: All

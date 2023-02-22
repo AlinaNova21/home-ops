@@ -5,7 +5,7 @@ metadata:
   name: weave-gitops
 spec:
   parentRefs:
-    - name: web
+    - name: internal
       namespace: networking
   hostnames:
     - gitops.ags131.com
