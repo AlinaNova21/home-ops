@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
   labels:
     substitution.flux.home.arpa/enabled: "true"
-    require-cilium.flux.home.arpa/disabled: "true"
+    require-cni.flux.home.arpa/disabled: "true"
 spec:
   path: ./kubernetes/apps/networking/gateway-api/apps
   prune: true
