@@ -17,6 +17,7 @@ resources:
   - ./metallb.yaml
   - ./minio.yaml
   - ./metrics-server.yaml
+  - ./piraeus.yaml
   - ./rook-ceph.yaml
   - ./stakater.yaml
   - ./traefik.yaml
