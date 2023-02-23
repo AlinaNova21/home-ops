@@ -48,4 +48,4 @@ spec:
     bgpControlPlane:
       enabled: true
     gatewayAPI:
-      enabled: true
+      enabled: false

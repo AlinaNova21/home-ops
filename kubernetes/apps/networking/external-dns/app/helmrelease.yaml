@@ -50,7 +50,7 @@ spec:
       - --fqdn-template={{ "{{" }}.Name{{ "}}" }}.ags131.com
     #   - --annotation-filter=external-dns.home.arpa/enabled in (true)
     policy: sync
-    sources: ["ingress", "service", "gateway-httproute"]
+    sources: ["ingress", "service"]
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ["whoverse.dev", "wg0.dev", "alinanova.dev", "ags131.com"]
