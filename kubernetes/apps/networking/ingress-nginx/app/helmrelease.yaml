@@ -33,6 +33,8 @@ spec:
       service:
         annotations:
           io.cilium/lb-ipam-ips: "${CILIUM_INGRESS_ADDR}"
+        labels:
+          pool: static
         externalTrafficPolicy: Local
       publishService:
         enabled: true
