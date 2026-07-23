@@ -1,0 +1,32 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: error-pages-internal
+  namespace: default
+spec:
+  interval: 30m
+  path: "./default/error-pages/app-internal"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  prune: false
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: error-pages-external
+  namespace: default
+spec:
+  interval: 30m
+  path: "./default/error-pages/app-external"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  prune: false
