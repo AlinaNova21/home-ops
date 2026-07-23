@@ -5,7 +5,7 @@ resources:
   - default
   #- docs
   - downloads
-  - entertainment
+  #- entertainment
   #- homepage
   #- immich
   #- plex
