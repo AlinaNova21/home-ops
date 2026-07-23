@@ -1,15 +1,14 @@
 creation_rules:
-  # Bootstrap secrets - GPG-encrypted, decrypted by operators with the matching private key
+  # Bootstrap secrets - age + GPG (both recipients can decrypt)
   - path_regex: kubernetes/bootstrap/.*\.sops\.yaml$
-    pgp: >-
-      B2266723EDB691FBB16501BC07D6E31CCAE33514
-
-  # Talos secrets - age key with GPG backup
-  - path_regex: talos/.*\.sops\.yaml$
     age: >-
       age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
     pgp: >-
       B2266723EDB691FBB16501BC07D6E31CCAE33514
 
-  # Default - Vault Transit for other secrets
-  - hc_vault_transit_uri: "https://vault.whoverse.dev/v1/sops/keys/komodo"
+  # Talos secrets - same age + GPG key set
+  - path_regex: talos/.*\.sops\.yaml$
+    age: >-
+      age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
+    pgp: >-
+      B2266723EDB691FBB16501BC07D6E31CCAE33514

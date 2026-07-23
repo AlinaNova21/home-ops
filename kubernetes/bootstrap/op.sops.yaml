@@ -13,18 +13,28 @@ metadata:
     uid: ENC[AES256_GCM,data:h+qmWrQEtKTnnSxK8AIWCWZ7gqRqkfdwg7eNf8VlEaZb/J6B,iv:ZAmD/dqulhPvOs7K3vEYj+dXUNo1q2tsiVgwvR8NdSU=,tag:cTp3GTAWPoUUKeMPOgtcxg==,type:str]
 type: ENC[AES256_GCM,data:bqSTeRYY,iv:99s9mJgjqpmL8lKiJoobIQTfGcJ1sRrNoCh6CL9LR40=,tag:S2RRhFemYYbWJe/POWFyZg==,type:str]
 sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtYWRwWVRjRkpzbTFodHJV
+            TmpyN3JmSGJ5alZhNFlQU1dNMTBMWHVXUEU4CmlnNDlJa1JXZmFmVTNQQ3NpbU9H
+            djlWT3pweXVZTzZCZ01acUd0cmNqeDQKLS0tIHZpMnIvejYxY3pKMm9GNXdxZjRv
+            U09ZcE1FbFdjTUlQZzMyT0liaU5HazgKTuotjC52xX7pXKtdCPGhwrERJVZyfEtP
+            2Y8BOa02r4o47b3mpLGYl5b67rPOt6xMRpOykXELtwit59Hcawpi3A==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
     lastmodified: "2026-07-23T00:43:49Z"
     mac: ENC[AES256_GCM,data:IbZKCZtPhLCK424PikHGDV9Qnd1w49nbVT8DmL3LvWx9v2C5iK0pzGd07M+c+BBuPd5bPFMaYfTMwXp9U+KoKbnUo1gusTAvXDAgcbjO/h5NHQ+K8XKctlh8Za44qR5gep3h6PeYqAWqUxzs2iqBc3vLFH0kRkhMEFUeh+KZqH0=,iv:cU531Roy/ZS7ptPcKOW+7mJUdI8Al6kF1oqR45g7ljM=,tag:oKM2haZ09Tbu8sccIvqH9g==,type:str]
     pgp:
-        - created_at: "2026-07-23T00:43:49Z"
+        - created_at: "2026-07-23T02:10:35Z"
           enc: |-
             -----BEGIN PGP MESSAGE-----
 
-            hF4DzCc2EjPFSlYSAQdAlSvT8UAQCdUHqB5d/cLqkfEHfQqi40gCzIWD2OWPARkw
-            PQmvxKLzy1QuIDSHFo9OdIyXXz71riR8bUHQRvOJouNMJMJKm/XLbnE7WHRJqXLs
-            0l4B5kd47Z073fAee+2vBu3WEN2xKtvCCIAO+Y6MDRH7RojJEo/jyWgWHD6HaoSg
-            PQ27W3j3GwT4kvu6aO9LbxYp20RdqoLoVgzDgAPP2vQ/8UmLJfZq60tiQU98z488
-            =GaNA
+            hF4DzCc2EjPFSlYSAQdAm2cqXHXJ7wkT5xTLrBy7xTIdCFoMckqoioaw6A/6fU8w
+            zsXj7R0kQhHKHI95FYDXnj+ICXIfTPyTkpG/tlQoklAfi3vuCzHJyqyzqaLqtxjD
+            0l4BaSwq2fHbu6kBID+AuCTjxpX8Aags7oZIH/Sd+Pw8mz7zrHRCQeJVyL8Gmxzu
+            RRwXEON9W1kxI8TOMhc5E7Z6AoGeJjxS8nSiUYH/mW3NliQEqZuvvNDOdIN6ovbn
+            =Q3ZM
             -----END PGP MESSAGE-----
           fp: B2266723EDB691FBB16501BC07D6E31CCAE33514
     unencrypted_suffix: _unencrypted
