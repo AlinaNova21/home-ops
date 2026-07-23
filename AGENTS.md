@@ -661,3 +661,38 @@ cd talos/whoverse
 ```
 
 Do **not** commit the generated manifests to a public repo — they contain your cluster's private keys.
+
+## Pre-commit hooks
+
+This repo uses [pre-commit](https://pre-commit.com) to run two secret scanners on every `git commit`:
+
+- `gitleaks` — scans staged changes (`--pre-commit --redact --staged --verbose`).
+- `trufflehog` — verifies discovered credentials against their APIs (`--results=verified --fail --trust-local-git-config`) and only blocks the commit on **verified** results.
+
+All three tools (`pre-commit`, `gitleaks`, `trufflehog`) are managed by [mise](https://mise.jdx.dev) and pinned in `mise.toml`. Running `mise install` in a checkout that has a `.git` entry (a directory in a normal clone, a file in a git worktree) automatically installs the hook via the `hooks:install` task and chains it through `[hooks].postinstall`. Hook entries invoke the binaries via `mise exec --` so the pinned version is used even when mise isn't activated in the caller's shell.
+
+### Common commands
+
+```bash
+mise install                # also installs the hook (when .git exists)
+mise run hooks:install      # idempotent reinstall of the hook
+just hooks-install          # Justfile wrapper around mise run hooks:install
+pre-commit run --all-files  # run both hooks across the working tree
+```
+
+### Skipping hooks when needed
+
+```bash
+SKIP=gitleaks,trufflehog git commit -m "..."   # skip specific hooks
+git commit --no-verify -m "..."                # bypass the pre-commit hook entirely
+```
+
+### Tuning
+
+- gitleaks config lives in `.gitleaks.toml` and extends the default ruleset with path-based allowlists for vendored content (e.g. `charts/kasm/*.lock`).
+- To ignore a specific gitleaks finding, append `# gitleaks:allow` on the same line as the finding.
+- To ignore a trufflehog finding, append `# trufflehog:ignore` on the same line as the finding.
+
+### When a hook fails
+
+The commit is aborted with a non-zero exit and the offending line is printed (gitleaks redacts the secret itself). Fix the leak by rotating the credential and rewriting the line, or add an inline allow comment if the match is a known false positive.

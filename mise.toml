@@ -1,0 +1,23 @@
+# home-ops dev environment
+# Install: https://mise.jdx.dev/getting-started.html
+# Shell:   eval "$(mise activate bash)"   # add to ~/.bashrc / ~/.zshrc
+
+[settings]
+experimental = true
+
+[tools]
+# Pre-commit + secret scanners (managed by pre-commit hooks)
+pre-commit = "latest"
+gitleaks   = "latest"
+trufflehog = "latest"
+
+[hooks]
+# Install the pre-commit hook (gitleaks + trufflehog) when `.git` exists.
+# `.git` is a directory in a normal clone, a file in git worktrees — handle both.
+postinstall = "if [ -d .git ] || [ -f .git ]; then mise run hooks:install; else echo 'pre-commit install skipped (no .git metadata)'; fi"
+
+[tasks."hooks:install"]
+description = "Install the local pre-commit Git hook using mise-pinned pre-commit"
+run = [
+  'pre-commit install --install-hooks --overwrite',
+]

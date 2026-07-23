@@ -1,0 +1,11 @@
+title = "home-ops gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated / vendored content not authored here"
+paths = [
+  '''charts/kasm/.*\.lock''',
+  '''\.gitleaks\.toml''',
+]

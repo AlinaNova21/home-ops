@@ -1,0 +1,17 @@
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: Detect hardcoded secrets (gitleaks)
+        description: Scan staged changes for hardcoded secrets using Gitleaks
+        entry: mise exec -- gitleaks git --pre-commit --redact --staged --verbose
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+      - id: trufflehog
+        name: Detect verified secrets (trufflehog)
+        description: Verify discovered credentials against their APIs using TruffleHog
+        entry: mise exec -- trufflehog git file://. --since-commit HEAD --results=verified --fail --trust-local-git-config
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

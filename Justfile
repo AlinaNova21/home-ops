@@ -13,6 +13,10 @@ talos_dir := "talos/whoverse"
 talos_config := talos_dir + "/clusterconfig"
 bootstrap_dir := "kubernetes/bootstrap"
 
+# Install the local pre-commit hook (gitleaks + trufflehog) using mise
+hooks-install:
+    mise run hooks:install
+
 # Default recipe - show available commands
 default:
     @just --list --unsorted
