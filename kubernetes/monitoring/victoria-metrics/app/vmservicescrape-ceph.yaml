@@ -1,0 +1,34 @@
+---
+# Ceph Manager metrics (port 9283)
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: rook-ceph-mgr
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - storage
+  selector:
+    matchLabels:
+      app: rook-ceph-mgr
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+---
+# Rook Ceph Exporter (port 9926)
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: rook-ceph-exporter
+  namespace: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - storage
+  selector:
+    matchLabels:
+      app: rook-ceph-exporter
+  endpoints:
+    - port: ceph-exporter-http-metrics
+      path: /metrics

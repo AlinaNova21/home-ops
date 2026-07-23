@@ -1,0 +1,19 @@
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: ingress-proxies
+  namespace: network
+spec:
+  type: ingress
+  replicas: 3
+  proxyClass: low-resources
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: pve-egress
+  namespace: network
+spec:
+  type: egress
+  proxyClass: low-resources

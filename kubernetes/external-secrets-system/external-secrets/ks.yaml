@@ -1,0 +1,48 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: external-secrets
+  namespace: external-secrets-system
+spec:
+  interval: 10m
+  path: "./external-secrets-system/external-secrets/app"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: external-secrets
+      namespace: external-secrets-system
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: external-secrets-webhook
+      namespace: external-secrets-system
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: external-secrets-cert-controller
+      namespace: external-secrets-system
+  timeout: 10m
+  wait: true
+  prune: false
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: external-secrets-config
+  namespace: external-secrets-system
+spec:
+  dependsOn:
+    - name: external-secrets
+    - name: onepassword-connect
+      namespace: onepassword-connect
+  interval: 10m
+  path: "./external-secrets-system/external-secrets/config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  prune: false

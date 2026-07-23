@@ -1,0 +1,70 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vector
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: vector
+      version: "0.56.0"
+      sourceRef:
+        kind: HelmRepository
+        name: vector
+        namespace: flux-system
+      interval: 24h
+  timeout: 10m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    # Run as a DaemonSet on every node to collect all container logs
+    role: Agent
+
+    # No Service needed for a log-shipping agent
+    service:
+      enabled: false
+
+    customConfig:
+      data_dir: /vector-data-dir
+
+      sources:
+        kubernetes_logs:
+          type: kubernetes_logs
+          self_node_name: "${VECTOR_SELF_NODE_NAME}"
+
+      transforms:
+        remap_logs:
+          type: remap
+          inputs:
+            - kubernetes_logs
+          source: |
+            .pod_name = .kubernetes.pod_name
+            .namespace = .kubernetes.pod_namespace
+            .container_name = .kubernetes.container_name
+            .node_name = .kubernetes.pod_node_name
+            del(.kubernetes)
+
+      sinks:
+        victoria_logs:
+          type: http
+          inputs:
+            - remap_logs
+          uri: "http://victoria-logs-victoria-logs-cluster-vlinsert.monitoring:9481/insert/jsonline?_stream_fields=stream,namespace,pod_name,container_name"
+          encoding:
+            codec: json
+          framing:
+            method: newline_delimited
+          compression: gzip

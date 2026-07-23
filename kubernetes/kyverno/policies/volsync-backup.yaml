@@ -1,0 +1,113 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: volsync-backup
+  annotations:
+    policies.kyverno.io/title: Auto VolSync Backup for Ceph PVCs
+    policies.kyverno.io/description: >-
+      Automatically generates an ExternalSecret and ReplicationSource for every
+      ceph-rbd PVC. Opt out by annotating the PVC with volsync.backube/exclude: "true".
+      Override the backup schedule with volsync.backube/schedule: "cron expression".
+spec:
+  generateExisting: true
+  rules:
+    - name: generate-externalsecret
+      match:
+        any:
+          - resources:
+              kinds:
+                - PersistentVolumeClaim
+      exclude:
+        any:
+          - resources:
+              annotations:
+                volsync.backube/exclude: "true"
+          - resources:
+              names:
+                - "volsync-*"
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.storageClassName }}"
+            operator: Equals
+            value: ceph-rbd
+      generate:
+        synchronize: true
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        name: "volsync-kopia-{{request.object.metadata.name}}"
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          spec:
+            refreshInterval: 1h
+            secretStoreRef:
+              kind: ClusterSecretStore
+              name: onepassword-connect
+            target:
+              name: "volsync-kopia-{{request.object.metadata.name}}"
+              creationPolicy: Owner
+              template:
+                data:
+                  AWS_ACCESS_KEY_ID: \{{ .accessKeyId }}
+                  AWS_SECRET_ACCESS_KEY: \{{ .secretAccessKey }}
+                  KOPIA_PASSWORD: \{{ .kopiaPassword }}
+                  AWS_S3_ENDPOINT: https://s3.us-west-001.backblazeb2.com
+                  KOPIA_REPOSITORY: "s3://whoverse-k8s-backups/volsync/{{request.object.metadata.namespace}}/{{request.object.metadata.name}}"
+            data:
+              - secretKey: accessKeyId
+                remoteRef:
+                  key: backblaze-k8s-backup
+                  property: key-id
+              - secretKey: secretAccessKey
+                remoteRef:
+                  key: backblaze-k8s-backup
+                  property: credential
+              - secretKey: kopiaPassword
+                remoteRef:
+                  key: volsync-kopia-password
+                  property: password
+
+    - name: generate-replicationsource
+      match:
+        any:
+          - resources:
+              kinds:
+                - PersistentVolumeClaim
+      exclude:
+        any:
+          - resources:
+              annotations:
+                volsync.backube/exclude: "true"
+          - resources:
+              names:
+                - "volsync-*"
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.storageClassName }}"
+            operator: Equals
+            value: ceph-rbd
+      generate:
+        synchronize: true
+        apiVersion: volsync.backube/v1alpha1
+        kind: ReplicationSource
+        name: "{{request.object.metadata.name}}-backup"
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          spec:
+            sourcePVC: "{{request.object.metadata.name}}"
+            trigger:
+              schedule: "{{ request.object.metadata.annotations.\"volsync.backube/schedule\" || '0 2 * * *' }}"
+            kopia:
+              repository: "volsync-kopia-{{request.object.metadata.name}}"
+              copyMethod: Clone
+              storageClassName: ceph-rbd
+              cacheCapacity: 1Gi
+              moverSecurityContext:
+                runAsUser: 0
+                runAsGroup: 0
+                fsGroup: 0
+              retain:
+                daily: 7
+                weekly: 4
+                monthly: 3
+

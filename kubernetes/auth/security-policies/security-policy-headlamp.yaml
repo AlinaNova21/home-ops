@@ -1,0 +1,23 @@
+---
+# Protects the Headlamp HTTPRoute (in headlamp namespace)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: oidc-headlamp
+  namespace: headlamp
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: headlamp
+  oidc:
+    provider:
+      issuer: "https://dex.whoverse.dev"
+    clientID: "envoy-internal"
+    clientSecret:
+      name: dex-envoy-client-secret
+    redirectURL: "https://headlamp.whoverse.dev/oauth2/callback"
+    scopes:
+      - openid
+      - email
+      - profile
