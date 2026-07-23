@@ -13,4 +13,4 @@ spec:
     - name: infrastructure
   timeout: 10m
   wait: true
-  prune: true
+  prune: false

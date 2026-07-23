@@ -15,4 +15,4 @@ spec:
     - name: cloudnative-pg
   timeout: 10m
   wait: true
-  prune: true
+  prune: false

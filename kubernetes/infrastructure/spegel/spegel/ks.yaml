@@ -11,4 +11,4 @@ spec:
     name: home-ops
     namespace: flux-system
   wait: true
-  prune: true
+  prune: false

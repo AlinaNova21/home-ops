@@ -11,4 +11,4 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
-  prune: true
+  prune: false

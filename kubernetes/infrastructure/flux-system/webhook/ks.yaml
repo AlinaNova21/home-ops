@@ -15,4 +15,4 @@ spec:
     name: home-ops
   timeout: 5m
   wait: true
-  prune: true
+  prune: false

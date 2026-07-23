@@ -7,3 +7,4 @@ resources:
   - flux-system.yaml
   - apps.yaml
   - infrastructure.yaml
+  - cluster.yaml

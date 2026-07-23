@@ -15,4 +15,4 @@ spec:
     - name: victoria-logs
   timeout: 10m
   wait: true
-  prune: true
+  prune: false

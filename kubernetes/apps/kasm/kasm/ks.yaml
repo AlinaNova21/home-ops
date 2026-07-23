@@ -15,4 +15,4 @@ spec:
       namespace: flux-system
   timeout: 10m
   wait: true
-  prune: true
+  prune: false

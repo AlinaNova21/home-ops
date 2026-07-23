@@ -19,4 +19,4 @@ spec:
     - name: sonarr-anime
   timeout: 5m
   wait: true
-  prune: true
+  prune: false

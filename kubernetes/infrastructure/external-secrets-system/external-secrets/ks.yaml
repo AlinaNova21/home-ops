@@ -26,7 +26,7 @@ spec:
       namespace: external-secrets-system
   timeout: 10m
   wait: true
-  prune: true
+  prune: false
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -45,4 +45,4 @@ spec:
     name: home-ops
     namespace: flux-system
   timeout: 5m
-  prune: true
+  prune: false
