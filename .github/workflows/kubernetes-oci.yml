@@ -45,7 +45,7 @@ jobs:
       - name: Trigger Flux Webhook
         if: success()
         run: |
-          PAYLOAD='{"action":"push","repository":"komodo-resources"}'
+          PAYLOAD='{"action":"push","repository":"home-ops"}'
           SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "${{ secrets.FLUX_WEBHOOK_TOKEN }}" | sed 's/^.* //')
           curl -X POST https://flux.whoverse.nexus/hook/087b90ea9fa7e2f177a1bbbcfb139032d8f373c7fc5586f3f355b3a99ee28a39 \
             -H "Content-Type: application/json" \
