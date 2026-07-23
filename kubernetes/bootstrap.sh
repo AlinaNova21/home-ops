@@ -91,9 +91,8 @@ apply_flux_config() {
     # Apply the HelmRelease for Flux to manage itself
     kubectl apply -f "${FLUX_CONFIG_DIR}/flux-helmrelease.yaml"
 
-    # Apply the root Kustomizations that point to infrastructure and apps
-    kubectl apply -f "${FLUX_CONFIG_DIR}/infrastructure.yaml"
-    kubectl apply -f "${FLUX_CONFIG_DIR}/apps.yaml"
+    # Apply the root Kustomization that points to the flat cluster layout
+    kubectl apply -f "${FLUX_CONFIG_DIR}/cluster.yaml"
 
     log_info "Flux is now configured for self-management"
 }
@@ -110,9 +109,9 @@ wait_for_reconciliation() {
     log_info "Waiting for Flux HelmRelease..."
     kubectl wait --for=condition=ready --timeout=600s helmrelease/flux2 -n flux-system || true
 
-    # Wait for infrastructure Kustomization
-    log_info "Waiting for infrastructure Kustomization..."
-    kubectl wait --for=condition=ready --timeout=600s kustomization/infrastructure -n flux-system || true
+    # Wait for cluster Kustomization
+    log_info "Waiting for cluster Kustomization..."
+    kubectl wait --for=condition=ready --timeout=600s kustomization/cluster -n flux-system || true
 
     log_info "Initial reconciliation complete"
 }

@@ -9,7 +9,7 @@ All app secrets are synced from 1Password Connect via the External Secrets Opera
 
 ## ClusterSecretStore (already deployed)
 
-Defined at `kubernetes/infrastructure/external-secrets-system/external-secrets/config/clustersecretstore.yaml`:
+Defined at `kubernetes/external-secrets-system/external-secrets/config/clustersecretstore.yaml`:
 
 ```yaml
 apiVersion: external-secrets.io/v1
@@ -34,7 +34,7 @@ spec:
 
 ## ExternalSecret template
 
-`kubernetes/apps/{namespace}/{component}/app/externalsecret.yaml`:
+`kubernetes/{namespace}/{component}/app/externalsecret.yaml`:
 
 ```yaml
 ---

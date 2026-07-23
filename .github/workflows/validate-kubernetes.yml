@@ -48,7 +48,7 @@ jobs:
       - name: Validate kustomize builds and schemas
         if: steps.filter.outputs.kubernetes == 'true'
         run: |
-          for dir in kubernetes/flux-config kubernetes/infrastructure kubernetes/apps; do
+          for dir in kubernetes/flux-config kubernetes; do
             echo "=== Building $dir ==="
             kustomize build "$dir" | kubeconform \
               -strict \

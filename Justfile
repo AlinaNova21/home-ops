@@ -95,8 +95,7 @@ flux-configure:
     kubectl apply -k kubernetes/flux-config/registry/oci
     kubectl apply -k kubernetes/flux-config/registry/helm
     kubectl apply -f kubernetes/flux-config/flux-helmrelease.yaml
-    kubectl apply -f kubernetes/flux-config/infrastructure.yaml
-    kubectl apply -f kubernetes/flux-config/apps.yaml
+    kubectl apply -f kubernetes/flux-config/cluster.yaml
 
 # Full bootstrap: Cilium + Flux + self-management config
 bootstrap: bootstrap-cilium bootstrap-flux flux-configure
@@ -118,8 +117,7 @@ flux-push:
 flux-sync:
     kubectl annotate --overwrite ocirepository/home-ops -n flux-system \
         reconcile.fluxcd.io/requestedAt="$(date +%s)"
-    flux reconcile kustomization infrastructure -n flux-system || true
-    flux reconcile kustomization apps -n flux-system || true
+    flux reconcile kustomization cluster -n flux-system || true
 
 # Check Flux status
 flux-status:

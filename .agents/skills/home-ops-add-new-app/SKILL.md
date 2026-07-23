@@ -7,12 +7,12 @@ description: Use when adding a new application to the home-ops Kubernetes GitOps
 
 ## When to use
 
-When deploying a new application to the Kubernetes cluster managed by Flux CD. Each app lives under `kubernetes/apps/{namespace}/{component}/`.
+When deploying a new application to the Kubernetes cluster managed by Flux CD. Each app lives under `kubernetes/{namespace}/{component}/`.
 
 ## Step 1: Create directory structure
 
 ```bash
-mkdir -p kubernetes/apps/{namespace}/{component}/app
+mkdir -p kubernetes/{namespace}/{component}/app
 ```
 
 Where:
@@ -32,7 +32,7 @@ metadata:
   namespace: {namespace}
 spec:
   interval: 15m
-  path: "./kubernetes/apps/{namespace}/{component}/app"
+  path: "./{namespace}/{component}/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -52,6 +52,16 @@ kind: Kustomization
 resources:
   - ns.yaml
   - {component}/ks.yaml
+```
+
+And add the namespace to the top-level `kubernetes/kustomization.yaml` aggregator:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - {namespace}
+  # ...other namespaces
 ```
 
 ## Step 3: Create resource files in `app/`
@@ -76,19 +86,19 @@ resources:
 
 ## Step 5: Add to namespace-level kustomization
 
-Edit `kubernetes/apps/{namespace}/kustomization.yaml` and add the new component's `ks.yaml` reference.
+Edit `kubernetes/{namespace}/kustomization.yaml` and add the new component's `ks.yaml` reference.
 
 ## Step 6: Deploy
 
 ```bash
 # Local validation (matches CI)
-kustomize build kubernetes/apps | kubeconform -strict -ignore-missing-schemas
+kustomize build kubernetes | kubeconform -strict -ignore-missing-schemas
 
 # Direct apply for quick iteration
-kubectl apply -k kubernetes/apps/{namespace}/{component}/app
+kubectl apply -k kubernetes/{namespace}/{component}/app
 
 # Production: commit + push
-git add kubernetes/apps/{namespace}/{component}
+git add kubernetes/{namespace}/{component}
 git commit -m "Add {component} to {namespace}"
 git push
 # OCI artifact auto-built; Flux picks up automatically
@@ -100,3 +110,4 @@ git push
 - The namespace's `kustomization.yaml` must reference `ns.yaml` **first** (enforced)
 - `bjw-s/app-template` chart structure — see `home-ops-app-pattern` skill
 - App chart version: pin explicitly (don't use `latest`)
+- Use `./{namespace}/{component}/app` for `spec.path` (3-level path from OCI artifact root)

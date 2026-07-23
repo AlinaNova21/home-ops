@@ -12,8 +12,8 @@ HTTPRoutes define how traffic flows from Envoy Gateway to a Kubernetes Service. 
 
 ## File location
 
-- **Per-app**: `kubernetes/apps/{namespace}/{component}/app/httproute.yaml`
-- **Shared**: `kubernetes/infrastructure/network/envoy-gateway/config/httproutes/`
+- **Per-app**: `kubernetes/{namespace}/{component}/app/httproute.yaml`
+- **Shared**: `kubernetes/network/envoy-gateway/config/httproutes/`
 
 ## Internal-only HTTPRoute
 
