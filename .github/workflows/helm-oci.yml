@@ -1,0 +1,60 @@
+name: Build and Push Helm Chart to OCI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'charts/kasm/**'
+      - '.github/workflows/helm-oci.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/kasm-helm
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Checkout specific tag/branch of kasm-helm
+        run: |
+          cd charts/kasm
+          git checkout release/1.18.1
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package and push Helm chart to OCI
+        run: |
+          cd charts/kasm/charts/kasm
+          CHART_VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
+          echo "Packaging kasm chart version: $CHART_VERSION"
+
+          helm package . --version $CHART_VERSION
+          echo "Pushing to OCI registry..."
+          helm push kasm-${CHART_VERSION}.tgz oci://ghcr.io/alinanova21/kasm-helm
+
+      - name: Trigger Flux Webhook
+        if: success()
+        run: |
+          PAYLOAD='{"action":"push","repository":"kasm-helm"}'
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "${{ secrets.FLUX_WEBHOOK_TOKEN }}" | sed 's/^.* //')
+          curl -X POST https://flux.whoverse.nexus/hook/087b90ea9fa7e2f177a1bbbcfb139032d8f373c7fc5586f3f355b3a99ee28a39 \
+            -H "Content-Type: application/json" \
+            -H "X-Signature: sha256=$SIGNATURE" \
+            -d "$PAYLOAD"

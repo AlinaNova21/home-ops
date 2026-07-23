@@ -1,0 +1,195 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "pinDigests": true,
+  "flux": {
+    "managerFilePatterns": [
+      "/(^|/)kubernetes/.+\\.ya?ml$/"
+    ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/(^|/)kubernetes/.+\\.ya?ml$/"
+    ]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)kubernetes/.+\\.ya?ml$/",
+        "/(^|/)talos/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+version: (?<currentValue>\\S+)"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Auto-merge patch updates silently",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Security-critical and low-risk charts: auto-merge all versions including major",
+      "matchManagers": [
+        "flux"
+      ],
+      "matchPackageNames": [
+        "tailscale-operator",
+        "external-dns",
+        "tuppr"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Security-critical images: auto-merge all versions including major",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "cloudflare/cloudflared"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "App charts: auto-merge minor",
+      "matchManagers": [
+        "flux"
+      ],
+      "matchPackageNames": [
+        "app-template",
+        "connect"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "All other Helm charts: auto-merge minor, patch, and digest",
+      "matchManagers": [
+        "flux"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Arr app images: auto-merge minor and digest",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "digest"
+      ],
+      "automerge": true,
+      "automergeType": "branch",
+      "matchPackageNames": [
+        "/^ghcr\\.io/home-operations//"
+      ]
+    },
+    {
+      "description": "Never auto-merge Talos or Kubernetes version bumps",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/siderolabs/installer",
+        "ghcr.io/siderolabs/kubelet"
+      ],
+      "separateMajorMinor": true,
+      "separateMinorPatch": true
+    },
+    {
+      "description": "Auto-merge npm minor updates",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "update/major"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "addLabels": [
+        "update/minor"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "addLabels": [
+        "update/patch"
+      ]
+    },
+    {
+      "matchManagers": [
+        "flux"
+      ],
+      "addLabels": [
+        "manager/flux"
+      ]
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "addLabels": [
+        "manager/github-actions"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "addLabels": [
+        "manager/npm"
+      ]
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "addLabels": [
+        "manager/regex"
+      ]
+    }
+  ]
+}

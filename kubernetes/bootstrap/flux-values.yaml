@@ -1,0 +1,18 @@
+# Flux bootstrap values
+crds:
+  install: true
+
+controllers:
+  source:
+    enabled: true
+  kustomize:
+    enabled: true
+  helm:
+    enabled: true
+  notification:
+    enabled: true
+  image:
+    enabled: true
+
+policies:
+  create: false

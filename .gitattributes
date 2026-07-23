@@ -1,3 +1,10 @@
 * text=auto eol=lf
+
+# SOPS-encrypted files: use sopsdiffer so GitHub shows readable diffs
 *.sops.* diff=sopsdiffer
-*.sops.toml linguist-language=JSON
+*.sops.yaml diff=sopsdiffer
+*.sops.yml diff=sopsdiffer
+
+# SOPS YAML files are JSON-compatible YAML, hint for GitHub linguist
+*.sops.yaml linguist-language=YAML
+*.sops.yml linguist-language=YAML

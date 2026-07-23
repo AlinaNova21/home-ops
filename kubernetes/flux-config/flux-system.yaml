@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: "./flux-config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: flux2
+      namespace: flux-system
+  timeout: 10m
+  wait: true
+  prune: true

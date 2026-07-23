@@ -1,0 +1,23 @@
+apiVersion: tuppr.home-operations.com/v1alpha1
+kind: KubernetesUpgrade
+metadata:
+  name: kubernetes
+  namespace: system-upgrade
+spec:
+  kubernetes:
+    # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
+    version: v1.36.2
+  healthChecks:
+    # All nodes must be Ready
+    - apiVersion: v1
+      kind: Node
+      expr: |
+        status.conditions.filter(c, c.type == "Ready").all(c, c.status == "True")
+      timeout: 10m
+    # Ceph must be HEALTH_OK
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      name: storage
+      namespace: storage
+      expr: status.ceph.health in ["HEALTH_OK"]
+      timeout: 10m

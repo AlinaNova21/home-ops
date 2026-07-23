@@ -1,0 +1,53 @@
+name: Build and Push Kubernetes OCI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'kubernetes/**'
+      - '.github/workflows/kubernetes-oci.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: alinanova21/home-ops
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Set up Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push OCI artifact
+        working-directory: ./kubernetes
+        run: |
+          flux push artifact oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            --path="." \
+            --source="$(git config --get remote.origin.url)" \
+            --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)"
+
+      - name: Trigger Flux Webhook
+        if: success()
+        run: |
+          PAYLOAD='{"action":"push","repository":"komodo-resources"}'
+          SIGNATURE=$(echo -n "$PAYLOAD" | openssl dgst -sha256 -hmac "${{ secrets.FLUX_WEBHOOK_TOKEN }}" | sed 's/^.* //')
+          curl -X POST https://flux.whoverse.nexus/hook/087b90ea9fa7e2f177a1bbbcfb139032d8f373c7fc5586f3f355b3a99ee28a39 \
+            -H "Content-Type: application/json" \
+            -H "X-Signature: sha256=$SIGNATURE" \
+            -d "$PAYLOAD"

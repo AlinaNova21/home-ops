@@ -1,0 +1,21 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backblaze-backup
+  namespace: databases
+spec:
+  configuration:
+    destinationPath: s3://whoverse-k8s-backups/cnpg/homelab-postgres
+    endpointURL: https://s3.us-west-001.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: backblaze-backup-creds
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: backblaze-backup-creds
+        key: ACCESS_SECRET_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip

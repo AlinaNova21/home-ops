@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: memos
+  namespace: default
+spec:
+  interval: 15m
+  path: "./apps/default/memos/app"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  dependsOn:
+    - name: default-storage
+  timeout: 10m
+  wait: true
+  prune: true

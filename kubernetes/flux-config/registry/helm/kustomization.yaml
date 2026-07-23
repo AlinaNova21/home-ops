@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - bjw-s.yaml
+  - cilium.yaml
+  - home-operations.yaml
+  - home-operations-mirror.yaml
+  - kyverno.yaml
+  - envoy-gateway.yaml
+  - external-dns.yaml
+  - external-secrets.yaml
+  - fluxcd-community.yaml
+  - intel.yaml
+  - jetstack.yaml
+  - jellyfin.yaml
+  - metrics-server.yaml
+  - nfd.yaml
+  - openebs.yaml
+  - ceph-csi-operator.yaml
+  - rook-ceph.yaml
+  - spegel.yaml
+  - tailscale.yaml
+  - volsync.yaml
+  - dex.yaml
+  - victoria-metrics.yaml
+  - grafana.yaml
+  - vector.yaml
+  - headlamp.yaml
+  - sympozium.yaml
+  - error-pages.yaml

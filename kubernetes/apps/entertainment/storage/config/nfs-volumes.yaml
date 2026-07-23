@@ -1,0 +1,272 @@
+---
+# Music (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-music-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/music
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-music
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-music-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# Movies - Anime (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-movies-anime-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/movies/anime
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-movies-anime
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-movies-anime-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# Movies - HD (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-movies-hd-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/movies/hd
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-movies-hd
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-movies-hd-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# Movies - UHD (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-movies-uhd-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/movies/uhd
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-movies-uhd
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-movies-uhd-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# TV - Anime (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-tv-anime-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/tv/anime
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-tv-anime
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-tv-anime-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# TV - HD (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-tv-hd-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/tv/hd
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-tv-hd
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-tv-hd-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# TV - Kids (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-tv-kids-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/tv/kids
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-tv-kids
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-tv-kids-entertainment
+  resources:
+    requests:
+      storage: 1Ti
+---
+# TV - Old (entertainment namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-tv-old-entertainment
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/tv/old
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-tv-old
+  namespace: entertainment
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-tv-old-entertainment
+  resources:
+    requests:
+      storage: 1Ti

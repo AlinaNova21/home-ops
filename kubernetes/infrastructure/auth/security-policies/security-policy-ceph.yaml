@@ -1,0 +1,23 @@
+---
+# Protects the Rook-Ceph dashboard HTTPRoute (in storage namespace)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: oidc-ceph
+  namespace: storage
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: ceph-dashboard
+  oidc:
+    provider:
+      issuer: "https://dex.whoverse.dev"
+    clientID: "envoy-internal"
+    clientSecret:
+      name: dex-envoy-client-secret
+    redirectURL: "https://ceph.whoverse.dev/oauth2/callback"
+    scopes:
+      - openid
+      - email
+      - profile

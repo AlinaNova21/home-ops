@@ -1,0 +1,35 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: spegel
+  namespace: spegel
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: spegel
+      version: "0.7.4"
+      sourceRef:
+        kind: HelmRepository
+        name: spegel
+        namespace: flux-system
+  values:
+    spegel:
+      containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+    controllers:
+      spegel:
+        type: daemonset
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
+        containers:
+          spegel:
+            imagePullPolicy: IfNotPresent
+            securityContext:
+              privileged: true
+              capabilities:
+                add:
+                  - NET_ADMIN
+                  - NET_RAW
+                  - SYS_ADMIN
+    service:
+      enabled: false

@@ -1,0 +1,8 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: sympozium
+  namespace: flux-system
+spec:
+  url: https://deploy.sympozium.ai/charts
+  interval: 24h

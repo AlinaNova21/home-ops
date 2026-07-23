@@ -1,0 +1,151 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homepage
+  namespace: homepage
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: "5.0.1"
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+    controllers:
+      homepage:
+        containers:
+          homepage:
+            image:
+              repository: ghcr.io/gethomepage/homepage
+              tag: v1.29.2
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: "America/Chicago"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 256Mi
+
+    service:
+      main:
+        controller: homepage
+        ports:
+          http:
+            port: 3000
+
+    persistence:
+      # Homepage configuration
+      config:
+        type: persistentVolumeClaim
+        size: 1Gi
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /app/config
+
+    # ConfigMap with example homepage configuration
+    configMaps:
+      config:
+        enabled: true
+        data:
+          settings.yaml: |
+              title: Whoverse Homelab
+              subtitle: Welcome to the homelab dashboard
+              headerStyle: clean
+              hideVersion: true
+              theme: dark
+              color: slate
+              target: _blank
+
+              layout:
+                Media:
+                  style: row
+                  columns: 2
+                Applications:
+                  style: row
+                  columns: 3
+                Infrastructure:
+                  style: row
+                  columns: 2
+
+          services.yaml: |
+              - Media:
+                - Plex:
+                    href: "https://plex.whoverse.nexus"
+                    description: "Media streaming server"
+                    icon: plex.svg
+                - Immich:
+                    href: "https://photos.whoverse.nexus"
+                    description: "Photo management"
+                    icon: immich.svg
+
+              - Infrastructure:
+                - Capacitor:
+                    href: "https://capacitor.whoverse.nexus"
+                    description: "Flux dashboard"
+                    icon: flux.svg
+
+          widgets.yaml: |
+              - greeting:
+                  text_size: xl
+                  text: "Welcome to Whoverse Homelab!"
+
+              - datetime:
+                  text_size: l
+                  format:
+                    timeStyle: short
+
+          bookmarks.yaml: |
+              - Development:
+                - GitHub:
+                  - href: "https://github.com"
+                    icon: github.svg
+                - Kubernetes Docs:
+                  - href: "https://kubernetes.io/docs/"
+                    icon: kubernetes.svg

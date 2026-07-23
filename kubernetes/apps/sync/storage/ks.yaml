@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: sync-storage
+  namespace: sync
+spec:
+  interval: 15m
+  path: "./apps/sync/storage/config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 10m
+  wait: true
+  prune: true

@@ -1,0 +1,8 @@
+---
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: rook-osd
+provisioning:
+  diskSelector:
+    match: "!system_disk"
+  minSize: 128GiB

@@ -1,0 +1,156 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: grafana
+      version: "10.5.15"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      interval: 24h
+  timeout: 10m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    admin:
+      existingSecret: grafana-secrets
+      userKey: admin-user
+      passwordKey: admin-password
+
+    persistence:
+      enabled: true
+      storageClassName: openebs-hostpath
+      size: 2Gi
+
+    # Recreate ensures old pod fully releases the RWO PVC before new pod starts,
+    # so the init-chown-data container can chown the volume cleanly.
+    deploymentStrategy:
+      type: Recreate
+
+    # Sidecar discovers datasource ConfigMaps
+    sidecar:
+      dashboards:
+        enabled: false
+      datasources:
+        enabled: true
+        label: grafana_datasource
+        labelValue: "1"
+        searchNamespace: ALL
+
+    # Download dashboards from grafana.com by gnetId at startup
+    dashboards:
+      default:
+        # Kubernetes Views series
+        kubernetes-global:
+          gnetId: 15661
+          revision: 1
+          datasource: VictoriaMetrics
+        kubernetes-nodes:
+          gnetId: 15757
+          revision: 1
+          datasource: VictoriaMetrics
+        kubernetes-namespaces:
+          gnetId: 15758
+          revision: 1
+          datasource: VictoriaMetrics
+        kubernetes-pods:
+          gnetId: 15759
+          revision: 1
+          datasource: VictoriaMetrics
+        kubernetes-cluster:
+          gnetId: 15760
+          revision: 37
+          datasource: VictoriaMetrics
+        # Flux
+        flux-cluster:
+          gnetId: 16714
+          revision: 1
+          datasource: VictoriaMetrics
+        # Ceph
+        ceph-cluster:
+          gnetId: 2842
+          revision: 17
+          datasource: VictoriaMetrics
+        ceph-osd:
+          gnetId: 5336
+          revision: 9
+          datasource: VictoriaMetrics
+        # Infrastructure
+        node-exporter:
+          gnetId: 1860
+          revision: 37
+          datasource: VictoriaMetrics
+        coredns:
+          gnetId: 7249
+          revision: 1
+          datasource: VictoriaMetrics
+
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: default
+            orgId: 1
+            folder: ""
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: VictoriaMetrics
+            type: prometheus
+            url: http://vmselect-victoria-metrics.monitoring:8481/select/0/prometheus
+            access: proxy
+            isDefault: true
+            jsonData:
+              timeInterval: "30s"
+          - name: VictoriaLogs
+            type: victoriametrics-logs-datasource
+            url: http://victoria-logs-victoria-logs-cluster-vlselect.monitoring:9471
+            access: proxy
+
+    env:
+      GF_SERVER_ROOT_URL: https://grafana.whoverse.dev
+      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
+      GF_AUTH_GENERIC_OAUTH_NAME: Authentik
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: grafana
+      GF_AUTH_GENERIC_OAUTH_AUTO_LOGIN: "true"
+      GF_AUTH_GENERIC_OAUTH_SCOPES: "openid email profile groups"
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: https://dex.whoverse.dev/auth
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: https://dex.whoverse.dev/token
+      GF_AUTH_GENERIC_OAUTH_API_URL: https://dex.whoverse.dev/userinfo
+      GF_AUTH_GENERIC_OAUTH_USE_PKCE: "true"
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(groups[*], 'admins') && 'Admin' || 'Viewer'"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+
+    envValueFrom:
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
+        secretKeyRef:
+          name: grafana-secrets
+          key: grafana-secret
+
+    plugins:
+      - victoriametrics-logs-datasource

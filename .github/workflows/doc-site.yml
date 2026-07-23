@@ -1,0 +1,51 @@
+name: doc-site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'doc-site/**'
+      - 'kubernetes/**'
+      - '.github/workflows/doc-site.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-container-registry@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run flate
+        uses: home-operations/flate/action@main
+        with:
+          command: build all --path ./kubernetes -o json
+          output-file: doc-site/public/flate-output.json
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./doc-site
+          file: ./doc-site/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/doc-site:latest
+            ghcr.io/${{ github.repository }}/doc-site:${{ github.sha }}

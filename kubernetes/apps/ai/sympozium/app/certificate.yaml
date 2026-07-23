@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sympozium-whoverse-dev
+  namespace: sympozium-system
+spec:
+  secretName: sympozium-whoverse-dev-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - sym.whoverse.dev

@@ -1,0 +1,22 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: sonarr-anime
+  namespace: downloads
+spec:
+  targetNamespace: downloads
+  components:
+    - ../../../../components/kopiur/backup
+  interval: 15m
+  path: "./apps/downloads/sonarr-anime/app"
+  postBuild:
+    substitute:
+      APP: sonarr-anime
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 10m
+  wait: true
+  prune: true
