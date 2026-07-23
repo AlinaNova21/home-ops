@@ -1,0 +1,173 @@
+---
+clusterName: whoverse
+talosVersion: v1.13.5
+kubernetesVersion: v1.36.2
+endpoint: https://192.168.2.20:6443
+
+# Allow workloads on control plane nodes
+allowSchedulingOnControlPlanes: true
+
+# Cluster networking
+clusterPodNets:
+  - 10.244.0.0/16
+clusterSvcNets:
+  - 10.96.0.0/12
+
+# CNI configuration - disable default for Cilium
+cniConfig:
+  name: none
+
+nodes:
+  - hostname: whoverse-cp1  # ZimaBoard
+    ipAddress: 192.168.2.21
+    controlPlane: true
+    installDisk: /dev/sda
+    patches:
+      - "@./ceph-osd-volume.yaml"
+
+  - hostname: whoverse-cp2  # ZimaBoard
+    ipAddress: 192.168.2.22
+    controlPlane: true
+    installDisk: /dev/sda
+    patches:
+      - "@./ceph-osd-volume.yaml"
+
+  - hostname: whoverse-cp3  # ZimaBoard
+    ipAddress: 192.168.2.23
+    controlPlane: true
+    installDisk: /dev/sda
+    patches:
+      - "@./ceph-osd-volume.yaml"
+
+  - hostname: whoverse-w1  # ZimaBoard 2
+    ipAddress: 192.168.2.24
+    controlPlane: false
+    installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
+    patches:
+      - "@./ceph-osd-volume.yaml"
+
+  - hostname: whoverse-w2  # VM (libvirt)
+    ipAddress: 192.168.2.225
+    controlPlane: false 
+    installDisk: /dev/sda
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/iscsi-tools
+            - siderolabs/realtek-firmware
+            - siderolabs/gvisor
+            - siderolabs/qemu-guest-agent
+            - siderolabs/amdgpu
+            - siderolabs/i915
+            - siderolabs/xe
+    networkInterfaces:
+      - interface: ens18
+        dhcp: false
+      - interface: br0
+        dhcp: true
+        bridge:
+          stp:
+            enabled: false
+          interfaces:
+            - ens18
+        vip:
+          ip: 192.168.2.20
+
+controlPlane:
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/iscsi-tools
+          - siderolabs/realtek-firmware
+          - siderolabs/gvisor
+          - siderolabs/amdgpu
+          - siderolabs/i915
+          - siderolabs/xe
+  patches:
+    - |-
+      cluster:
+        proxy:
+          disabled: true
+    - |-
+      cluster:
+        apiServer:
+          extraArgs:
+            oidc-issuer-url: https://dex.whoverse.dev
+            oidc-client-id: kubernetes
+            oidc-username-claim: email
+            oidc-groups-claim: groups
+    - |-
+      machine:
+        features:
+          kubernetesTalosAPIAccess:
+            enabled: true
+            allowedRoles:
+              - os:admin
+            allowedKubernetesNamespaces:
+              - system-upgrade
+    - |-
+      machine:
+        sysctls:
+          user.max_user_namespaces: "11255"
+    - "@./patches/spegel-containerd-config.yaml"
+    - "@./patches/watchdog.yaml"
+  # Limit ephemeral volume size
+  volumes: &sharedVolumes
+    - name: EPHEMERAL
+      provisioning:
+        diskSelector:
+          match: system_disk
+        maxSize: 64GiB
+  # User volume for OpenEBS LocalPV hostpath storage
+  userVolumes: &sharedUserVolumes
+    - name: hostpath
+      provisioning:
+        diskSelector:
+          match: system_disk
+        minSize: 50GiB
+        maxSize: 128GiB
+  networkInterfaces:
+    - interface: br0
+      dhcp: true
+      bridge:
+        stp:
+          enabled: true
+        interfaces:
+          - enp2s0
+      vip:
+        ip: 192.168.2.20
+
+worker:
+  schematic:
+    customization:
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/iscsi-tools
+          - siderolabs/realtek-firmware
+          - siderolabs/gvisor
+          - siderolabs/amdgpu
+          - siderolabs/i915
+          - siderolabs/xe
+  patches:
+    - |-
+      cluster:
+        proxy:
+          disabled: true
+    - |-
+      machine:
+        sysctls:
+          user.max_user_namespaces: "11255"
+    - "@./patches/spegel-containerd-config.yaml"
+    - "@./patches/watchdog.yaml"
+  volumes: *sharedVolumes
+  userVolumes: *sharedUserVolumes
+  networkInterfaces:
+    - interface: br0
+      dhcp: true
+      bridge:
+        stp:
+          enabled: true
+        interfaces:
+          - enp2s0

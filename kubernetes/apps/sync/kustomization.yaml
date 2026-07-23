@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ns.yaml
+  # - storage/ks.yaml  # Not needed - using S3 for data storage
+  - seafile/ks.yaml

@@ -1,0 +1,33 @@
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: ClusterRepository
+metadata:
+  name: whoverse
+spec:
+  credentialProjection:
+    allowed: true
+  allowedNamespaces:
+    all: true
+  backend:
+    s3:
+      bucket: whoverse-k8s-backups
+      prefix: kopiur
+      endpoint: s3.us-west-001.backblazeb2.com
+      region: us-west-001
+      auth:
+        secretRef:
+          name: kopiur-repository-secret
+          namespace: kopiur-system
+  encryption:
+    passwordSecretRef:
+      name: kopiur-repository-secret
+      namespace: kopiur-system
+      key: KOPIA_PASSWORD
+  server:
+    namespace: kopiur-system
+    readOnly: true
+    auth:
+      generate: {}
+    service:
+      type: ClusterIP
+      port: 51515

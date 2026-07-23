@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai
+  labels:
+    app.kubernetes.io/name: ai
+    app.kubernetes.io/component: application
+    homelab.whoverse.dev/component: apps

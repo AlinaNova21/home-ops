@@ -1,0 +1,3 @@
+# Minimal Cilium bootstrap - no BGP resources
+# BGP and LoadBalancer IP pools are managed by Flux after cluster bootstrap
+# This file is intentionally empty - Cilium Helm chart is sufficient for bootstrap

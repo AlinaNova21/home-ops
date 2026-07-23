@@ -1,0 +1,252 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: error-pages-internal
+  namespace: network
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+
+  responseOverride:
+    - match:
+        statusCodes:
+          - type: Value
+            value: 400
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /400
+    - match:
+        statusCodes:
+          - type: Value
+            value: 401
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /401
+    - match:
+        statusCodes:
+          - type: Value
+            value: 403
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /403
+    - match:
+        statusCodes:
+          - type: Value
+            value: 404
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /404
+    - match:
+        statusCodes:
+          - type: Value
+            value: 405
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /405
+    - match:
+        statusCodes:
+          - type: Value
+            value: 407
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /407
+    - match:
+        statusCodes:
+          - type: Value
+            value: 408
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /408
+    - match:
+        statusCodes:
+          - type: Value
+            value: 409
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /409
+    - match:
+        statusCodes:
+          - type: Value
+            value: 410
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /410
+    - match:
+        statusCodes:
+          - type: Value
+            value: 411
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /411
+    - match:
+        statusCodes:
+          - type: Value
+            value: 412
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /412
+    - match:
+        statusCodes:
+          - type: Value
+            value: 413
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /413
+    - match:
+        statusCodes:
+          - type: Value
+            value: 416
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /416
+    - match:
+        statusCodes:
+          - type: Value
+            value: 418
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /418
+    - match:
+        statusCodes:
+          - type: Value
+            value: 429
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /429
+    - match:
+        statusCodes:
+          - type: Value
+            value: 500
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /500
+    - match:
+        statusCodes:
+          - type: Value
+            value: 502
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /502
+    - match:
+        statusCodes:
+          - type: Value
+            value: 503
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /503
+    - match:
+        statusCodes:
+          - type: Value
+            value: 504
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /504
+    - match:
+        statusCodes:
+          - type: Value
+            value: 505
+      source: Local
+      redirect:
+        scheme: http
+        hostname: errors.whoverse.dev
+        port: 80
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /505

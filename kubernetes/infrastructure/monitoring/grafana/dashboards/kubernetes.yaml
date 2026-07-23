@@ -1,0 +1,32 @@
+---
+# Kubernetes cluster overview dashboard (Grafana Labs ID 15760)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-kubernetes
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  kubernetes.json: |
+    {
+      "__inputs": [],
+      "__requires": [],
+      "annotations": {"list": []},
+      "description": "Kubernetes cluster overview — CPU, Memory, Pods",
+      "editable": true,
+      "gnetId": 15760,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [],
+      "refresh": "30s",
+      "schemaVersion": 38,
+      "style": "dark",
+      "tags": ["kubernetes"],
+      "time": {"from": "now-1h", "to": "now"},
+      "timepicker": {},
+      "title": "Kubernetes Cluster Overview",
+      "uid": "kubernetes-cluster-overview",
+      "version": 1
+    }

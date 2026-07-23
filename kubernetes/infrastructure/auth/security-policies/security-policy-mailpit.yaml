@@ -1,0 +1,23 @@
+---
+# Protects the Mailpit HTTPRoute (in default namespace)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: oidc-mailpit
+  namespace: default
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: mailpit
+  oidc:
+    provider:
+      issuer: "https://dex.whoverse.dev"
+    clientID: "envoy-internal"
+    clientSecret:
+      name: dex-envoy-client-secret
+    redirectURL: "https://mail.whoverse.dev/oauth2/callback"
+    scopes:
+      - openid
+      - email
+      - profile

@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - agent-sandbox-system
+  - spegel
+  - cert-manager
+  - kyverno
+  #- cnpg-system
+  - external-secrets-system
+  - flux-system
+  - kube-system
+  - monitoring
+  - network
+  - onepassword-connect
+  - storage
+  - system-upgrade
+  - auth
+  - headlamp
+  - inteldeviceplugins-system
+  - kopiur-system

@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: victoria-logs
+  namespace: monitoring
+spec:
+  interval: 30m
+  path: "./infrastructure/monitoring/victoria-logs/app"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 10m
+  wait: true
+  prune: true

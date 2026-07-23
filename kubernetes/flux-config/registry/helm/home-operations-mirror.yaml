@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: home-operations-mirror
+  namespace: flux-system
+spec:
+  type: oci
+  url: oci://ghcr.io/home-operations/charts-mirror
+  interval: 24h

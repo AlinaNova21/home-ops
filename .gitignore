@@ -1,14 +1,28 @@
-# Trash
-.DS_Store
-Thumbs.db
-# k8s
-kubeconfig
-# vscode-sops
-.decrypted~*.yaml
-.config.env
-*.agekey
-*.pub
-*.key
+bin/vault
+kubernetes/apps/*/volsync/generated/
+tools/node_modules/
+*.local.json
 
-# charts from bootstrapping
-charts
+# Local credential/config files (never tracked)
+kubeconfig.yaml
+kubeconfig.yml
+.env
+.envrc
+
+# Worktrees
+.worktrees/
+
+# direnv (legacy; project uses mise now but ignore in case anyone still runs it)
+.direnv/
+
+# Generated docs (k8s/talos auto-generated from manifests)
+docs/docs/kubernetes/overview.md
+docs/docs/kubernetes/kinds/
+docs/docs/kubernetes/manifests/
+docs/docs/nav.yaml
+docs/docs/talos/overview.md
+docs/docs/talos/nodes.md
+
+# Packer
+packer/**/*.pkrvars.hcl
+packer/**/.packer.lock

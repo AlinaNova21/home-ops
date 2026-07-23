@@ -1,0 +1,129 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: plex
+  namespace: plex
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: "5.0.1"
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: plex
+      interval: 15m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+    controllers:
+      plex:
+        containers:
+          plex:
+            image:
+              repository: ghcr.io/linuxserver/plex
+              tag: 1.21.1.3795-ee64ab56f-ls9
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: "America/Chicago"
+              VERSION: docker
+              PLEX_CLAIM: ""  # Add claim token if needed for initial setup
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /identity
+                    port: 32400
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /identity
+                    port: 32400
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                cpu: 4000m  # Plex can use significant CPU for transcoding
+                memory: 4Gi
+
+    service:
+      plex:
+        controller: plex
+        type: LoadBalancer  # or NodePort for homelab
+        ports:
+          http:
+            port: 32400
+          # Plex companion ports
+          dlna-tcp:
+            port: 32469
+            protocol: TCP
+          dlna-udp:
+            port: 1900
+            protocol: UDP
+          gdm-1:
+            port: 32410
+            protocol: UDP
+          gdm-2:
+            port: 32412
+            protocol: UDP
+          gdm-3:
+            port: 32413
+            protocol: UDP
+          gdm-4:
+            port: 32414
+            protocol: UDP
+
+    persistence:
+      # Plex configuration and metadata
+      config:
+        type: persistentVolumeClaim
+        size: 20Gi  # Plex database and metadata can grow large
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+
+      # NFS media storage - no migration needed!
+      media:
+        type: nfs
+        server: "nfs-server.local"  # Update with actual NFS server
+        path: "/mnt/media"
+        globalMounts:
+          - path: /media
+            readOnly: false  # Plex may need write access for thumbnails
+
+      # Transcode directory (ephemeral, high-performance storage)
+      transcode:
+        type: emptyDir
+        medium: Memory  # Use RAM for transcoding if available
+        sizeLimit: 4Gi
+        globalMounts:
+          - path: /transcode

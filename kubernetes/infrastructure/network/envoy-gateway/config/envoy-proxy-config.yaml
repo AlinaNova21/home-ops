@@ -1,0 +1,32 @@
+---
+# External proxy - ClusterIP only, accessed by cloudflared internally
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: external-proxy-config
+  namespace: network
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        name: envoy-external
+        type: ClusterIP
+---
+# Internal proxy - Tailscale LoadBalancer for secure HA access
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: internal-proxy-config
+  namespace: network
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        name: envoy-internal
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+        annotations:
+          tailscale.com/hostname: whoverse-gateway
+          tailscale.com/proxy-group: ingress-proxies

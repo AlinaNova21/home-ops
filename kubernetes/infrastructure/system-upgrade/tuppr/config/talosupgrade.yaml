@@ -1,0 +1,26 @@
+apiVersion: tuppr.home-operations.com/v1alpha1
+kind: TalosUpgrade
+metadata:
+  name: cluster
+  namespace: system-upgrade
+spec:
+  talos:
+    # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
+    version: v1.13.6
+  policy:
+    rebootMode: default
+    timeout: 30m
+  healthChecks:
+    # All nodes must be Ready
+    - apiVersion: v1
+      kind: Node
+      expr: |
+        status.conditions.filter(c, c.type == "Ready").all(c, c.status == "True")
+      timeout: 10m
+    # Ceph must be HEALTH_OK before touching any node
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      name: storage
+      namespace: storage
+      expr: status.ceph.health in ["HEALTH_OK"]
+      timeout: 10m

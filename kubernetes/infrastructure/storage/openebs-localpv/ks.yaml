@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: openebs-localpv
+  namespace: storage
+spec:
+  interval: 30m
+  path: "./infrastructure/storage/openebs-localpv/app"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: openebs-localpv
+      namespace: storage
+  timeout: 10m
+  wait: true
+  prune: true

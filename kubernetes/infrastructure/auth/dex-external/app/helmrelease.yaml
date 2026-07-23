@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dex-external
+  namespace: auth
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: dex
+      version: ">=0.19.0"
+      sourceRef:
+        kind: HelmRepository
+        name: dexidp
+        namespace: flux-system
+      interval: 24h
+  install:
+    createNamespace: false
+    crds: CreateReplace
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      fsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+    envFrom:
+      - secretRef:
+          name: dex-external-secrets
+    config:
+      issuer: https://dex.whoverse.nexus
+      storage:
+        type: kubernetes
+        config:
+          inCluster: true
+      web:
+        http: 0.0.0.0:5556
+      oauth2:
+        skipApprovalScreen: true
+      connectors:
+        - type: oidc
+          id: authentik
+          name: Authentik
+          config:
+            issuer: $AUTHENTIK_OIDC_DISCOVERY_URL
+            clientID: $AUTHENTIK_CLIENT_ID
+            clientSecret: $AUTHENTIK_CLIENT_SECRET
+            redirectURI: https://dex.whoverse.nexus/callback
+            scopes:
+              - openid
+              - email
+              - profile
+              - groups
+      staticClients:
+        - id: envoy-external
+          name: Envoy Gateway External Services
+          secretEnv: ENVOY_EXTERNAL_CLIENT_SECRET
+          redirectURIs: []

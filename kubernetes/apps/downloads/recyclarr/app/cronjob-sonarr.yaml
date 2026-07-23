@@ -1,0 +1,59 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recyclarr-sync-sonarr
+  namespace: downloads
+spec:
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          containers:
+            - name: recyclarr
+              image: ghcr.io/recyclarr/recyclarr:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - recyclarr
+                - sync
+                - sonarr
+                - -c
+                - /config/sonarr-hd.yml
+                - -c
+                - /config/sonarr-anime.yml
+              volumeMounts:
+                - name: sonarr-configs
+                  mountPath: /config/sonarr-hd.yml
+                  subPath: sonarr-hd.yml
+                  readOnly: true
+                - name: sonarr-configs
+                  mountPath: /config/sonarr-anime.yml
+                  subPath: sonarr-anime.yml
+                  readOnly: true
+                - name: secrets
+                  mountPath: /config/secrets.yml
+                  subPath: secrets.yml
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+          volumes:
+            - name: sonarr-configs
+              configMap:
+                name: recyclarr-sonarr-configs
+            - name: secrets
+              secret:
+                secretName: recyclarr-secrets

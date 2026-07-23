@@ -1,0 +1,25 @@
+repositories:
+  - name: cilium
+    url: https://helm.cilium.io
+
+releases:
+  # Cilium CNI - must be first for networking
+  - name: cilium
+    namespace: kube-system
+    chart: cilium/cilium
+    version: 1.19.6
+    values:
+      - cilium-values.yaml
+    wait: true
+    timeout: 300
+
+  # Flux CD - GitOps controller
+  - name: flux2
+    namespace: flux-system
+    chart: oci://ghcr.io/fluxcd-community/charts/flux2
+    version: 2.18.4
+    createNamespace: true
+    values:
+      - flux-values.yaml
+    wait: true
+    timeout: 300

@@ -1,0 +1,23 @@
+---
+# Protects the Capacitor HTTPRoute (in monitoring namespace)
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: oidc-capacitor
+  namespace: monitoring
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: capacitor
+  oidc:
+    provider:
+      issuer: "https://dex.whoverse.dev"
+    clientID: "envoy-internal"
+    clientSecret:
+      name: dex-envoy-client-secret
+    redirectURL: "https://capacitor.whoverse.dev/oauth2/callback"
+    scopes:
+      - openid
+      - email
+      - profile

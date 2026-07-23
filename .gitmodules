@@ -1,0 +1,3 @@
+[submodule "charts/kasm"]
+	path = charts/kasm
+	url = https://github.com/kasmtech/kasm-helm.git

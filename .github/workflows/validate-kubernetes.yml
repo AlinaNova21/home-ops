@@ -1,0 +1,112 @@
+name: Validate Kubernetes Manifests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'kubernetes/**'
+      - '.github/workflows/validate-kubernetes.yml'
+  push:
+    branches:
+      - 'renovate/**'
+    # No path filter: always run so Renovate gets a status check regardless
+    # of which files the branch touches. Expensive steps are gated internally.
+
+jobs:
+  kustomize-validate:
+    name: Kustomize + Schema Validation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - name: Detect kubernetes path changes
+        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4
+        id: filter
+        with:
+          filters: |
+            kubernetes:
+              - 'kubernetes/**'
+              - '.github/workflows/validate-kubernetes.yml'
+
+      - name: Install kustomize
+        if: steps.filter.outputs.kubernetes == 'true'
+        uses: imranismail/setup-kustomize@53f941b41dca13ed61874bbc6b4b6e1562877530 # v3
+
+      - name: Install kubeconform
+        if: steps.filter.outputs.kubernetes == 'true'
+        env:
+          KUBECONFORM_VERSION: 0.6.7
+        run: |
+          curl -sL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+            | tar xz -C /usr/local/bin
+
+      - name: Validate kustomize builds and schemas
+        if: steps.filter.outputs.kubernetes == 'true'
+        run: |
+          for dir in kubernetes/flux-config kubernetes/infrastructure kubernetes/apps; do
+            echo "=== Building $dir ==="
+            kustomize build "$dir" | kubeconform \
+              -strict \
+              -ignore-missing-schemas \
+              -schema-location default \
+              -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+          done
+
+  # Single gate job that branch protection / Renovate automerge should require.
+  # Passes when kustomize-validate succeeded or was skipped (no k8s changes).
+  # Fails only when kustomize-validate failed or was cancelled.
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    needs: [kustomize-validate]
+    if: always()
+    steps:
+      - name: Check result
+        run: |
+          result="${{ needs.kustomize-validate.result }}"
+          echo "kustomize-validate: $result"
+          if [[ "$result" == "failure" || "$result" == "cancelled" ]]; then
+            exit 1
+          fi
+
+  flux-local:
+    name: flux-local Test + Diff
+    if: false  # temporarily disabled
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Install flux CLI
+        uses: fluxcd/flux2/action@v2
+
+      - name: flux-local test
+        uses: allenporter/flux-local/action/test@92d3a538c009c3fec120fbf50f6ef33b3e0a569c # 8.4.0
+        with:
+          path: kubernetes/
+          enable-helm: true
+
+      - name: flux-local diff kustomizations
+        uses: allenporter/flux-local/action/diff@92d3a538c009c3fec120fbf50f6ef33b3e0a569c # 8.4.0
+        with:
+          live-branch: main
+          path: kubernetes/
+          resource: kustomization
+
+      - name: flux-local diff helmreleases
+        uses: allenporter/flux-local/action/diff@92d3a538c009c3fec120fbf50f6ef33b3e0a569c # 8.4.0
+        with:
+          live-branch: main
+          path: kubernetes/
+          resource: helmrelease
+          enable-helm: true

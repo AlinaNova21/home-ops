@@ -1,0 +1,153 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+  namespace: entertainment
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: "5.0.1"
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    controllers:
+      jellyfin:
+        strategy: Recreate
+        affinity:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                preference:
+                  matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                        - whoverse-w1
+        containers:
+          jellyfin:
+            image:
+              repository: ghcr.io/jellyfin/jellyfin
+            securityContext:
+              privileged: true
+              runAsUser: 0
+            env:
+              TZ: "America/Chicago"
+              JELLYFIN_PublishedServerUrl: "https://jelly.whoverse.nexus"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8096
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: 8096
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+                gpu.intel.com/i915: "1"
+              limits:
+                memory: 4Gi
+                gpu.intel.com/i915: "1"
+    service:
+      jellyfin:
+        controller: jellyfin
+        ports:
+          http:
+            port: 8096
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        size: 20Gi
+        storageClass: ceph-rbd
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+      cache:
+        type: nfs
+        server: "192.168.2.193"
+        path: "/mnt/tank/cache/jellyfin/cache"
+        globalMounts:
+          - path: /cache-data
+      metadata:
+        type: nfs
+        server: "192.168.2.193"
+        path: "/mnt/tank/cache/jellyfin/metadata"
+        globalMounts:
+          - path: /metadata-data
+      media-movies-anime:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-anime
+        globalMounts:
+          - path: /data/movies/anime
+      media-movies-hd:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-hd
+        globalMounts:
+          - path: /data/movies/hd
+      media-movies-uhd:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-uhd
+        globalMounts:
+          - path: /data/movies/uhd
+      media-tv-anime:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-anime
+        globalMounts:
+          - path: /data/tv/anime
+      media-tv-hd:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-hd
+        globalMounts:
+          - path: /data/tv/hd
+      media-tv-kids:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-kids
+        globalMounts:
+          - path: /data/tv/kids
+      media-tv-old:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-old
+        globalMounts:
+          - path: /data/tv/old
+      transcode:
+        type: emptyDir
+        sizeLimit: 8Gi
+        globalMounts:
+          - path: /transcode
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        globalMounts:
+          - path: /dev/dri
