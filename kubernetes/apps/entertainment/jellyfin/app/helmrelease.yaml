@@ -45,7 +45,7 @@ spec:
         containers:
           jellyfin:
             image:
-              repository: docker.io/jellyfin/jellyfin
+              repository: ghcr.io/jellyfin/jellyfin
               tag: 10.11.10
             securityContext:
               privileged: true
