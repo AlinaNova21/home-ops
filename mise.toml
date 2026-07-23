@@ -16,8 +16,8 @@ TALOSCONFIG = "{{config_root}}/talos/whoverse/clusterconfig/talosconfig"
 
 [tools]
 # Talos
-talosctl   = "1.13.3"
-talhelper  = "3.1.10"
+talosctl   = "latest"
+talhelper  = "latest"
 
 # Kubernetes
 kubectl    = "1.36.1"
