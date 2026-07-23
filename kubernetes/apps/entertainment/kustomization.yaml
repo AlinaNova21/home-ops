@@ -4,4 +4,3 @@ resources:
   - ns.yaml
   - storage/ks.yaml
   - jellyfin/ks.yaml
-  - jellyfin-cache/ks.yaml
