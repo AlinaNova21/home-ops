@@ -68,7 +68,7 @@ all other storage classes stay untouched.
 | Replication | DRBD9, `replicas: "2"` + automatic diskless tie-breaker on the 4th node |
 | Pool resource shape | one `MiroirNodeGroup` with a node-label selector |
 | StorageClass name | `miroir-replicated` |
-| VolumeSnapshotClass name | `miroir-snap` (not defined; chart supports it, see §6) |
+| VolumeSnapshotClass name | `miroir-snap` (defined day-1; see §3 and §6) |
 
 ### Per-node disk math (each storage node keeps `EPHEMERAL` unchanged)
 
@@ -152,7 +152,8 @@ kubernetes/storage/miroir/
 └── app/
     ├── helmrelease.yaml
     ├── miroirnodegroup.yaml
-    └── storageclass.yaml
+    ├── storageclass.yaml
+    └── volumesnapshotclass.yaml
 ```
 
 `MiroirNodeGroup`:
@@ -194,6 +195,21 @@ parameters:
   miroir.home-operations.com/replicas: "2"
   csi.storage.k8s.io/fstype: ext4
 ```
+
+`VolumeSnapshotClass` `miroir-snap`:
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: miroir-snap
+driver: miroir.home-operations.com
+deletionPolicy: Delete
+```
+
+The cluster already runs the `snapshot.storage.k8s.io` CRDs and a
+`snapshot-controller` Deployment (volsync depends on them), so no extra
+work is needed to make `miroir-snap` resolvable.
 
 ### Helm chart
 
@@ -339,16 +355,16 @@ but has no consumers.
 
 ## 6. Open questions
 
-- **`miroir-snap` VolumeSnapshotClass.** Verified against the chart:
-  VolumeSnapshotClasses are first-class — `driver: miroir.home-operations.com`
-  plus a `deletionPolicy`, and the chart already ships the
-  `csi-snapshotter:v8.6.0` sidecar. The only external prerequisite is the
-  `snapshot.storage.k8s.io` CRDs and a `snapshot-controller` Deployment,
-  which already run in the cluster because volsync depends on them. The
-  `miroir-snap` class is deferred because Phase 0 uses kopiur for restore
-  and there is no day-1 consumer. Add it as a single file when a concrete
-  use case (volsync target swap to mirror, or an in-cluster snapshot for
-  rollback) materializes.
+- **`miroir-snap` VolumeSnapshotClass.** Defined day-1 in §3.
+  Verified against the chart: VolumeSnapshotClasses are first-class —
+  `driver: miroir.home-operations.com` plus a `deletionPolicy` — and the
+  chart already ships the `csi-snapshotter:v8.6.0` sidecar. The only
+  external prerequisite is the `snapshot.storage.k8s.io` CRDs and a
+  `snapshot-controller` Deployment, which already run in the cluster
+  because volsync depends on them. Including the class day-1 removes the
+  need for a follow-up manifest when we eventually want CSI snapshots
+  (e.g. kopiur pointed at mirror, or rollback snapshots during future
+  migration).
 - **Rook mon DB placement.** Some rook versions warn when mon DB is on
   shared replicated storage because the device path changes under failover.
   Validate during Phase 2 that rook is happy with `miroir-replicated` mons
