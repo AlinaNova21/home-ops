@@ -48,7 +48,7 @@ nodes:
 
   - hostname: whoverse-w2  # VM (libvirt)
     ipAddress: 192.168.2.225
-    controlPlane: false 
+    controlPlane: false
     installDisk: /dev/sda
     schematic:
       customization:
@@ -61,6 +61,7 @@ nodes:
             - siderolabs/amdgpu
             - siderolabs/i915
             - siderolabs/xe
+            - siderolabs/drbd
     networkInterfaces:
       - interface: ens18
         dhcp: false
