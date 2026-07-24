@@ -85,6 +85,7 @@ controlPlane:
           - siderolabs/amdgpu
           - siderolabs/i915
           - siderolabs/xe
+          - siderolabs/drbd
   patches:
     - |-
       cluster:
@@ -113,6 +114,7 @@ controlPlane:
           user.max_user_namespaces: "11255"
     - "@./patches/spegel-containerd-config.yaml"
     - "@./patches/watchdog.yaml"
+    - "@./miroir-kernel.yaml"
   # Limit ephemeral volume size
   volumes: &sharedVolumes
     - name: EPHEMERAL
