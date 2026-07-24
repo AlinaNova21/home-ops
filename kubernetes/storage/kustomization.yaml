@@ -4,4 +4,3 @@ resources:
   - ns.yaml
   - openebs-localpv/ks.yaml
   - rook-ceph/ks.yaml
-  - volsync/ks.yaml
