@@ -67,18 +67,17 @@ Generated cluster objects that Flux will prune once their owners are deleted:
 
 ## 6. Design
 
-### 6.1 Prerequisite: enable pruning
+### 6.1 Phase 0 — flip prune flags first
 
-Every `Kustomization` in this repo currently has `prune: false` (per commit `70c2d76`). Without flipping the flag, deleting the manifests only removes the source files; cluster resources persist. The following three Flux `Kustomization`s are flipped to `prune: true` as part of this PR:
+Before any source-file deletion, flip `prune: false` → `prune: true` on the three Flux `Kustomization`s that own VolSync resources. This is delivered as its own commit pushed first so Flux reconciles with the new flag before any files vanish. Each sub-Kustomization's `prune: true` ensures that when the file is deleted in a later commit, the sub-Kustomization itself prunes its subtree during the same reconcile cycle, before Flux's GC kicks in.
 
-| File | Block to edit | Target | Why |
+| File | Block | Target | Why |
 |---|---|---|---|
-| `kubernetes/storage/ks.yaml` | `Kustomization/storage` | `prune: true` | Owns `HelmRelease/volsync` (via `storage/volsync/ks.yaml`) |
-| `kubernetes/kyverno/ks.yaml` | `Kustomization/kyverno-policies` (the third document) | `prune: true` | Owns `ClusterPolicy/volsync-backup` and the generated `ExternalSecret`/`Secret`/`ReplicationSource` objects |
-| `kubernetes/kyverno/ks.yaml` | `Kustomization/kyverno-rbac` (the second document) | `prune: true` | Owns `ClusterRole/kyverno-generate-volsync` and its `ClusterRoleBinding` |
-| `kubernetes/flux-config/ks.yaml` | `Kustomization/flux-config` | `prune: true` | Owns `HelmRepository/volsync` |
+| `kubernetes/storage/volsync/ks.yaml` | `Kustomization/volsync` (the only doc) | `prune: true` | Owns `HelmRelease/volsync` |
+| `kubernetes/kyverno/ks.yaml` | `Kustomization/kyverno-rbac` (the second doc) | `prune: true` | Owns `ClusterRole/kyverno-generate-volsync` and its `ClusterRoleBinding` |
+| `kubernetes/kyverno/ks.yaml` | `Kustomization/kyverno-policies` (the third doc) | `prune: true` | Owns `ClusterPolicy/volsync-backup` and the generated `ExternalSecret`/`Secret`/`ReplicationSource` objects |
 
-**The `Kustomization/kyverno` block (the first document in `kyverno/ks.yaml`) is intentionally left at `prune: false`.** Flipping it would prune the Kyverno Helm chart itself and uninstall the policy engine. Only `kyverno-rbac` and `kyverno-policies` get flipped.
+**The `Kustomization/kyverno` block (the first document in `kyverno/ks.yaml`) is intentionally left at `prune: false`.** Flipping it would prune the Kyverno Helm chart itself and uninstall the policy engine. The cluster root (`kubernetes/flux-config/cluster.yaml`) already has `prune: true` and is left alone.
 
 ### 6.2 Files to delete
 
@@ -96,24 +95,19 @@ Every `Kustomization` in this repo currently has `prune: false` (per commit `70c
 
 1. `kubernetes/storage/kustomization.yaml` — drop `- volsync/ks.yaml` (line 7)
 2. `kubernetes/flux-config/registry/helm/kustomization.yaml` — drop `- volsync.yaml` (line 23)
-3. `kubernetes/storage/ks.yaml` — `prune: false` → `prune: true`
-4. `kubernetes/kyverno/ks.yaml` — `prune: false` → `prune: true`
-5. `kubernetes/flux-config/ks.yaml` — `prune: false` → `prune: true`
-6. `kubernetes/kyverno/ks.yaml` — flip `prune: false` → `prune: true` on the `kyverno-rbac` block only; leave the `kyverno` block at `prune: false` to avoid pruning the Kyverno Helm chart itself
-7. `kubernetes/scripts/deploy-infrastructure.sh` — remove `deploy_volsync()` function (L171–192), its call from `deploy_all` (L230), the status probe (L254), and the `"volsync"|"backup"` case branch (L285–286)
-8. `AGENTS.md` line 98 — drop `volsync` from the `storage/` directory listing
-9. `.gitignore` line 2 — drop the legacy `kubernetes/apps/*/volsync/generated/` path
-10. `docs/superpowers/plans/2026-07-22-flatten-k8s-hierarchy.md` — in Phase 7 / Task 7.1, remove every `volsync` `dependsOn` entry; keep the `kopiur` entries only
+3. `kubernetes/storage/volsync/ks.yaml` — `prune: false` → `prune: true` (Phase 0)
+4. `kubernetes/kyverno/ks.yaml` — flip `prune: false` → `prune: true` on the `kyverno-rbac` block (line 34) and the `kyverno-policies` block (line 52) only; leave the `kyverno` block at `prune: false` to avoid pruning the Kyverno Helm chart itself (Phase 0)
+5. `kubernetes/scripts/deploy-infrastructure.sh` — remove `deploy_volsync()` function (L171–192), its call from `deploy_all` (L230), the status probe (L254), and the `"volsync"|"backup"` case branch (L285–286)
+6. `AGENTS.md` line 98 — drop `volsync` from the `storage/` directory listing
+7. `.gitignore` line 2 — drop the legacy `kubernetes/apps/*/volsync/generated/` path
+8. `docs/superpowers/plans/2026-07-22-flatten-k8s-hierarchy.md` — in Phase 7 / Task 7.1, remove every `volsync` `dependsOn` entry; keep the `kopiur` entries only
 
-### 6.4 Order of operations (single PR)
+### 6.4 Order of operations
 
-1. Apply edits to flipping `prune: true` on the four `Kustomization`s (commit 1 of 1, but applied first conceptually).
-2. Delete the source files listed in §6.2 and edit the files listed in §6.3.
-3. Commit and push.
-4. CI runs `kustomize build` + `kubeconform` — must pass with no `volsync.backube/v1alpha1` references.
-5. Run `flux reconcile kustomization cluster -n flux-system` (or wait for the next poll).
-6. Verify the cluster is clean (see §6.5).
-7. Run the explicit `kubectl delete` for the two cluster-scoped RBAC objects (see §6.6).
+1. **Phase 0** — commit and push the prune-flag flips from §6.1. Wait for Flux to reconcile (or `flux reconcile kustomization cluster -n flux-system`).
+2. **Phases 1–5** — each removes a logical layer (VolSync HelmRelease, HelmRepository, Kyverno policy, RBAC, docs/scripts). Commit and push each phase separately. Flux reconciles between phases; verify no orphans.
+3. **Phase 6** — run the CI validation commands locally.
+4. **Phase 7** — verify the cluster is clean and run the explicit `kubectl delete` for cluster-scoped RBAC objects.
 
 ### 6.5 Cluster verification commands
 
@@ -135,23 +129,23 @@ kubectl get clusterrole,clusterrolebinding | grep volsync         # expect no ou
 kubectl get pvc -A | grep '^volsync-'                             # expect no output
 ```
 
-### 6.6 Out-of-band cluster cleanup (cannot be pruned)
+### 6.6 Out-of-band cluster cleanup
 
-The following two cluster-scoped objects are not owned by any pruned Flux `Kustomization` because they live in the `kyverno/rbac/` directory and the RBAC file is being deleted (so the `kyverno-rbac` Flux `Kustomization` reconciles to nothing):
+`ClusterRole/kyverno-generate-volsync` and its `ClusterRoleBinding` are cluster-scoped and Flux's GC behavior for cluster-scoped children is implementation-defined. As a safety net, after Phase 4 reconcile succeeds, run:
 
 ```bash
 kubectl delete clusterrole kyverno-generate-volsync
 kubectl delete clusterrolebinding kyverno-generate-volsync
 ```
 
-These are run manually after the reconcile completes. They are safe to run after the prune because nothing else in the cluster references them.
+If they were already pruned by the cluster root with `prune: true`, the commands will report "not found" — that is fine.
 
 ### 6.7 Rollback
 
 If backups were missed or a dependent app surfaces a bug:
 
-1. Revert the single PR.
-2. The four `prune: false` flags flip back.
+1. Revert the Phase 0 commit. The three `prune: false` flags are restored; Flux re-reconciles.
+2. Revert each subsequent deletion commit in reverse order. Flux re-reconciles after each.
 3. `flux reconcile kustomization cluster -n flux-system` reinstalls `HelmRelease/volsync`, the Kyverno policy, and the generated `ExternalSecret`/`ReplicationSource` objects.
 4. Re-run `kubectl apply` (or let Flux reconcile) for the deleted `ClusterRole`/`ClusterRoleBinding`.
 5. The historical Backblaze B2 bucket data is still available because §3 left it untouched.
@@ -183,7 +177,8 @@ Cluster validation: §6.5 commands.
 
 | Risk | Mitigation |
 |---|---|
-| Forgetting one of the four `prune: true` flips leaves orphan cluster resources | The plan lists all four flips explicitly; CI's `kustomize build` would still pass but the verification commands in §6.5 will catch orphans |
+| Forgetting one of the three `prune: true` flips leaves orphan cluster resources | The plan executes Phase 0 first as a separate commit; CI's `kustomize build` would still pass but the verification commands in §6.5 catch orphans |
+| Phase 0 flips prune on `Kustomization/kyverno` and prunes Kyverno itself | `kyverno` block is explicitly excluded from the flips; only `kyverno-rbac` and `kyverno-policies` are touched |
 | Third-party chart repo `perfectra1n/volsync` vs upstream `backube/volsync` divergence | Irrelevant for removal; flagged for future investigation only |
 | VolSync intermediate PVCs (`volsync-*`) left on the Ceph RBD pool | §6.5 includes `kubectl get pvc -A | grep '^volsync-'`; if any remain, delete manually |
 | `default/memos` loses its (unused) backup with no replacement | Confirmed by user; memos is unused |

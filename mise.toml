@@ -40,6 +40,8 @@ yq   = "4.53.2"
 pre-commit = "latest"
 gitleaks   = "latest"
 trufflehog = "latest"
+"aqua:k8sgpt-ai/k8sgpt" = "latest"
+kopia = "latest"
 
 [hooks]
 # Install the helm-diff plugin (mise manages binaries, not helm plugins).
