@@ -64,5 +64,5 @@ run = ['op inject -i .op.env -o .env']
 [tasks."kopia:connect"]
 description = "Connect workstation kopia CLI to the kopiur cluster repository (requires `mise run secrets:env` first)"
 run = [
-  'kopia repository connect-to --endpoint=s3.us-west-001.backblazeb2.com --bucket=whoverse-k8s-backups --prefix=kopiur s3',
+  'kopia repository connect s3 --endpoint=s3.us-west-001.backblazeb2.com --region=us-west-001 --bucket=whoverse-k8s-backups --prefix=kopiur',
 ]
