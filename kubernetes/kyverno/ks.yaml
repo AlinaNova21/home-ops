@@ -31,7 +31,7 @@ spec:
     - name: kyverno
   timeout: 5m
   wait: true
-  prune: false
+  prune: true
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -49,4 +49,4 @@ spec:
     - name: kyverno-rbac
   timeout: 5m
   wait: true
-  prune: false
+  prune: true
