@@ -90,10 +90,11 @@ spec:
           nodePort: 31234
     envoy:
       enabled: false
-    agent:
-      resources:
-        requests:
-          memory: 512Mi
+    # Top-level resources: applies to the cilium-agent DaemonSet container
+    # (the chart's 'agent:' key is a boolean enable flag, not a config block).
+    resources:
+      requests:
+        memory: 512Mi
     socketLB:
       enabled: true
       hostNamespaceOnly: true
