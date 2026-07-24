@@ -5,7 +5,6 @@ resources:
   - cilium.yaml
   - home-operations.yaml
   - home-operations-mirror.yaml
-  - kyverno.yaml
   - envoy-gateway.yaml
   - external-dns.yaml
   - external-secrets.yaml

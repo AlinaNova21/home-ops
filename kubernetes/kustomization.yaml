@@ -8,7 +8,6 @@ resources:
   - agent-sandbox-system
   - spegel
   - cert-manager
-  - kyverno
   - external-secrets-system
   - flux-system
   - kube-system
