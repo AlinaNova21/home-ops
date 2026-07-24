@@ -86,7 +86,7 @@ config change is required for this design.
 - `mise run secrets:env` runs `op inject -i .op.env -o .env`, producing a
   gitignored `.env` with resolved values. Re-running overwrites `.env` cleanly.
 - `mise run kopia:connect` runs
-  `kopia repository connect-to --endpoint=s3.us-west-001.backblazeb2.com --bucket=whoverse-k8s-backups --prefix=kopiur s3`,
+  `kopia repository connect s3 --endpoint=s3.us-west-001.backblazeb2.com --region=us-west-001 --bucket=whoverse-k8s-backups --prefix=kopiur`,
   which uses the env-injected `KOPIA_PASSWORD`, `AWS_ACCESS_KEY_ID`,
   `AWS_SECRET_ACCESS_KEY`, and `AWS_REGION` for authentication.
 - A `mise exec -- kopia …` shell now sees `KOPIA_PASSWORD`, `AWS_*` as ordinary
@@ -131,7 +131,7 @@ config change is required for this design.
    [tasks."kopia:connect"]
    description = "Connect workstation kopia CLI to the kopiur cluster repository (requires `mise run secrets:env` first)"
    run = [
-     'kopia repository connect-to --endpoint=s3.us-west-001.backblazeb2.com --bucket=whoverse-k8s-backups --prefix=kopiur s3',
+     'kopia repository connect s3 --endpoint=s3.us-west-001.backblazeb2.com --region=us-west-001 --bucket=whoverse-k8s-backups --prefix=kopiur',
    ]
    ```
 
