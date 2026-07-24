@@ -37,10 +37,9 @@ spec:
       enableGatewayAPI: true
     prometheus:
       enabled: false
-    cert-manager:
-      resources:
-        requests:
-          memory: 128Mi
+    resources:
+      requests:
+        memory: 128Mi
     webhook:
       resources:
         requests:
