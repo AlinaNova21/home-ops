@@ -152,6 +152,7 @@ worker:
           - siderolabs/amdgpu
           - siderolabs/i915
           - siderolabs/xe
+          - siderolabs/drbd
   patches:
     - |-
       cluster:
@@ -163,6 +164,7 @@ worker:
           user.max_user_namespaces: "11255"
     - "@./patches/spegel-containerd-config.yaml"
     - "@./patches/watchdog.yaml"
+    - "@./miroir-kernel.yaml"
   volumes: *sharedVolumes
   userVolumes: *sharedUserVolumes
   networkInterfaces:
