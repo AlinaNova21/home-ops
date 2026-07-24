@@ -82,9 +82,14 @@ spec:
             memory: 64Mi
       ui:
         enabled: true
-        resources:
-          requests:
-            memory: 64Mi
+        backend:
+          resources:
+            requests:
+              memory: 64Mi
+        frontend:
+          resources:
+            requests:
+              memory: 64Mi
         service:
           type: NodePort
           nodePort: 31234
