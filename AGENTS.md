@@ -95,7 +95,7 @@ kubernetes/
 ├── network/                  # cloudflared, envoy-gateway, external-dns, pve-egress, tailscale
 ├── onepassword-connect/
 ├── spegel/                   # P2P image distribution
-├── storage/                  # rook-ceph, openebs-localpv, volsync
+├── storage/                  # rook-ceph, openebs-localpv
 ├── system-upgrade/           # tuppr
 ├── components/               # Cross-cutting bundles (e.g. kopiur)
 ├── flux-config/              # Flux CD self-management (HelmRelease, OCIRepository, cluster root)

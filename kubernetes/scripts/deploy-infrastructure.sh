@@ -168,29 +168,6 @@ deploy_external_secrets() {
     echo "✅ External Secrets Operator deployment completed"
 }
 
-# Deploy VolSync
-deploy_volsync() {
-    echo "💾 Deploying VolSync..."
-    
-    # Check if VolSync is already installed
-    if kubectl get deployment volsync -n volsync-system &> /dev/null; then
-        echo "ℹ️  VolSync already installed"
-    else
-        echo "📥 Installing VolSync..."
-        helm repo add backube https://backube.github.io/helm-charts/
-        helm repo update
-        
-        kubectl create namespace volsync-system --dry-run=client -o yaml | kubectl apply -f -
-        
-        helm install volsync backube/volsync \
-            --namespace volsync-system
-            
-        wait_for_deployment "volsync-system" "volsync" 300
-    fi
-    
-    echo "✅ VolSync deployment completed"
-}
-
 # Deploy monitoring stack (optional)
 deploy_monitoring() {
     echo "📊 Deploying monitoring stack..."
@@ -227,8 +204,6 @@ deploy_all() {
     echo
     deploy_external_secrets
     echo
-    deploy_volsync
-    echo
     deploy_cloudnative_pg
     echo
     deploy_monitoring
@@ -249,9 +224,6 @@ deploy_all() {
     
     echo "🔐 External Secrets:"
     kubectl get pods -n external-secrets-system | grep external-secrets || echo "   Not found"
-    
-    echo "💾 VolSync:"
-    kubectl get pods -n volsync-system | grep volsync || echo "   Not found"
     
     echo "📊 Monitoring:"
     kubectl get pods -n monitoring | head -5 || echo "   Not found"
@@ -281,9 +253,6 @@ case "$COMPONENT" in
         ;;
     "external-secrets"|"eso")
         deploy_external_secrets
-        ;;
-    "volsync"|"backup")
-        deploy_volsync
         ;;
     "monitoring"|"prometheus")
         deploy_monitoring

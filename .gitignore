@@ -1,5 +1,4 @@
 bin/vault
-kubernetes/apps/*/volsync/generated/
 tools/node_modules/
 *.local.json
 
