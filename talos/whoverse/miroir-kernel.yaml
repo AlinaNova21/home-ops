@@ -1,0 +1,12 @@
+---
+machine:
+  kernel:
+    modules:
+      - name: drbd
+        parameters:
+          - usermode_helper=disabled
+      - name: drbd_transport_tcp
+  kubelet:
+    extraConfig:
+      shutdownGracePeriod: 120s
+      shutdownGracePeriodCriticalPods: 60s
