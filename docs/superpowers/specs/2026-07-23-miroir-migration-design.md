@@ -68,7 +68,7 @@ all other storage classes stay untouched.
 | Replication | DRBD9, `replicas: "2"` + automatic diskless tie-breaker on the 4th node |
 | Pool resource shape | one `MiroirNodeGroup` with a node-label selector |
 | StorageClass name | `miroir-replicated` |
-| VolumeSnapshotClass name | `miroir-snap` (deferred — see §6) |
+| VolumeSnapshotClass name | `miroir-snap` (not defined; chart supports it, see §6) |
 
 ### Per-node disk math (each storage node keeps `EPHEMERAL` unchanged)
 
@@ -339,12 +339,16 @@ but has no consumers.
 
 ## 6. Open questions
 
-- **`miroir-snap` VolumeSnapshotClass.** Mirror's CSI driver may or may not
-  expose `VolumeSnapshot` support in the chart version available at install
-  time. The `volumesnapshotclass.yaml` file is therefore left out of the day-1
-  chart layout. If/when mirror exposes snapshot support, add it alongside
-  kopiur for direct snapshot-based migration. Until then, kopiur is the only
-  restore path.
+- **`miroir-snap` VolumeSnapshotClass.** Verified against the chart:
+  VolumeSnapshotClasses are first-class — `driver: miroir.home-operations.com`
+  plus a `deletionPolicy`, and the chart already ships the
+  `csi-snapshotter:v8.6.0` sidecar. The only external prerequisite is the
+  `snapshot.storage.k8s.io` CRDs and a `snapshot-controller` Deployment,
+  which already run in the cluster because volsync depends on them. The
+  `miroir-snap` class is deferred because Phase 0 uses kopiur for restore
+  and there is no day-1 consumer. Add it as a single file when a concrete
+  use case (volsync target swap to mirror, or an in-cluster snapshot for
+  rollback) materializes.
 - **Rook mon DB placement.** Some rook versions warn when mon DB is on
   shared replicated storage because the device path changes under failover.
   Validate during Phase 2 that rook is happy with `miroir-replicated` mons
