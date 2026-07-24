@@ -180,3 +180,18 @@ done
   - `home-ops-network-troubleshooting` — Gateway/Tailscale/ExternalDNS/cert diagnostics
   - `home-ops-initial-bootstrap` — Cilium CA + Hubble TLS one-time setup
   - `home-ops-external-secrets` — 1Password Connect `ExternalSecret` convention
+
+## Workstation Secrets
+
+1Password-backed env vars for workstation CLIs live in a tracked template at the repo root and resolve to a gitignored `.env` via `op inject`.
+
+```bash
+mise run secrets:env      # refresh .env from .op.env (requires `op` signed in)
+mise run kopia:connect    # connect local kopia CLI to the kopiur-managed repo
+mise exec -- kopia snapshot ls
+```
+
+- `.op.env` holds `op://…` URI templates in commented sections (`# ─── kopia ───` is the first). Values mirror the corresponding in-cluster `ExternalSecret` items.
+- Adding a new tool: append `KEY="op://vault/item/field"` lines inside a new commented section in `.op.env`, then `mise run secrets:env` to refresh.
+- `.env` is gitignored and never tracked. Do not add manual entries there — use `mise.toml [env]` for persistent vars.
+- Tool-specific helpers (e.g. `kopia:connect`) live as one-line mise tasks alongside `secrets:env`.
