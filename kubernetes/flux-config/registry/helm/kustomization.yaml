@@ -20,7 +20,6 @@ resources:
   - rook-ceph.yaml
   - spegel.yaml
   - tailscale.yaml
-  - volsync.yaml
   - dex.yaml
   - victoria-metrics.yaml
   - grafana.yaml

@@ -1,8 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: volsync
-  namespace: flux-system
-spec:
-  interval: 24h
-  url: https://perfectra1n.github.io/volsync/charts/
