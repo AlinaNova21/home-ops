@@ -78,6 +78,12 @@ spec:
           requests:
             cpu: 100m
             memory: 1Gi
+        logcollector:
+          limits:
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
       storage:
         useAllNodes: true
         useAllDevices: false

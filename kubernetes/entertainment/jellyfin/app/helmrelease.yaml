@@ -42,6 +42,12 @@ spec:
                         operator: In
                         values:
                           - whoverse-w1
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: jellyfin
+                  topologyKey: kubernetes.io/hostname
         containers:
           jellyfin:
             image:

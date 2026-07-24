@@ -32,9 +32,18 @@ spec:
     master:
       enableTaints: false
       replicaCount: 1
+      resources:
+        limits:
+          memory: 512Mi
     worker:
       enable: true
+      resources:
+        limits:
+          memory: 512Mi
     topologyUpdater:
       enable: false
     gc:
       enable: true
+      resources:
+        limits:
+          memory: 512Mi

@@ -31,6 +31,14 @@ spec:
   values:
     kind: CronJob
     schedule: "*/5 * * * *"
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
     deschedulerPolicy:
       profiles:
         - name: default
