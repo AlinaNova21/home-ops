@@ -32,3 +32,14 @@ spec:
       retryInterval: 5m
   values:
     installCRDs: true
+    resources:
+      requests:
+        memory: 64Mi
+    webhook:
+      resources:
+        requests:
+          memory: 64Mi
+    certController:
+      resources:
+        requests:
+          memory: 64Mi

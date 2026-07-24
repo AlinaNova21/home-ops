@@ -37,3 +37,18 @@ spec:
       enableGatewayAPI: true
     prometheus:
       enabled: false
+    resources:
+      requests:
+        memory: 64Mi
+    controller:
+      resources:
+        requests:
+          memory: 128Mi
+    webhook:
+      resources:
+        requests:
+          memory: 64Mi
+    cainjector:
+      resources:
+        requests:
+          memory: 64Mi

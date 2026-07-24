@@ -58,3 +58,6 @@ spec:
           parallel: true
     service:
       port: 4466
+    resources:
+      requests:
+        memory: 96Mi

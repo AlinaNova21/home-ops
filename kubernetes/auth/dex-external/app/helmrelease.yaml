@@ -76,3 +76,6 @@ spec:
           name: Envoy Gateway External Services
           secretEnv: ENVOY_EXTERNAL_CLIENT_SECRET
           redirectURIs: []
+    resources:
+      requests:
+        memory: 64Mi

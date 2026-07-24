@@ -33,6 +33,12 @@ spec:
     # Run as a DaemonSet on every node to collect all container logs
     role: Agent
 
+    # Memory request for the log-shipping agent. Live usage is ~60-130MiB;
+    # 256Mi covers backpressure spikes during log bursts.
+    resources:
+      requests:
+        memory: 256Mi
+
     # No Service needed for a log-shipping agent
     service:
       enabled: false

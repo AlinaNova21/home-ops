@@ -93,3 +93,6 @@ spec:
           secretEnv: GRAFANA_CLIENT_SECRET
           redirectURIs:
             - https://grafana.whoverse.dev/login/generic_oauth
+    resources:
+      requests:
+        memory: 96Mi

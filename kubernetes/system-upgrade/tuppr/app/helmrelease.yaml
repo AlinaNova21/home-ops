@@ -27,3 +27,7 @@ spec:
     strategy:
       name: RetryOnFailure
       retryInterval: 5m
+  values:
+    resources:
+      requests:
+        memory: 128Mi

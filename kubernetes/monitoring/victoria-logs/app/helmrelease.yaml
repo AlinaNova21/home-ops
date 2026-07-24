@@ -32,9 +32,15 @@ spec:
   values:
     vlinsert:
       replicaCount: 2
+      resources:
+        requests:
+          memory: 64Mi
 
     vlstorage:
       replicaCount: 2
+      resources:
+        requests:
+          memory: 128Mi
       persistentVolume:
         enabled: true
         storageClassName: openebs-hostpath
@@ -50,3 +56,6 @@ spec:
 
     vlselect:
       replicaCount: 2
+      resources:
+        requests:
+          memory: 64Mi
