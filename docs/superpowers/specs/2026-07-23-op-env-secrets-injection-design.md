@@ -203,7 +203,11 @@ writes, no orphans.
   not match default gitleaks or trufflehog secret patterns; the path
   allowlist is precautionary.
 
-### Behavioral
+### Behavioral (manual verification)
+
+These steps require a signed-in `op` session (biometric prompt) and a
+reachable S3 bucket. They cannot be automated from CI; the implementer
+runs them once after the commits land.
 
 - `mise run secrets:env` produces `.env` with resolved values. Verify with
   `grep -E '^KOPIA_PASSWORD=' .env` — should print a single line with a
@@ -217,7 +221,7 @@ writes, no orphans.
   variable) and re-running `secrets:env` must include the new variable in
   `.env`.
 
-### Negative tests
+### Negative tests (manual verification)
 
 - Delete `.op.env`, run `mise run secrets:env` → fails with "no such file".
 - Sign out of `op` (`op signout`), run `mise run secrets:env` → fails

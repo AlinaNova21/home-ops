@@ -203,9 +203,15 @@ git commit -m "docs: document workstation secrets workflow"
 
 ---
 
-## Task 5: End-to-end smoke test
+## Task 5: End-to-end smoke test (manual verification)
 
 **Files:** none (verification only)
+
+**Note:** This task requires `op` biometric sign-in and a reachable S3 bucket.
+It cannot be run from CI or by a non-interactive agent. The implementer runs
+it once locally after the commits land; until then the task remains open.
+Steps 4 (`.env` gitignored), 8 (full pre-commit), and 9 (final repo state)
+were verified mechanically and pass.
 
 - [ ] **Step 1: Prerequisites — `op` signed in and items present**
 
