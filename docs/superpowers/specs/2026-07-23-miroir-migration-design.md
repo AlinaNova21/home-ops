@@ -68,7 +68,7 @@ all other storage classes stay untouched.
 | Replication | DRBD9, `replicas: "2"` + automatic diskless tie-breaker on the 4th node |
 | Pool resource shape | one `MiroirNodeGroup` with a node-label selector |
 | StorageClass name | `miroir-replicated` |
-| VolumeSnapshotClass name | `miroir-snap` (defined but unused — see §6) |
+| VolumeSnapshotClass name | `miroir-snap` (deferred — see §6) |
 
 ### Per-node disk math (each storage node keeps `EPHEMERAL` unchanged)
 
@@ -132,9 +132,9 @@ storage, leaving ~60 GB headroom.
   Apply via `nodes[cp1].patches`, `nodes[cp2].patches`, `nodes[cp3].patches`,
   and `nodes[w1].patches`. **Do not** apply to `w2`.
 
-- Drop the existing `hostpath` `UserVolumeConfig` from the
-  `&sharedUserVolumes` YAML anchor in `talconfig.yaml`. The label `u-hostpath`
-  disappears from every node on the next `talos-gen`/`talos-apply`.
+- During Phases 1–5, the `hostpath` `UserVolumeConfig` remains in
+  `talconfig.yaml` so the still-active `openebs-hostpath` workloads on the
+  not-yet-cycled nodes keep their mount. It is removed in Phase 6.
 
 The Talos label caveat ("Ceph will not create a partition if the partition
 label contains the substring `ceph`") does not apply — the new label
@@ -152,8 +152,7 @@ kubernetes/storage/miroir/
 └── app/
     ├── helmrelease.yaml
     ├── miroirnodegroup.yaml
-    ├── storageclass.yaml
-    └── volumesnapshotclass.yaml
+    └── storageclass.yaml
 ```
 
 `MiroirNodeGroup`:
@@ -259,10 +258,11 @@ The phase ordering keeps the cluster in a working state throughout:
 4. Validate: `talosctl -n 192.168.2.21 get volumestatus r-miroir` →
    `ready`. `talosctl -n 192.168.2.21 list /var/mnt/hostpath` is now empty
    (partition gone).
-5. Create mirror PVCs for whichever vmstorage/vlstorage/vmselect/grafana
-   shards landed on cp1. `Restore` against each mirror PVC via kopiur. Move
-   the workload over by changing the HelmRelease values for that component
-   to the new `mirror-replicated` storage class and storage size.
+5. Create `miroir-replicated` PVCs for whichever vmstorage/vlstorage/
+   vmselect/grafana shards landed on cp1. `Restore` against each mirror
+   PVC via kopiur. Move the workload over by changing the HelmRelease values
+   for that component to the new `miroir-replicated` storage class and
+   storage size.
 6. Validate: monitoring dashboards render, metrics write succeeds.
 
 ### Phase 2 — cycle `cp2`
@@ -270,12 +270,12 @@ The phase ordering keeps the cluster in a working state throughout:
 Same as Phase 1, plus:
 
 - The `rook-ceph-mon-j` PVC was on cp2. After cp2 cycles, that PVC's
-  underlying path is gone and the mon pod will fail. Rook redeploys the mon
-  on its PVC-less state with empty data; surviving `mon-m` (cp3) and
-  `mon-n` (w2) maintain quorum and reseed `mon-j`. Optionally create the
-  mon-j PVC on `mirror-replicated` ahead of the cycle so rook has somewhere
-  to land; otherwise let rook use the same PVC name once the openebs PV is
-  released.
+  underlying path is gone and the mon pod will fail. Rook redeploys the
+  mon pod; surviving `mon-m` (cp3) and `mon-n` (w2) maintain quorum and
+  reseed `mon-j` from scratch. Optionally pre-create the mon-j PVC on
+  `miroir-replicated` ahead of the cycle so rook has somewhere to land;
+  otherwise let rook use the same PVC name once the openebs PV is released
+  by Phase 5.
 
 ### Phase 3 — cycle `w1`
 
@@ -305,29 +305,23 @@ populated and a HelmRelease reconciliation shows the new mount in use.
 
 Remove `hostpath` from the YAML anchor block. `just talos-gen`. No
 `talos-apply` is needed on live nodes — the change only affects future
-re-images. The `OpenEBS` storage class still exists in the cluster but has
-no consumers.
+re-images. The `openebs-hostpath` storage class still exists in the cluster
+but has no consumers.
 
 ### Phase 7 — retire openebs
 
 1. Move `rook-ceph-mon-n` (w2) off openebs-hostpath. Two options:
-   - Re-schedule it onto a `mirror-replicated` PVC and accept that w2's pod
+   - Re-schedule it onto a `miroir-replicated` PVC and accept that w2's pod
      writes to a remote mirror leg; or
    - Provision a small `ceph-rbd` PVC for it (rook docs generally recommend
      host-local for mons, but w2's openebs pool is small enough that this
-     is acceptable trade-off).
-2. Once no PVC references `openebs-hostpath`, delete the `StorageClass` and
-   the `kubernetes/storage/openebs-localpv/` Flux Kustomization. Update
-   `kubernetes/storage/kustomization.yaml` to remove the `openebs-localpv/ks.yaml`
-   reference. Validate. Commit.
-
-### Phase 8 — decommission `openebs-localpv` runtime
-
-Remove the `openebs-localpv-alloy` DaemonSet, `openebs-localpv-localpv-provisioner`,
-the Helm release, and the related RBAC. Easiest path: delete the entire
-`kubernetes/storage/openebs-localpv/` tree and let Flux's prune (currently
-`prune: true` on the cluster root) clean up the runtime. Validate everything
-else still works.
+     is an acceptable trade-off).
+2. Delete the openebs-hostpath `StorageClass` and the entire
+   `kubernetes/storage/openebs-localpv/` tree. Update
+   `kubernetes/storage/kustomization.yaml` to remove the
+   `openebs-localpv/ks.yaml` reference. Commit. Flux's `prune: true`
+   cluster root removes the `openebs-localpv-alloy` `DaemonSet`,
+   `openebs-localpv-localpv-provisioner`, the Helm release, and the RBAC.
 
 ## 5. Risks and mitigations
 
@@ -345,13 +339,15 @@ else still works.
 
 ## 6. Open questions
 
-- **`mirror-snap` VolumeSnapshotClass.** Mirror's CSI driver may or may not
+- **`miroir-snap` VolumeSnapshotClass.** Mirror's CSI driver may or may not
   expose `VolumeSnapshot` support in the chart version available at install
-  time. Define the class anyway and verify it during Phase 0b; if not
-  supported yet, leave the class out and rely on kopiur for restore.
-- **Rook mon DB placement.** Some rook versions complain when mon DB is on
+  time. The `volumesnapshotclass.yaml` file is therefore left out of the day-1
+  chart layout. If/when mirror exposes snapshot support, add it alongside
+  kopiur for direct snapshot-based migration. Until then, kopiur is the only
+  restore path.
+- **Rook mon DB placement.** Some rook versions warn when mon DB is on
   shared replicated storage because the device path changes under failover.
-  Validate during Phase 2 that rook is happy with `mirror-replicated` mons
+  Validate during Phase 2 that rook is happy with `miroir-replicated` mons
   before committing to it for cp3 as well. If not, fall back to rook's
   built-in mon recovery against empty data (slow, but works).
 
@@ -374,13 +370,13 @@ kubectl get pvc -A -o json | jq '.items[] | {ns:.metadata.namespace,name:.metada
 talosctl get volumestatus r-miroir -n <node>
 ```
 
-Acceptance criteria for completion of Phase 8:
+Acceptance criteria for completion of Phase 7:
 
 - `kubectl get pvc -A` shows zero PVCs with `storageClassName: openebs-hostpath`.
 - `kubectl get sc` does not show `openebs-hostpath`.
 - `kubectl get pods -n storage -l app.kubernetes.io/name=openebs-localpv` is
   empty.
-- `kubectl exec -n storage deploy/miroir-controller -- miroir pool status`
-  (or equivalent) reports 4 pool legs and a healthy DRBD quorum.
+- `kubectl get miroirnodegroup cluster` reports 4 pool legs and a healthy
+  DRBD quorum.
 - Monitoring dashboards render and metrics writes succeed end-to-end
   (sample-write then sample-query).
