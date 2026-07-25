@@ -4,5 +4,4 @@ resources:
   - namespace.yaml
   - registries.yaml
   - flux-system.yaml
-  - cluster.yaml
   - sops/ks.yaml

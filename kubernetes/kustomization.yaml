@@ -1,22 +1,24 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - entertainment
-  - default
-  - downloads
-  - sync
-  - agent-sandbox-system
-  - spegel
-  - cert-manager
-  - external-secrets-system
+  # core / platform — kept in DR mode
   - flux-system
   - kube-system
-  - monitoring
-  - network
-  - onepassword-connect
   - storage
+  - external-secrets-system
+  - onepassword-connect
+  - network
+  - cert-manager
+  - spegel
   - system-upgrade
-  - auth
-  - headlamp
   - inteldeviceplugins-system
   - kopiur-system
+  # apps — commented out for DR (prune:false on cluster, so existing resources stay running)
+  # - entertainment
+  # - default
+  # - downloads
+  # - sync
+  # - agent-sandbox-system
+  # - auth
+  # - headlamp
+  # - monitoring
