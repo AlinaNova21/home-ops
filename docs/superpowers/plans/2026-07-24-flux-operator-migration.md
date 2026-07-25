@@ -814,3 +814,19 @@ Confirm:
 - Cluster runs Flux v2.9.3 managed by flux-operator v0.27.0, all 6 controllers Running, custom args applied.
 
 Report any deviations to the user.
+## Post-incident findings (2026-07-25)
+
+### csi-snapshotter sidecar requires explicit snapshotPolicy
+The ceph-csi-drivers chart v1.0.4 defaults `snapshotPolicy: none` which omits
+the csi-snapshotter sidecar. This breaks the VolumeSnapshot → CSI → ceph RBD
+chain. Set `snapshotPolicy: volumeSnapshot` in both `operatorConfig.driverSpecDefaults`
+and per-driver spec in the HelmRelease values.
+
+### csi-rbdplugin empty keyring after operator reconcile
+After the csi-snapshotter sidecar is added, the csi-rbdplugin still fails with
+"failed to fetch monitor list using clusterID (storage): missing configuration".
+The ceph-csi-operator v1.0.4 does not mount the `rook-csi-rbd-provisioner` secret
+to `/tmp/csi/keys/rbd` in its generated Deployment. Workaround: patch the
+operator-managed Deployment to add an init container that copies the secret into
+the emptyDir. This must be done once the operator is scaled down (otherwise its
+reconcile loop reverts the change).
