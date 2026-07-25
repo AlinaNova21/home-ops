@@ -6,6 +6,7 @@ resources:
   - database/ks.yaml
   - error-pages/ks.yaml
   - grocy/ks.yaml
+  - konflate/ks.yaml
   - mailpit/ks.yaml
   #- memos/ks.yaml
   - speedtest-tracker/ks.yaml
