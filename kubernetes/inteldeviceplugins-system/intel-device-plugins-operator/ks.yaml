@@ -6,7 +6,7 @@ metadata:
   namespace: inteldeviceplugins-system
 spec:
   interval: 30m
-  path: "./inteldeviceplugins-system/intel-device-plugins-operator/app"
+  path: "./kubernetes/inteldeviceplugins-system/intel-device-plugins-operator/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

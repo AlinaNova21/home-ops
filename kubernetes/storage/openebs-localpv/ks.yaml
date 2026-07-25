@@ -6,7 +6,7 @@ metadata:
   namespace: storage
 spec:
   interval: 30m
-  path: "./storage/openebs-localpv/app"
+  path: "./kubernetes/storage/openebs-localpv/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

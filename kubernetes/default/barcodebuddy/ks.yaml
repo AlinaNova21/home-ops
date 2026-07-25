@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 30m
-  path: ./default/barcodebuddy/app
+  path: ./kubernetes/default/barcodebuddy/app
   postBuild:
     substitute:
       APP: barcodebuddy

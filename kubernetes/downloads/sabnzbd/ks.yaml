@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./downloads/sabnzbd/app"
+  path: "./kubernetes/downloads/sabnzbd/app"
   postBuild:
     substitute:
       APP: sabnzbd

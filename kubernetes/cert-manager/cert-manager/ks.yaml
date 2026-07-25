@@ -6,7 +6,7 @@ metadata:
   namespace: cert-manager
 spec:
   interval: 30m
-  path: "./cert-manager/cert-manager/app"
+  path: "./kubernetes/cert-manager/cert-manager/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -39,7 +39,7 @@ spec:
     - name: external-secrets-config
       namespace: external-secrets-system
   interval: 10m
-  path: "./cert-manager/cert-manager/config"
+  path: "./kubernetes/cert-manager/cert-manager/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

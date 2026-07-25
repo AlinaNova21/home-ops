@@ -6,7 +6,7 @@ metadata:
   namespace: onepassword-connect
 spec:
   interval: 30m
-  path: "./onepassword-connect/onepassword-connect/app"
+  path: "./kubernetes/onepassword-connect/onepassword-connect/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

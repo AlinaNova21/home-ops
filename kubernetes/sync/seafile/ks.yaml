@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/seafile-backup
   interval: 15m
-  path: "./sync/seafile/app"
+  path: "./kubernetes/sync/seafile/app"
   postBuild:
     substitute:
       APP: seafile

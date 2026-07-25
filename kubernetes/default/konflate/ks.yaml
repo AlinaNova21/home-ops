@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: ./default/konflate/app
+  path: ./kubernetes/default/konflate/app
   sourceRef:
     kind: OCIRepository
     name: home-ops

@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./downloads/radarr-anime/app"
+  path: "./kubernetes/downloads/radarr-anime/app"
   postBuild:
     substitute:
       APP: radarr-anime

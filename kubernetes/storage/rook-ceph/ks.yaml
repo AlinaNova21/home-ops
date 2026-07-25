@@ -6,7 +6,7 @@ metadata:
   namespace: storage
 spec:
   interval: 30m
-  path: "./storage/rook-ceph/app"
+  path: "./kubernetes/storage/rook-ceph/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

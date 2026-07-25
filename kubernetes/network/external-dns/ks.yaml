@@ -9,7 +9,7 @@ spec:
     - name: external-secrets-config
       namespace: external-secrets-system
   interval: 30m
-  path: "./network/external-dns/app"
+  path: "./kubernetes/network/external-dns/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

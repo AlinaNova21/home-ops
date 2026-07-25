@@ -6,7 +6,7 @@ metadata:
   namespace: monitoring
 spec:
   interval: 30m
-  path: "./monitoring/victoria-logs/app"
+  path: "./kubernetes/monitoring/victoria-logs/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
