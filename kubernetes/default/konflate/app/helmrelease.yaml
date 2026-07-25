@@ -56,3 +56,4 @@ spec:
       prComments: true
       publicUrl: https://konflate.whoverse.nexus
       mcp: true
+      logLevel: debug
