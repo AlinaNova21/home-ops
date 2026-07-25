@@ -9,6 +9,7 @@ resources:
   - external-dns.yaml
   - external-secrets.yaml
   - fluxcd-community.yaml
+  - controlplaneio.yaml
   - intel.yaml
   - jetstack.yaml
   - jellyfin.yaml
