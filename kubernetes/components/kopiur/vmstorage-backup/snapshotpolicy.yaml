@@ -60,3 +60,47 @@ spec:
     keepDaily: 7
     keepWeekly: 4
     keepMonthly: 3
+---
+# VictoriaLogs shards are routed by vlinsert via consistent hash and do NOT
+# self-rebuild when a node cycles — the cycled pod starts with an empty
+# data dir and the data range that lived there is permanently lost. Back
+# them up too.
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: vlstorage-0
+  namespace: monitoring
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  credentialProjection:
+    enabled: true
+  copyMethod: Direct
+  sources:
+    - pvc:
+        name: vlstorage-volume-victoria-logs-victoria-logs-cluster-vlstorage-0
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: vlstorage-1
+  namespace: monitoring
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  credentialProjection:
+    enabled: true
+  copyMethod: Direct
+  sources:
+    - pvc:
+        name: vlstorage-volume-victoria-logs-victoria-logs-cluster-vlstorage-1
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3

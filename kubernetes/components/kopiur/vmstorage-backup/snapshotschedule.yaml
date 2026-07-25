@@ -34,3 +34,27 @@ spec:
   schedule:
     cron: H * * * *
     runOnCreate: true
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotSchedule
+metadata:
+  name: vlstorage-0
+  namespace: monitoring
+spec:
+  policyRef:
+    name: vlstorage-0
+  schedule:
+    cron: H * * * *
+    runOnCreate: true
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotSchedule
+metadata:
+  name: vlstorage-1
+  namespace: monitoring
+spec:
+  policyRef:
+    name: vlstorage-1
+  schedule:
+    cron: H * * * *
+    runOnCreate: true
