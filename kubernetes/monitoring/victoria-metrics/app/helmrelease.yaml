@@ -51,10 +51,12 @@ spec:
           storage:
             volumeClaimTemplate:
               spec:
-                storageClassName: openebs-hostpath
+                # miroir-replicated (DRBD, 2 replicas across 4-node pool).
+                # Replacing openebs-hostpath as part of the miroir migration.
+                storageClassName: miroir-replicated
                 resources:
                   requests:
-                    storage: 50Gi
+                    storage: 25Gi
         vminsert:
           replicaCount: 2
         vmselect:
@@ -63,7 +65,7 @@ spec:
           storage:
             volumeClaimTemplate:
               spec:
-                storageClassName: openebs-hostpath
+                storageClassName: miroir-replicated
                 resources:
                   requests:
                     storage: 2Gi

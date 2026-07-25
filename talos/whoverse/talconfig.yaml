@@ -24,6 +24,7 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./ceph-osd-volume.yaml"
+      - "@./miroir-disk.yaml"
 
   - hostname: whoverse-cp2  # ZimaBoard
     ipAddress: 192.168.2.22
@@ -123,14 +124,11 @@ controlPlane:
         diskSelector:
           match: system_disk
         maxSize: 64GiB
-  # User volume for OpenEBS LocalPV hostpath storage
-  userVolumes: &sharedUserVolumes
-    - name: hostpath
-      provisioning:
-        diskSelector:
-          match: system_disk
-        minSize: 50GiB
-        maxSize: 128GiB
+  # hostpath user volume removed as part of the miroir migration. Each
+  # pool node now gets a per-node miroir-disk.yaml patch (see nodes[].patches)
+  # which creates an r-miroir RawVolumeConfig consumed by the home-operations/miroir
+  # CSI driver as its LVM-thin backing device. The user-volume approach is
+  # retired once every pool node is on mirror storage.
   networkInterfaces:
     - interface: br0
       dhcp: true
