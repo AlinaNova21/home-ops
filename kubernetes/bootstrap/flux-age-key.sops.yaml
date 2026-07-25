@@ -1,0 +1,35 @@
+apiVersion: ENC[AES256_GCM,data:Ru4=,iv:OOonp3wVr0P/bHAMGUWoJUMG5U6NbElgU3gGrivPzAg=,tag:RTQ2pWBT7IcazS7ue+TNoA==,type:str]
+kind: ENC[AES256_GCM,data:RRn3VsFs,iv:lAtMI/BeFcDf7M2kHbb0MhBPCssSCGYf7NiyAbD9IpI=,tag:ampBdVes/lkSLmHuiBL47g==,type:str]
+metadata:
+    name: ENC[AES256_GCM,data:OFLh4II9UKA=,iv:9wroMK84lAUHqXmEhOBwaFGSq40ynP18oY5tLtffkT0=,tag:SIrAwPKSX45k2Eq3M/+3vw==,type:str]
+    namespace: ENC[AES256_GCM,data:JsUzvjV7a2SVm7Q=,iv:z7klCRzcXMBDa5/kpzC9BmLyldThnYa+h4B+3bBI8gw=,tag:p9gWbd+XdEoUweEO5D1+LA==,type:str]
+type: ENC[AES256_GCM,data:SzzZXb6y,iv:W50yO3/yHXMONAVkBp+Qe+GCc4/8tqYGa4nOzX0Fl4M=,tag:FqspSc45XAT+tjrZ8WWMnA==,type:str]
+stringData:
+    sops.agekey: ENC[AES256_GCM,data:ZSvRtmptTcu//AeXDybhSlR8FbvCjYXK8qtR491yeJlYkVPpMlRVjgQD6svk800dtzBB4ziu5991TK5uDPHAPW/0dCdsWD5kF+a51/UHBW1vVvZMncHwnZBHlS+Bju+dW4p58SNF3yGqPKmUQw1Ry2zxkO3oSQScp9rXx5MjHrNtjpHAYB38I+ILJ2KsogSv5n+/1S9KRAPj8+8CL2GBT5ta65kXl/1i3aNLPp1X+6ha4rDrIKkW0jEwvxEC,iv:eT70xzn589wdM7DaiXLmjG+1AblO37ArgeIBwprDPkY=,tag:6Q29CZ5ZOAwfIOYY6eGMrA==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0NmxZTW01dEhzR3F2WFIz
+            QlI4cXFlWmVrNG1ORHc1MU9jZjk3K1N6eVVzCi94a0dtWDU4ODBRLzhjOW1RVzB0
+            djcwc3djcG1uejRNcU5JOVlKajVtZjAKLS0tIFV2UllGbDlOci81M3dzZkhLQWRy
+            TS9VWStXUXJUTm14b3o4SmVWYWNIQmMKw8NHB68cWPGbfenSDWiLwNh+YMDWyBHi
+            pCJ+s190Z3qxSuO6KYEQ1JAv1/puMfb7QYZ4m23g4d0CR+bjEY+znA==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
+    lastmodified: "2026-07-25T02:24:48Z"
+    mac: ENC[AES256_GCM,data:MILVYPpWJ9PMI3oTKypfYqwqNqyQBNOxxKffFvSBpzEVLmsP1fKYV4wUMTmOFwVMT2YEhr9ghUslL5OFMiR3Eg4f7HLn/nzmBxsXKIci8CGQflifcidNy4oMAF9WkB7uI8aPGbJcvgfkOnEQLEZ9tOtU31n7mqeNq2eL66l/obg=,iv:QO1UI/8oBX+zzjPSXQuyrvE+7V0PtpGAfPbWXgI7ESo=,tag:HEpS8IxIqcdd4KdL/qYCyA==,type:str]
+    pgp:
+        - created_at: "2026-07-25T02:24:48Z"
+          enc: |-
+            -----BEGIN PGP MESSAGE-----
+
+            hF4DzCc2EjPFSlYSAQdAdTxEenJ7r0V3LEaGs65WGRCLH3jS+wk+v9iMGCDdwgcw
+            tOFgutA+QEHaRmzmAvyhKkmfOPf84F6jRsJmdtm+ZKutcpLjF7OJRmfMR81JgCuj
+            0l4BmHAIicD4rY9WN+orEGqqNvKAKQlOn5mgCSR+QG4Uz02AwcD2N7EPkB4ODc2Z
+            79/S1sQMOh0rmq5eXJR9jbg5UsbeFB1JOsuy/MWgpsInYMAUlkFIFeHKSZ54atRD
+            =n427
+            -----END PGP MESSAGE-----
+          fp: B2266723EDB691FBB16501BC07D6E31CCAE33514
+    unencrypted_suffix: _unencrypted
+    version: 3.13.1
