@@ -43,18 +43,13 @@ spec:
       deletionPolicy: Delete
       isDefault: false
 
-    cephClusterSpec:
+cephClusterSpec:
       mon:
         count: 3
         allowMultiplePerNode: false
         volumeClaimTemplate:
           spec:
-            # mirror-replicated (DRBD, 2 replicas + diskless tie-breaker).
-            # Replaces openebs-hostpath so replacement mons (e.g. when a
-            # pool node's hostpath partition is wiped) bind to a mirror
-            # PVC. Existing mons (j/m/n) keep their openebs-hostpath
-            # PVCs until their pod fails and rook recreates them.
-            storageClassName: miroir-replicated
+            storageClassName: mirror-replicated
             resources:
               requests:
                 storage: 10Gi
