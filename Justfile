@@ -12,6 +12,7 @@ oci_url := registry + "/" + repo_name
 talos_dir := "talos/whoverse"
 talos_config := talos_dir + "/clusterconfig"
 bootstrap_dir := "kubernetes/bootstrap"
+sops_age_key_file := "~/.config/sops/age/keys.txt"
 
 # Install the local pre-commit hook (gitleaks + trufflehog) using mise
 hooks-install:
@@ -98,7 +99,17 @@ flux-configure:
     kubectl apply -f kubernetes/flux-config/cluster.yaml
 
 # Full bootstrap: Cilium + Flux + self-management config
-bootstrap: bootstrap-cilium bootstrap-flux flux-configure
+bootstrap: bootstrap-cilium bootstrap-flux flux-configure bootstrap-sops-key
+
+# Install the Flux SOPS age key Secret (one-shot per cluster rebuild).
+# Decrypts kubernetes/bootstrap/flux-age-key.sops.yaml with the personal age key
+# and applies Secret/flux-system/sops-age, then forces Flux to reconcile the
+# flux-sops Kustomization which decrypts and applies the 1Password Connect
+# credentials Secret from kubernetes/flux-config/sops/.
+bootstrap-sops-key:
+    SOPS_AGE_KEY_FILE={{ sops_age_key_file }} \
+        sops -d kubernetes/bootstrap/flux-age-key.sops.yaml | kubectl apply -f -
+    flux reconcile kustomization flux-sops -n flux-system
 
 # =============================================================================
 # Flux Operations
