@@ -1,0 +1,39 @@
+---
+apiVersion: fluxcd.controlplane.io/v1
+kind: FluxInstance
+metadata:
+  name: flux
+  namespace: flux-system
+spec:
+  distribution:
+    # renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution
+    version: "2.9.3"
+    registry: "ghcr.io/fluxcd"
+  components:
+    - source-controller
+    - kustomize-controller
+    - helm-controller
+    - notification-controller
+    - image-reflector-controller
+    - image-automation-controller
+  cluster:
+    size: medium
+  kustomize:
+    patches:
+      - target:
+          kind: Deployment
+          labelSelector: "app.kubernetes.io/name in (kustomize-controller, helm-controller)"
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --concurrent=16
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --requeue-dependency=5s
+      - target:
+          kind: Deployment
+          labelSelector: "app.kubernetes.io/name=source-controller"
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --requeue-dependency=5s
