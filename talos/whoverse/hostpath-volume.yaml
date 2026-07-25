@@ -1,0 +1,13 @@
+---
+# Per-node RawVolumeConfig: keep the u-hostpath user volume on nodes that
+# still need it (cp2, cp3, w1, w2 — openebs-hostpath PVCs are pinned to them
+# and haven't been migrated to mirror yet). cp1 has its own per-node
+# miroir-disk.yaml patch instead.
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: hostpath
+provisioning:
+  diskSelector:
+    match: system_disk
+  minSize: 50GiB
+  maxSize: 128GiB

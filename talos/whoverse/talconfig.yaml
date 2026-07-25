@@ -32,6 +32,7 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./ceph-osd-volume.yaml"
+      - "@./hostpath-volume.yaml"
 
   - hostname: whoverse-cp3  # ZimaBoard
     ipAddress: 192.168.2.23
@@ -39,6 +40,7 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./ceph-osd-volume.yaml"
+      - "@./hostpath-volume.yaml"
 
   - hostname: whoverse-w1  # ZimaBoard 2
     ipAddress: 192.168.2.24
@@ -46,11 +48,14 @@ nodes:
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
       - "@./ceph-osd-volume.yaml"
+      - "@./hostpath-volume.yaml"
 
   - hostname: whoverse-w2  # VM (libvirt)
     ipAddress: 192.168.2.225
     controlPlane: false
     installDisk: /dev/sda
+    patches:
+      - "@./hostpath-volume.yaml"
     schematic:
       customization:
         systemExtensions:
@@ -165,7 +170,6 @@ worker:
     - "@./patches/watchdog.yaml"
     - "@./miroir-kernel.yaml"
   volumes: *sharedVolumes
-  userVolumes: *sharedUserVolumes
   networkInterfaces:
     - interface: br0
       dhcp: true
