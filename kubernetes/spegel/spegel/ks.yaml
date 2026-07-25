@@ -5,7 +5,7 @@ metadata:
   namespace: spegel
 spec:
   interval: 15m
-  path: "./kubernetes/spegel/spegel/app"
+  path: "./spegel/spegel/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

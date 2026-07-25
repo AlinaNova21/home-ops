@@ -6,7 +6,7 @@ metadata:
   namespace: network
 spec:
   interval: 30m
-  path: "./kubernetes/network/envoy-gateway/app"
+  path: "./network/envoy-gateway/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -31,7 +31,7 @@ spec:
     - name: cert-manager-config
       namespace: cert-manager
   interval: 10m
-  path: "./kubernetes/network/envoy-gateway/config"
+  path: "./network/envoy-gateway/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

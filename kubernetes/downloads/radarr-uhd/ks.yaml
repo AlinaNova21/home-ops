@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./kubernetes/downloads/radarr-uhd/app"
+  path: "./downloads/radarr-uhd/app"
   postBuild:
     substitute:
       APP: radarr-uhd

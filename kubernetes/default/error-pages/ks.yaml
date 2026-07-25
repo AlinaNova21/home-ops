@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: "./kubernetes/default/error-pages/app-internal"
+  path: "./default/error-pages/app-internal"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -22,7 +22,7 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: "./kubernetes/default/error-pages/app-external"
+  path: "./default/error-pages/app-external"
   sourceRef:
     kind: OCIRepository
     name: home-ops

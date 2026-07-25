@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 30m
-  path: ./kubernetes/default/grocy/app
+  path: ./default/grocy/app
   postBuild:
     substitute:
       APP: grocy

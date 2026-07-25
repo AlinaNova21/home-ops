@@ -6,7 +6,7 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kubernetes/kube-system/cilium/app"
+  path: "./kube-system/cilium/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -29,7 +29,7 @@ spec:
   dependsOn:
     - name: cilium
   interval: 10m
-  path: "./kubernetes/kube-system/cilium/config"
+  path: "./kube-system/cilium/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

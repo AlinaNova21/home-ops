@@ -6,7 +6,7 @@ metadata:
   namespace: downloads
 spec:
   interval: 15m
-  path: "./kubernetes/downloads/recyclarr/app"
+  path: "./downloads/recyclarr/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

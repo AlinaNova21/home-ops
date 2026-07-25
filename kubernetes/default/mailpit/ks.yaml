@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 30m
-  path: "./kubernetes/default/mailpit/app"
+  path: "./default/mailpit/app"
   postBuild:
     substitute:
       APP: mailpit

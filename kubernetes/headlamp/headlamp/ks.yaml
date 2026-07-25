@@ -5,7 +5,7 @@ metadata:
   namespace: headlamp
 spec:
   interval: 30m
-  path: "./kubernetes/headlamp/headlamp/app"
+  path: "./headlamp/headlamp/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

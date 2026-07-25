@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./kubernetes/downloads/seerr/app"
+  path: "./downloads/seerr/app"
   postBuild:
     substitute:
       APP: seerr

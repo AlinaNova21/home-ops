@@ -6,7 +6,7 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kubernetes/kube-system/node-feature-discovery/app"
+  path: "./kube-system/node-feature-discovery/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

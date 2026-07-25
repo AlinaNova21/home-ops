@@ -6,7 +6,7 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
-  path: "./kubernetes/monitoring/capacitor/app"
+  path: "./monitoring/capacitor/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

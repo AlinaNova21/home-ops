@@ -9,7 +9,7 @@ spec:
     - name: external-secrets-config
       namespace: external-secrets-system
   interval: 30m
-  path: "./kubernetes/network/cloudflared/app"
+  path: "./network/cloudflared/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

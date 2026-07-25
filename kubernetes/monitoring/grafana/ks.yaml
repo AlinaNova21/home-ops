@@ -6,7 +6,7 @@ metadata:
   namespace: monitoring
 spec:
   interval: 30m
-  path: "./kubernetes/monitoring/grafana/app"
+  path: "./monitoring/grafana/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

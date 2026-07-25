@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: ./kubernetes/default/database/config
+  path: ./default/database/config
   sourceRef:
     kind: OCIRepository
     name: home-ops

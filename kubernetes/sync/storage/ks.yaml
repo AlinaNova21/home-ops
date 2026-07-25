@@ -6,7 +6,7 @@ metadata:
   namespace: sync
 spec:
   interval: 15m
-  path: "./kubernetes/sync/storage/config"
+  path: "./sync/storage/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

@@ -8,7 +8,7 @@ spec:
   dependsOn:
     - name: flux-operator
   interval: 30m
-  path: "./kubernetes/flux-system/flux-instance/app"
+  path: "./flux-system/flux-instance/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

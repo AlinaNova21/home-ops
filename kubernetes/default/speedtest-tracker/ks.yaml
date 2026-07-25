@@ -11,7 +11,7 @@ spec:
   dependsOn:
     - name: default-database
   interval: 30m
-  path: ./kubernetes/default/speedtest-tracker/app
+  path: ./default/speedtest-tracker/app
   postBuild:
     substitute:
       APP: speedtest-tracker

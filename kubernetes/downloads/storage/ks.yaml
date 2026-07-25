@@ -6,7 +6,7 @@ metadata:
   namespace: downloads
 spec:
   interval: 15m
-  path: "./kubernetes/downloads/storage/config"
+  path: "./downloads/storage/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

@@ -35,6 +35,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push OCI artifact
+        working-directory: ./kubernetes
         run: |
           flux push artifact oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
             --path="." \

@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   interval: 15m
-  path: "./kubernetes/default/memos/app"
+  path: "./default/memos/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

@@ -6,7 +6,7 @@ metadata:
   namespace: inteldeviceplugins-system
 spec:
   interval: 30m
-  path: "./kubernetes/inteldeviceplugins-system/intel-gpu-plugin/app"
+  path: "./inteldeviceplugins-system/intel-gpu-plugin/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops

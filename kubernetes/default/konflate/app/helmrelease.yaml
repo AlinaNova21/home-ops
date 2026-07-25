@@ -51,7 +51,6 @@ spec:
       maxUnavailable: 1
     config:
       repo: github://AlinaNova21/home-ops
-      clusterPath: kubernetes
       statusChecks: true
       prComments: true
       publicUrl: https://konflate.whoverse.nexus

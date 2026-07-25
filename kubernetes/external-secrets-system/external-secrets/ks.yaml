@@ -6,7 +6,7 @@ metadata:
   namespace: external-secrets-system
 spec:
   interval: 10m
-  path: "./kubernetes/external-secrets-system/external-secrets/app"
+  path: "./external-secrets-system/external-secrets/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
@@ -39,7 +39,7 @@ spec:
     - name: onepassword-connect
       namespace: onepassword-connect
   interval: 10m
-  path: "./kubernetes/external-secrets-system/external-secrets/config"
+  path: "./external-secrets-system/external-secrets/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

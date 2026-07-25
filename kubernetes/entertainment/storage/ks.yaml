@@ -6,7 +6,7 @@ metadata:
   namespace: entertainment
 spec:
   interval: 15m
-  path: "./kubernetes/entertainment/storage/config"
+  path: "./entertainment/storage/config"
   sourceRef:
     kind: OCIRepository
     name: home-ops

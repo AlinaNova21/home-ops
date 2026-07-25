@@ -8,7 +8,7 @@ spec:
   components:
     - ../../../components/kopiur/backup
   interval: 15m
-  path: "./kubernetes/entertainment/jellyfin/app"
+  path: "./entertainment/jellyfin/app"
   postBuild:
     substitute:
       APP: jellyfin

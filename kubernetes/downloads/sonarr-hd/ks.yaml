@@ -9,7 +9,7 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./kubernetes/downloads/sonarr-hd/app"
+  path: "./downloads/sonarr-hd/app"
   postBuild:
     substitute:
       APP: sonarr-hd

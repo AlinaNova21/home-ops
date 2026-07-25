@@ -6,7 +6,7 @@ metadata:
   namespace: network
 spec:
   interval: 15m
-  path: "./kubernetes/network/pve-egress/app"
+  path: "./network/pve-egress/app"
   sourceRef:
     kind: OCIRepository
     name: home-ops
