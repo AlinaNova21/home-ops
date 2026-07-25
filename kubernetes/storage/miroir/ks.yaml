@@ -19,3 +19,20 @@ spec:
   timeout: 10m
   wait: true
   prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: miroir-config
+  namespace: storage
+spec:
+  dependsOn:
+    - name: miroir
+  interval: 30m
+  path: "./storage/miroir/config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  prune: true
