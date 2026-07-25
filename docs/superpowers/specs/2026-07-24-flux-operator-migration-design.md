@@ -151,39 +151,55 @@ spec:
 apiVersion: fluxcd.controlplane.io/v1
 kind: FluxInstance
 metadata:
-  name: flux
+  name: flux                       # REQUIRED: must be 'flux' (CRD x-kubernetes-validations)
   namespace: flux-system
 spec:
   distribution:
-    version: "2.4.0"            # see Section 7 for pin rationale
+    version: "2.9.x"               # semver; tracks latest patch in 2.9 line (see Section 7)
     registry: "ghcr.io/fluxcd"
-    imagePullSecrets:
-      - name: regcred           # only if private registry; see Section 7
+    # imagePullSecret omitted — Flux images are public
   components:
+    - source-controller            # matches current HelmRelease (no source-watcher)
     - kustomize-controller
     - helm-controller
-    - source-controller
     - notification-controller
     - image-reflector-controller
     - image-automation-controller
   cluster:
-    size: medium                # default; tune at impl time
+    size: medium                   # default; tune at impl time
   kustomize:
-    args:
-      - --concurrent=16
-      - --requeue-dependency=5s
-  helm:
-    args:
-      - --concurrent=16
-  source:
-    args:
-      - --requeue-dependency=5s
+    patches:
+      # Preserve --concurrent=16, --requeue-dependency=5s on kustomize + helm;
+      # --requeue-dependency=5s on source (currently in flux-helmrelease.yaml L44–56).
+      - target:
+          kind: Deployment
+          labelSelector: "app.kubernetes.io/name in (kustomize-controller, helm-controller)"
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --concurrent=16
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --requeue-dependency=5s
+      - target:
+          kind: Deployment
+          labelSelector: "app.kubernetes.io/name=source-controller"
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --requeue-dependency=5s
 ```
 
 This preserves every controller flag currently set in
 `kubernetes/flux-config/flux-helmrelease.yaml` lines 44–56, plus the
 image reflector + image automation controllers enabled by
-`bootstrap.sh` lines 64–69.
+`bootstrap.sh` lines 64–69. Note: `FluxInstance` does not have a
+`spec.helm.args` or `spec.source.args` field — controller arguments are
+applied via JSON patches targeting the controller Deployments.
+
+The CRD enforces `metadata.name == 'flux'` via
+`x-kubernetes-validations` — any other name will be rejected by the API
+server.
 
 ### 4.4 `Kustomization/flux-operator` and `Kustomization/flux-instance`
 
@@ -257,24 +273,35 @@ operator reconciles `FluxInstance`, and the Flux controllers come online.
 
 ## 7. Open items resolved at implementation time
 
-1. **`flux-operator` chart version.** Will pin to the latest stable
-   release available at implementation time. The repo's convention is
-   pinned chart versions (see `kubernetes/flux-config/flux-helmrelease.yaml`
-   line 11: `version: 2.19.0`). Renovate handles bumps.
-2. **`FluxInstance.spec.distribution.version`.** The latest stable Flux
-   release as of implementation time. The previous HelmRelease pinned
-   `2.19.0`; the operator-managed version is independent of the chart
-   version.
-3. **`imagePullSecrets`.** Default is empty (Flux images are public).
-   Only set `regcred` if a private registry is configured (currently
-   not — `kubernetes/bootstrap/helmfile.yaml` uses public charts only).
-4. **Operator Helm values.** Default values are sufficient for the
-   cluster. Document any customizations in
-   `kubernetes/flux-system/flux-operator/app/helmrelease.yaml` comments
-   at implementation time.
+1. **`flux-operator` chart version.** Pin to the latest stable release
+   available at implementation time. As of 2026-07-24, the latest chart
+   version is `0.27.0` (`oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator:0.27.0`).
+   The repo's convention is pinned chart versions (see
+   `kubernetes/flux-config/flux-helmrelease.yaml` line 11: `version: 2.19.0`).
+   Renovate handles bumps.
+2. **`FluxInstance.spec.distribution.version`.** Plan: `"2.9.x"` (semver
+   expression). The current cluster runs Flux 2.9.1 (chart 2.19.0;
+   appVersion confirmed via `oci://ghcr.io/fluxcd-community/charts/flux2`
+   metadata). The latest Flux release in the operator-manifests OCI
+   artifact is `v2.9.3` (per
+   `github.com/controlplaneio-fluxcd/distribution` tags, fetched
+   2026-07-24). Using `2.9.x` tracks the latest patch in the 2.9 minor
+   line; on first reconcile the operator resolves to `v2.9.3`. Pin to
+   an exact version (e.g. `"2.9.1"`) instead if a zero-change cutover
+   is preferred.
+3. **`distribution.imagePullSecret`.** Omitted — Flux images are pulled
+   from the public `ghcr.io/fluxcd` registry, no secret required.
+4. **Operator Helm values.** Default chart values are sufficient.
+   Notable defaults preserved: `installCRDs: true`, `priorityClassName: ""`
+   (operator will not set cluster-critical by default), `rbac.create: true`
+   (required for FluxInstance reconciliation).
 5. **`flux-local` validation job.** `.github/workflows/validate-kubernetes.yml`
    line 79 disables `flux-local test`. Re-enable it so the operator CRDs
    and `FluxInstance` types are validated end-to-end before merge.
+6. **Cluster size tuning.** `FluxInstance.spec.cluster.size` defaults
+   to `medium`. The cluster has 5 nodes (3 control-plane, 2 workers per
+   `kubectl get nodes`). `medium` is appropriate; revisit if controller
+   resource pressure is observed.
 
 ## 8. Validation
 

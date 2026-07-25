@@ -195,3 +195,73 @@ mise exec -- kopia snapshot ls
 - Adding a new tool: append `KEY="op://vault/item/field"` lines inside a new commented section in `.op.env`, then `mise run secrets:env` to refresh.
 - `.env` is gitignored and never tracked. Do not add manual entries there — use `mise.toml [env]` for persistent vars.
 - Tool-specific helpers (e.g. `kopia:connect`) live as one-line mise tasks alongside `secrets:env`.
+
+## SOPS for Flux
+
+Flux decrypts `kubernetes/flux-config/sops/*.sops.yaml` using a dedicated age key that lives in the cluster as `Secret/flux-system/sops-age`. The key is generated once during initial setup and bootstrapped manually after a fresh cluster install.
+
+### Keys
+
+| File | Purpose | `.sops.yaml` rule |
+|---|---|---|
+| `~/.config/sops/age/keys.txt` | Personal age key — decrypts k8s bootstrap + Talos | `kubernetes/bootstrap/`, `talos/` |
+| `Secret/flux-system/sops-age` (in cluster) | Flux-only age key — decrypts Flux-managed k8s | `kubernetes/flux-config/sops/` |
+
+The personal key is also a recipient on `kubernetes/flux-config/sops/*.sops.yaml` (dual recipients) so the operator can decrypt locally without touching the cluster Secret.
+
+### One-shot bootstrap (per cluster rebuild)
+
+```bash
+just bootstrap-sops-key
+```
+
+This decrypts `kubernetes/bootstrap/flux-age-key.sops.yaml` with the personal key, applies `Secret/flux-system/sops-age` to the cluster, and forces Flux to reconcile `Kustomization/flux-sops` — which then decrypts and applies the 1Password Connect credentials Secret from `kubernetes/flux-config/sops/`.
+
+### Adding a new k8s SOPS file
+
+Drop the file under `kubernetes/flux-config/sops/`, add it to `kubernetes/flux-config/sops/kustomization.yaml`. The matching `.sops.yaml` rule already covers any new file in that directory — no rule edit needed.
+
+```bash
+# Encrypt in place after authoring the Secret manifest
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -e -i kubernetes/flux-config/sops/<name>.sops.yaml
+```
+
+### Flux age key rotation
+
+```bash
+# 1. Generate a new keypair (ephemeral /tmp keyfile)
+age-keygen -o /tmp/flux-home-ops.txt.new
+NEW_PUB=$(grep '# public key:' /tmp/flux-home-ops.txt.new | awk '{print $NF}')
+
+# 2. Update .sops.yaml with the new public key in the flux-config/sops rule
+# 3. Re-encrypt all files under kubernetes/flux-config/sops/
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt:/tmp/flux-home-ops.txt \
+  sops updatekeys -y kubernetes/flux-config/sops/*.sops.yaml
+
+# 4. Re-encrypt the bootstrap Secret with the new private key
+python3 -c "
+import textwrap
+with open('/tmp/flux-home-ops.txt.new') as f:
+    print(textwrap.dedent('''
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sops-age
+  namespace: flux-system
+type: Opaque
+stringData:
+  sops.agekey: |
+''').lstrip() + textwrap.indent(f.read().rstrip(), '    '))
+" > kubernetes/bootstrap/flux-age-key.sops.yaml
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt \
+  sops -e -i kubernetes/bootstrap/flux-age-key.sops.yaml
+
+# 5. Discard the temporary keyfile
+rm -f /tmp/flux-home-ops.txt.new
+
+# 6. Commit + push, then re-run the bootstrap
+git add .sops.yaml kubernetes/bootstrap/flux-age-key.sops.yaml kubernetes/flux-config/sops/
+git commit -m "chore(sops): rotate Flux age key"
+git push
+just bootstrap-sops-key
+```
