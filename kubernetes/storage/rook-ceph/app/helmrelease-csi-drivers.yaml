@@ -38,10 +38,15 @@ spec:
           priorityClassName: system-node-critical
         controllerPlugin:
           priorityClassName: system-cluster-critical
+        # Enable VolumeSnapshot support for all drivers (required by kopiur)
+        # Adds csi-snapshotter sidecar to ctrlplugin pods
+        snapshotPolicy: volumeSnapshot
     drivers:
       rbd:
         enabled: true
         name: storage.rbd.csi.ceph.com
+        # Required for VolumeSnapshot to work on RBD
+        snapshotPolicy: volumeSnapshot
       cephfs:
         enabled: false
       nfs:
