@@ -32,7 +32,7 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./ceph-osd-volume.yaml"
-      - "@./hostpath-volume.yaml"
+      - "@./miroir-disk.yaml"
 
   - hostname: whoverse-cp3  # ZimaBoard
     ipAddress: 192.168.2.23
