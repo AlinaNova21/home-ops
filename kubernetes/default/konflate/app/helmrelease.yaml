@@ -31,7 +31,7 @@ spec:
     - kind: Secret
       name: konflate-github-app
       valuesKey: appClientId
-      targetPath: secret.appClientId
+      targetPath: config.appClientId
     - kind: Secret
       name: konflate-github-app
       valuesKey: appPrivateKey
