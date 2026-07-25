@@ -155,7 +155,8 @@ metadata:
   namespace: flux-system
 spec:
   distribution:
-    version: "2.9.x"               # semver; tracks latest patch in 2.9 line (see Section 7)
+    # renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution
+    version: "2.9.3"               # pinned; renovate bumps per Section 7
     registry: "ghcr.io/fluxcd"
     # imagePullSecret omitted — Flux images are public
   components:
@@ -279,16 +280,21 @@ operator reconciles `FluxInstance`, and the Flux controllers come online.
    The repo's convention is pinned chart versions (see
    `kubernetes/flux-config/flux-helmrelease.yaml` line 11: `version: 2.19.0`).
    Renovate handles bumps.
-2. **`FluxInstance.spec.distribution.version`.** Plan: `"2.9.x"` (semver
-   expression). The current cluster runs Flux 2.9.1 (chart 2.19.0;
-   appVersion confirmed via `oci://ghcr.io/fluxcd-community/charts/flux2`
-   metadata). The latest Flux release in the operator-manifests OCI
-   artifact is `v2.9.3` (per
+2. **`FluxInstance.spec.distribution.version`.** Pin to `"2.9.3"` (exact).
+   The current cluster runs Flux 2.9.1 (chart 2.19.0; appVersion
+   confirmed via `oci://ghcr.io/fluxcd-community/charts/flux2`
+   metadata). The latest Flux release is `v2.9.3` (per
    `github.com/controlplaneio-fluxcd/distribution` tags, fetched
-   2026-07-24). Using `2.9.x` tracks the latest patch in the 2.9 minor
-   line; on first reconcile the operator resolves to `v2.9.3`. Pin to
-   an exact version (e.g. `"2.9.1"`) instead if a zero-change cutover
-   is preferred.
+   2026-07-24). Using a concrete pin produces a zero-change cutover.
+   **Renovate guidance**: the field is a plain string under
+   `FluxInstance.spec.distribution.version` (not a HelmRelease), so the
+   built-in `flux` manager in `.github/renovate.json` does not pick it
+   up. Mark it for the existing `customManagers.regex` rule (lines
+   17-28) by prefixing the version with the convention comment:
+   `# renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution`
+   on the line directly above `version:`. Renovate will then propose
+   bumps; the global `matchUpdateTypes: [patch]` rule (lines 30-37)
+   auto-merges patch updates silently.
 3. **`distribution.imagePullSecret`.** Omitted — Flux images are pulled
    from the public `ghcr.io/fluxcd` registry, no secret required.
 4. **Operator Helm values.** Default chart values are sufficient.
