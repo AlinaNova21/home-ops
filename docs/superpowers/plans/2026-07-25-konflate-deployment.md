@@ -4,7 +4,7 @@
 
 **Goal:** Deploy Konflate 0.4.3 as a public PR-diff UI for `AlinaNova21/home-ops` using GitHub App credentials for forge auth (read + write path).
 
-**Architecture:** Flux `Kustomization/konflate` (namespace `default`) renders a `HelmRelease/konflate` (chart `konflate` 0.4.3 from the shared `home-operations` OCI registry). GitHub App credentials (`appClientId`, `appSecretKey`) are synced from 1Password Connect into `Secret/konflate-github-app` and injected into the HelmRelease via two `valuesFrom` entries. Konflate is exposed on the external Gateway (Cloudflare Tunnel) at `konflate.whoverse.nexus` via a single `HTTPRoute`.
+**Architecture:** Flux `Kustomization/konflate` (namespace `default`) renders a `HelmRelease/konflate` (chart `konflate` 0.4.3 from the shared `home-operations` OCI registry). GitHub App credentials (`appClientId`, `appPrivateKey`) are synced from 1Password Connect into `Secret/konflate-github-app` and injected into the HelmRelease via two `valuesFrom` entries. Konflate is exposed on the external Gateway (Cloudflare Tunnel) at `konflate.whoverse.nexus` via a single `HTTPRoute`.
 
 **Tech Stack:** Flux CD, HelmRelease v2, External Secrets Operator, Envoy Gateway (Gateway API v1), `bjw-s`-style conventions.
 
@@ -87,10 +87,10 @@ spec:
       remoteRef:
         key: konflate-github-app
         property: appClientId
-    - secretKey: appSecretKey
+    - secretKey: appPrivateKey
       remoteRef:
         key: konflate-github-app
-        property: appSecretKey
+        property: appPrivateKey
 ```
 
 ---
@@ -139,7 +139,7 @@ spec:
       targetPath: secret.appClientId
     - kind: Secret
       name: konflate-github-app
-      valuesKey: appSecretKey
+      valuesKey: appPrivateKey
       targetPath: secret.appPrivateKey
   values:
     replicaCount: 1
@@ -304,7 +304,7 @@ Create item `konflate-github-app` in the operator's vault with two text fields:
 | Field | Value |
 |---|---|
 | `appClientId` | The GitHub App's client id (e.g. `Iv23li...`) |
-| `appSecretKey` | The PEM private key, paste with original line breaks |
+| `appPrivateKey` | The PEM private key, paste with original line breaks |
 
 - [ ] **Step 2: Confirm the App installation**
 
@@ -368,6 +368,6 @@ Open (or push to) an open PR on `AlinaNova21/home-ops`. Within
 
 **3. Type / naming consistency:**
 - HelmRelease `metadata.name: konflate`, Flux `Kustomization` `metadata.name: konflate`, ExternalSecret `metadata.name: konflate-github-app`, HTTPRoute `metadata.name: konflate`, Service target `name: konflate` (chart default from release name) — consistent.
-- `valuesFrom.valuesKey` matches `ExternalSecret.data.secretKey` (`appClientId`, `appSecretKey`) — consistent.
-- `valuesFrom.targetPath: secret.appPrivateKey` matches the chart's expected values key (the chart calls the private-key field `secret.appPrivateKey`; the operator named the 1Password field `appSecretKey`, and that label carries through ExternalSecret + Secret + HelmRelease valuesKey; only the chart-bound targetPath uses the chart's name).
+- `valuesFrom.valuesKey` matches `ExternalSecret.data.secretKey` (`appClientId`, `appPrivateKey`) — consistent.
+- `valuesFrom.targetPath: secret.appPrivateKey` matches the chart's expected values key (`secret.appPrivateKey`); all four layers (1Password field, ExternalSecret property, Secret data key, HelmRelease valuesKey) share the same `appPrivateKey` label.
 - 1Password item key matches `ExternalSecret.remoteRef.key` (`konflate-github-app`) — consistent.

@@ -34,13 +34,12 @@ Service is `konflate` on port `8080` (chart default).
 
 Forge identity is a GitHub App whose client id + PEM private key are stored
 in 1Password Connect under item `konflate-github-app`, fields `appClientId`
-and `appSecretKey`, synced into the cluster by External Secrets Operator
+and `appPrivateKey`, synced into the cluster by External Secrets Operator
 into `Secret/default/konflate-github-app` (data keys `appClientId` and
-`appSecretKey`). The HelmRelease injects both via two `valuesFrom` entries:
-`appClientId` → `secret.appClientId`, and `appSecretKey` → `secret.appPrivateKey`
-(the chart's expected key name; the ExternalSecret data key keeps the operator's
-`appSecretKey` label). The App installation on `AlinaNova21/home-ops` is
-auto-discovered from `config.repo`; no installation id is configured.
+`appPrivateKey`). The HelmRelease injects both via two `valuesFrom` entries:
+`appClientId` → `secret.appClientId`, and `appPrivateKey` → `secret.appPrivateKey`.
+The App installation on `AlinaNova21/home-ops` is auto-discovered from
+`config.repo`; no installation id is configured.
 
 ## File map
 
@@ -109,7 +108,7 @@ spec:
       targetPath: secret.appClientId
     - kind: Secret
       name: konflate-github-app
-      valuesKey: appSecretKey
+      valuesKey: appPrivateKey
       targetPath: secret.appPrivateKey
   values:
     replicaCount: 1
@@ -151,10 +150,10 @@ spec:
       remoteRef:
         key: konflate-github-app
         property: appClientId
-    - secretKey: appSecretKey
+    - secretKey: appPrivateKey
       remoteRef:
         key: konflate-github-app
-        property: appSecretKey
+        property: appPrivateKey
 ```
 
 ```yaml
@@ -188,7 +187,7 @@ with two text fields:
 
 - `appClientId` — the GitHub App's **client id** (the JWT issuer; `Iv23li…`
   shape). No numeric app id needed.
-- `appSecretKey` — the PEM private key, with original line breaks preserved.
+- `appPrivateKey` — the PEM private key, with original line breaks preserved.
 
 The App must be installed on `AlinaNova21/home-ops` with these repository
 permissions:

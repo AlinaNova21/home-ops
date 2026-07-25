@@ -34,7 +34,7 @@ spec:
       targetPath: secret.appClientId
     - kind: Secret
       name: konflate-github-app
-      valuesKey: appSecretKey
+      valuesKey: appPrivateKey
       targetPath: secret.appPrivateKey
   values:
     replicaCount: 1
