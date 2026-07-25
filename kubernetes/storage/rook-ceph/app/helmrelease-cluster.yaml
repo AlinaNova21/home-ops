@@ -49,7 +49,7 @@ spec:
         allowMultiplePerNode: false
         volumeClaimTemplate:
           spec:
-            storageClassName: mirror-replicated
+            storageClassName: miroir-replicated
             resources:
               requests:
                 storage: 10Gi
