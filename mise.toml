@@ -23,7 +23,7 @@ talhelper  = "latest"
 kubectl    = "1.36.3"
 helm       = "4.2.3"
 helmfile   = "1.5.2"
-flux2      = "2.8.8"
+flux2      = "2.9"
 cilium-cli = "0.19.6"
 k9s        = "0.50.18"
 
@@ -42,6 +42,9 @@ gitleaks   = "latest"
 trufflehog = "latest"
 "aqua:k8sgpt-ai/k8sgpt" = "latest"
 kopia = "latest"
+flux-operator = "latest"
+flux-operator-mcp = "latest"
+kubeconform = "latest"
 
 [hooks]
 # Install the helm-diff plugin (mise manages binaries, not helm plugins).

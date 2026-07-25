@@ -15,6 +15,7 @@ resources:
   - metrics-server.yaml
   - nfd.yaml
   - openebs.yaml
+  - miroir.yaml
   - ceph-csi-operator.yaml
   - rook-ceph.yaml
   - spegel.yaml

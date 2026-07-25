@@ -6,3 +6,4 @@ resources:
   - flux-helmrelease.yaml
   - flux-system.yaml
   - cluster.yaml
+  - sops/ks.yaml
