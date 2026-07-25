@@ -76,30 +76,12 @@ bootstrap-cilium:
         -f {{bootstrap_dir}}/cilium-values.yaml \
         --wait --timeout 5m
 
-# Install Flux only
-bootstrap-flux:
-    helm repo add fluxcd-community oci://ghcr.io/fluxcd-community/charts 2>/dev/null || true
-    helm upgrade --install flux2 fluxcd-community/flux2 \
-        --namespace flux-system \
-        --create-namespace \
-        --version 2.16.2 \
-        -f {{bootstrap_dir}}/flux-values.yaml \
-        --wait --timeout 5m
-
-# Bootstrap Cilium and Flux using Helmfile
+# Bootstrap Cilium and Flux Operator using Helmfile
 bootstrap-helmfile:
     cd {{bootstrap_dir}} && helmfile apply
 
-# Configure Flux for self-management after bootstrap
-flux-configure:
-    kubectl apply -f kubernetes/flux-config/namespace.yaml
-    kubectl apply -k kubernetes/flux-config/registry/oci
-    kubectl apply -k kubernetes/flux-config/registry/helm
-    kubectl apply -f kubernetes/flux-config/flux-helmrelease.yaml
-    kubectl apply -f kubernetes/flux-config/cluster.yaml
-
-# Full bootstrap: Cilium + Flux + self-management config
-bootstrap: bootstrap-cilium bootstrap-flux flux-configure bootstrap-sops-key
+# Full bootstrap: Cilium + Flux Operator + Flux self-management via GitOps
+bootstrap: bootstrap-helmfile bootstrap-sops-key
 
 # Install the Flux SOPS age key Secret (one-shot per cluster rebuild).
 # Decrypts kubernetes/bootstrap/flux-age-key.sops.yaml with the personal age key
