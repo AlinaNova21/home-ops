@@ -48,7 +48,7 @@ nodes:
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
       - "@./ceph-osd-volume.yaml"
-      - "@./hostpath-volume.yaml"
+      - "@./miroir-disk.yaml"
 
   - hostname: whoverse-w2  # VM (libvirt)
     ipAddress: 192.168.2.225
