@@ -1,6 +1,9 @@
 repositories:
   - name: cilium
     url: https://helm.cilium.io
+  - name: controlplaneio
+    url: ghcr.io/controlplaneio-fluxcd/charts
+    oci: true
 
 releases:
   # Cilium CNI - must be first for networking
@@ -13,13 +16,10 @@ releases:
     wait: true
     timeout: 300
 
-  # Flux CD - GitOps controller
-  - name: flux2
+  # Flux Operator - GitOps controller lifecycle (installs FluxInstance CRDs)
+  - name: flux-operator
     namespace: flux-system
-    chart: oci://ghcr.io/fluxcd-community/charts/flux2
-    version: 2.18.4
-    createNamespace: true
-    values:
-      - flux-values.yaml
+    chart: controlplaneio/flux-operator
+    version: 0.27.0
     wait: true
     timeout: 300
