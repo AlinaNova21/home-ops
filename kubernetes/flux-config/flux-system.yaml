@@ -11,9 +11,13 @@ spec:
     kind: OCIRepository
     name: home-ops
   healthChecks:
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: FluxInstance
+      name: flux
+      namespace: flux-system
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
-      name: flux2
+      name: flux-operator
       namespace: flux-system
   timeout: 10m
   wait: true
