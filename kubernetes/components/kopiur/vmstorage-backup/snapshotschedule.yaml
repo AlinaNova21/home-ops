@@ -3,6 +3,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotSchedule
 metadata:
   name: vmstorage-0
+  namespace: monitoring
 spec:
   policyRef:
     name: vmstorage-0
@@ -14,6 +15,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotSchedule
 metadata:
   name: vmstorage-1
+  namespace: monitoring
 spec:
   policyRef:
     name: vmstorage-1
@@ -25,6 +27,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotSchedule
 metadata:
   name: vmstorage-2
+  namespace: monitoring
 spec:
   policyRef:
     name: vmstorage-2

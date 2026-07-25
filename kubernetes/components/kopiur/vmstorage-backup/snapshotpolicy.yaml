@@ -3,6 +3,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotPolicy
 metadata:
   name: vmstorage-0
+  namespace: monitoring
 spec:
   repository:
     kind: ClusterRepository
@@ -22,6 +23,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotPolicy
 metadata:
   name: vmstorage-1
+  namespace: monitoring
 spec:
   repository:
     kind: ClusterRepository
@@ -41,6 +43,7 @@ apiVersion: kopiur.home-operations.com/v1alpha1
 kind: SnapshotPolicy
 metadata:
   name: vmstorage-2
+  namespace: monitoring
 spec:
   repository:
     kind: ClusterRepository
