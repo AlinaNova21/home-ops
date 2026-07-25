@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'kubernetes/**'
+      - 'kustomization.yaml'
       - '.github/workflows/kubernetes-oci.yml'
   workflow_dispatch:
 
