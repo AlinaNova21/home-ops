@@ -11,6 +11,8 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
+  components:
+    - ../../../components/kopiur/vmstorage-backup
   timeout: 10m
   wait: true
   prune: false

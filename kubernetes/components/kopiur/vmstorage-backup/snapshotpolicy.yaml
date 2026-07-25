@@ -1,0 +1,56 @@
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/snapshotpolicy_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: vmstorage-0
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  credentialProjection:
+    enabled: true
+  sources:
+    - pvc:
+        name: vmstorage-db-vmstorage-victoria-metrics-0
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/snapshotpolicy_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: vmstorage-1
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  credentialProjection:
+    enabled: true
+  sources:
+    - pvc:
+        name: vmstorage-db-vmstorage-victoria-metrics-1
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/snapshotpolicy_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: vmstorage-2
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  credentialProjection:
+    enabled: true
+  sources:
+    - pvc:
+        name: vmstorage-db-vmstorage-victoria-metrics-2
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3
