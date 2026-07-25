@@ -76,7 +76,8 @@ jobs:
 
   flux-local:
     name: flux-local Test + Diff
-    if: false  # temporarily disabled
+    needs: [kustomize-validate]
+    if: needs.kustomize-validate.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
