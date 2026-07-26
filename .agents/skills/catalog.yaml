@@ -1,0 +1,13 @@
+apiVersion: agent.fluxcd.controlplane.io/v1
+kind: Catalog
+spec:
+  sources:
+  - repository: ghcr.io/fluxcd/agent-skills
+    tag: latest
+    targetAgents:
+    - universal
+    verify:
+      matchOIDCIdentity:
+      - issuer: https://token.actions.githubusercontent.com
+        subject: ^https://github\.com/fluxcd/.*$
+      provider: cosign

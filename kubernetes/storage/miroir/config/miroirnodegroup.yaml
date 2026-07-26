@@ -9,9 +9,6 @@ spec:
       miroir.home-operations.com/enabled: "true"
   template:
     pools:
-      - name: local
-        lvmthin:
-          device: /dev/disk/by-partlabel/r-miroir
-      - name: replicated
+      - name: default
         lvmthin:
           device: /dev/disk/by-partlabel/r-miroir
