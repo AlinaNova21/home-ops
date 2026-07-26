@@ -294,7 +294,6 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 5Gi
-        storageClass: ceph-rbd
         advancedMounts:
           seafile:
             seafile:
@@ -304,7 +303,6 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 10Gi
-        storageClass: ceph-rbd
         advancedMounts:
           mariadb:
             mariadb:
@@ -314,7 +312,6 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClass: ceph-rbd
         advancedMounts:
           redis:
             redis:

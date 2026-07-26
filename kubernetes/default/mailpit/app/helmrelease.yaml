@@ -78,7 +78,6 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClass: ceph-rbd
         dataSourceRef:
           apiGroup: kopiur.home-operations.com
           kind: Restore

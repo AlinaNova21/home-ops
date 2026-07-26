@@ -98,7 +98,6 @@ spec:
       config:
         type: persistentVolumeClaim
         size: 20Gi
-        storageClass: ceph-rbd
         accessMode: ReadWriteOnce
         dataSourceRef:
           apiGroup: kopiur.home-operations.com

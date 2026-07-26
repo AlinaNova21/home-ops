@@ -78,6 +78,5 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClass: ceph-rbd
         globalMounts:
           - path: /var/opt/memos
