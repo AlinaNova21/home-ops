@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - miroirnodegroup.yaml
   - storageclass.yaml
+  - storageclass-replicated.yaml
   - volumesnapshotclass.yaml
