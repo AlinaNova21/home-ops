@@ -51,5 +51,7 @@ spec:
       prComments: true
       publicUrl: https://konflate.whoverse.nexus
       mcp: true
+      verifyImages: true
+      logLevel: debug
     secret:
       existingSecret: konflate-github-app
