@@ -23,7 +23,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
 
   - hostname: whoverse-cp2  # ZimaBoard
@@ -31,7 +30,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
 
   - hostname: whoverse-cp3  # ZimaBoard
@@ -39,7 +37,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
 
   - hostname: whoverse-w1  # ZimaBoard 2
@@ -47,7 +44,6 @@ nodes:
     controlPlane: false
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
 
   - hostname: whoverse-w2  # VM (libvirt)
