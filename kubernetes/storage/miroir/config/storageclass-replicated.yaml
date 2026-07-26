@@ -9,6 +9,6 @@ provisioner: miroir.home-operations.com
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 parameters:
-  miroir.home-operations.com/pool: "default"
+  miroir.home-operations.com/pool: "replicated"
   miroir.home-operations.com/replicas: "2"
   csi.storage.k8s.io/fstype: ext4
