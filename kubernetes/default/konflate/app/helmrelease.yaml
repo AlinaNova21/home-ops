@@ -39,7 +39,6 @@ spec:
     persistence:
       enabled: true
       size: 5Gi
-      storageClass: ceph-rbd
       accessModes:
         - ReadWriteOnce
     podDisruptionBudget:
