@@ -49,7 +49,7 @@ spec:
             name: ${schema.spec.repository}
           credentialProjection:
             enabled: ${schema.spec.credentialProjection}
-          sources: '${schema.spec.pvcNames.map(n, {"pvc": {"name": n}})}'
+          sources: '${schema.spec.pvcNames.map(n, {"pvc": {"name": n}, "sourcePathStrategy": "PvcName"})}'
           retention:
             keepDaily: ${schema.spec.retention.keepDaily}
             keepWeekly: ${schema.spec.retention.keepWeekly}
