@@ -5,13 +5,10 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  chart:
-    spec:
-      chart: error-pages
-      sourceRef:
-        kind: HelmRepository
-        name: tarampampam-error-pages
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: error-pages-internal
+    namespace: default
   install:
     remediation:
       retries: 3

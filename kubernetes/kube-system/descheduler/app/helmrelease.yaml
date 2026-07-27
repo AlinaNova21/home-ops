@@ -6,15 +6,10 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  chart:
-    spec:
-      chart: descheduler
-      version: "0.36.0"
-      sourceRef:
-        kind: HelmRepository
-        name: home-operations-mirror
-        namespace: flux-system
-      interval: 24h
+  chartRef:
+    kind: OCIRepository
+    name: descheduler
+    namespace: kube-system
   install:
     createNamespace: false
     remediation:

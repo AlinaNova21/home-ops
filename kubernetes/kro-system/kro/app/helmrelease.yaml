@@ -6,15 +6,10 @@ metadata:
   namespace: kro-system
 spec:
   interval: 30m
-  chart:
-    spec:
-      chart: kro
-      version: 0.9.2
-      sourceRef:
-        kind: HelmRepository
-        name: kro
-        namespace: flux-system
-      interval: 24h
+  chartRef:
+    kind: OCIRepository
+    name: kro
+    namespace: kro-system
   install:
     createNamespace: false
     remediation:

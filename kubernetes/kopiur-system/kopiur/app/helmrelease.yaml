@@ -6,15 +6,10 @@ metadata:
   namespace: kopiur-system
 spec:
   interval: 30m
-  chart:
-    spec:
-      chart: kopiur
-      version: "0.7.5"
-      sourceRef:
-        kind: HelmRepository
-        name: home-operations
-        namespace: flux-system
-      interval: 12h
+  chartRef:
+    kind: OCIRepository
+    name: kopiur
+    namespace: kopiur-system
   install:
     createNamespace: false
     remediation:

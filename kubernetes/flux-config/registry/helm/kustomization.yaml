@@ -3,29 +3,17 @@ kind: Kustomization
 resources:
   - bjw-s.yaml
   - cilium.yaml
-  - home-operations.yaml
-  - home-operations-mirror.yaml
-  - envoy-gateway.yaml
+  - dex.yaml
   - external-dns.yaml
   - external-secrets.yaml
-  - fluxcd-community.yaml
-  - controlplaneio.yaml
+  - ceph-csi-operator.yaml
+  - grafana.yaml
+  - headlamp.yaml
   - intel.yaml
   - jetstack.yaml
-  - jellyfin.yaml
   - metrics-server.yaml
-  - nfd.yaml
   - openebs.yaml
-  - miroir.yaml
-  - ceph-csi-operator.yaml
   - rook-ceph.yaml
-  - spegel.yaml
   - tailscale.yaml
-  - dex.yaml
-  - victoria-metrics.yaml
-  - grafana.yaml
   - vector.yaml
-  - headlamp.yaml
-  - sympozium.yaml
-  - error-pages.yaml
-  - kro.yaml
+  - victoria-metrics.yaml
