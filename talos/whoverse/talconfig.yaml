@@ -166,6 +166,8 @@ worker:
     - "@./patches/watchdog.yaml"
     - "@./miroir-kernel.yaml"
   volumes: *sharedVolumes
+  nodeLabels:
+    miroir.home-operations.com/enabled: "true"
   networkInterfaces:
     - interface: br0
       dhcp: true
