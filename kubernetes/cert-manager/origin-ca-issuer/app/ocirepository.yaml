@@ -1,0 +1,14 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: origin-ca-issuer
+  namespace: cert-manager
+spec:
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    digest: "sha256:c4d346a0a9126e7c61670907179409eb0ac7655d64a8c62d59832f232986187a"
+  url: oci://ghcr.io/cloudflare/origin-ca-issuer-charts/origin-ca-issuer

@@ -1,0 +1,42 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: origin-ca-issuer
+  namespace: cert-manager
+spec:
+  interval: 30m
+  path: "./cert-manager/origin-ca-issuer/app"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: origin-ca-issuer
+      namespace: cert-manager
+  timeout: 10m
+  wait: true
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: origin-ca-issuer-config
+  namespace: cert-manager
+spec:
+  dependsOn:
+    - name: cert-manager-config
+      namespace: cert-manager
+    - name: external-secrets-config
+      namespace: external-secrets-system
+  interval: 10m
+  path: "./cert-manager/origin-ca-issuer/config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  prune: true
