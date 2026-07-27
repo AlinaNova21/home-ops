@@ -14,7 +14,6 @@ spec:
       sectionName: https
     - name: external
       namespace: network
-      sectionName: http
   hostnames:
     - "seerr.whoverse.dev"
     - "requests.whoverse.nexus"

@@ -5,10 +5,9 @@ metadata:
   name: barcodebuddy
   namespace: default
 spec:
-  parentRefs:
-    - name: external
-      namespace: network
-      sectionName: http
+parentRefs:
+  - name: external
+    namespace: network
   hostnames:
     - barcodebuddy.whoverse.nexus
   rules:
