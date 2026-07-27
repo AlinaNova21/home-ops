@@ -21,6 +21,6 @@ releases:
   - name: flux-operator
     namespace: flux-system
     chart: controlplaneio/flux-operator
-    version: 0.56.0
+    version: 0.57.0
     wait: true
     timeout: 300
