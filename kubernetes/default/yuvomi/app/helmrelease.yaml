@@ -41,6 +41,7 @@ spec:
               TRUST_PROXY: loopback
               DOCUMENT_STORAGE_LOCAL_ENABLED: "true"
               DOCUMENT_STORAGE_LOCAL_PATH: /data/documents
+              BACKUP_DIR: /data/backups
               SESSION_SECRET:
                 valueFrom:
                   secretKeyRef:
