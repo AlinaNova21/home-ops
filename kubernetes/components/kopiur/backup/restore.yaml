@@ -12,3 +12,5 @@ spec:
     onMissingSnapshot: Continue
   target:
     populator: {}
+  credentialProjection:
+    enabled: true
