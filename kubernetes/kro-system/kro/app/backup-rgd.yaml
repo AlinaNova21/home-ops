@@ -1,0 +1,88 @@
+---
+# RGD that exposes a `Backup` custom API. Replaces the
+# `kubernetes/components/kopiur/backup/` kustomize component (and
+# `components/kopiur/seafile-backup/` for multi-PVC apps).
+#
+# Convention: the kro instance `metadata.name` equals the app's
+# Flux-substituted `${APP}`. The rendered SnapshotPolicy + SnapshotSchedule
+# take that name; the rendered Restore is named per-PVC (so the app's PVC
+# `dataSourceRef.name` keeps matching — `${APP}` for single-PVC apps, the
+# full PVC name for multi-PVC apps).
+#
+# Migration of existing apps is intentionally out of scope for this PR; the
+# RGD is staged here so it's available the day an app author wants to adopt it.
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: backup
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Backup
+
+    spec:
+      pvcNames: "[]string | required=true minItems=1 maxItems=20"
+      repository: string | default="whoverse"
+      credentialProjection: boolean | default=true
+      schedule: string | default="H * * * *"
+      retention:
+        keepDaily: integer | default=7
+        keepWeekly: integer | default=4
+        keepMonthly: integer | default=3
+
+    status:
+      ready: boolean
+      activeSnapshotCount: integer
+      lastSnapshotTime: string
+      restoreReady: boolean
+
+  resources:
+    - id: policy
+      template:
+        apiVersion: kopiur.home-operations.com/v1alpha1
+        kind: SnapshotPolicy
+        metadata:
+          name: ${schema.metadata.name}
+        spec:
+          repository:
+            kind: ClusterRepository
+            name: ${schema.spec.repository}
+          credentialProjection:
+            enabled: ${schema.spec.credentialProjection}
+          sources: '${schema.spec.pvcNames.map(n, {"pvc": {"name": n}})}'
+          retention:
+            keepDaily: ${schema.spec.retention.keepDaily}
+            keepWeekly: ${schema.spec.retention.keepWeekly}
+            keepMonthly: ${schema.spec.retention.keepMonthly}
+
+    - id: schedule
+      template:
+        apiVersion: kopiur.home-operations.com/v1alpha1
+        kind: SnapshotSchedule
+        metadata:
+          name: ${schema.metadata.name}
+        spec:
+          policyRef:
+            name: ${schema.metadata.name}
+          schedule:
+            cron: ${schema.spec.schedule}
+
+    - id: restore
+      forEach: ${schema.spec.pvcNames}
+      var: pvc
+      template:
+        apiVersion: kopiur.home-operations.com/v1alpha1
+        kind: Restore
+        metadata:
+          name: ${pvc}
+        spec:
+          source:
+            fromPolicy:
+              name: ${schema.metadata.name}
+              offset: 0
+          policy:
+            onMissingSnapshot: Continue
+          target:
+            populator: {}
+          credentialProjection:
+            enabled: ${schema.spec.credentialProjection}
