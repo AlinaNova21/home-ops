@@ -18,6 +18,8 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
     cert-manager.io/cluster-issuer: cloudflare-origin
+    cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
+    cert-manager.io/issuer-kind: ClusterOriginIssuer
     cert-manager.io/duration: 168h
     cert-manager.io/renew-before: 24h
 spec:
