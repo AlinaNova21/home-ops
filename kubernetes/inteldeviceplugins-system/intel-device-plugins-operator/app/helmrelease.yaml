@@ -6,15 +6,10 @@ metadata:
   namespace: inteldeviceplugins-system
 spec:
   interval: 30m
-  chart:
-    spec:
-      chart: intel-device-plugins-operator
-      version: 0.36.0
-      sourceRef:
-        kind: HelmRepository
-        name: intel
-        namespace: flux-system
-      interval: 24h
+  chartRef:
+    kind: OCIRepository
+    name: intel-device-plugins-operator
+    namespace: inteldeviceplugins-system
   install:
     createNamespace: false
     remediation:
