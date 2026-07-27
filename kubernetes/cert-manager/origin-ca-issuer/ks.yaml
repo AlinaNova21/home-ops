@@ -2,6 +2,41 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: origin-ca-issuer-crds-git
+  namespace: cert-manager
+spec:
+  interval: 24h
+  path: "./cert-manager/origin-ca-issuer/crds"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  prune: true
+  wait: true
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: origin-ca-issuer-crds
+  namespace: cert-manager
+spec:
+  interval: 1h
+  path: deploy/crds
+  sourceRef:
+    kind: GitRepository
+    name: origin-ca-issuer-upstream
+    namespace: cert-manager
+  dependsOn:
+    - name: origin-ca-issuer-crds-git
+      namespace: cert-manager
+  prune: true
+  wait: true
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: origin-ca-issuer
   namespace: cert-manager
 spec:
@@ -34,6 +69,8 @@ spec:
       namespace: cert-manager
     - name: external-secrets-config
       namespace: external-secrets-system
+    - name: origin-ca-issuer
+      namespace: cert-manager
   interval: 10m
   path: "./cert-manager/origin-ca-issuer/config"
   sourceRef:
