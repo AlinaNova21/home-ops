@@ -10,3 +10,4 @@ resources:
   - mailpit/ks.yaml
   #- memos/ks.yaml
   - speedtest-tracker/ks.yaml
+  - yuvomi/ks.yaml
