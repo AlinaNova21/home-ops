@@ -52,6 +52,17 @@ spec:
                   secretKeyRef:
                     name: yuvomi-secrets
                     key: dbEncryptionKey
+              GOOGLE_CLIENT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: yuvomi-secrets
+                    key: googleClientId
+              GOOGLE_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: yuvomi-secrets
+                    key: googleClientSecret
+              GOOGLE_REDIRECT_URI: "https://family.whoverse.nexus/api/v1/calendar/google/callback"
             resources:
               requests:
                 cpu: 50m
