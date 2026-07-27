@@ -5,9 +5,9 @@ metadata:
   name: sonarr-anime
   namespace: downloads
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "sonarr-anime.whoverse.dev"
   rules:

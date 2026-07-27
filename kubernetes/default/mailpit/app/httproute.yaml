@@ -5,9 +5,9 @@ metadata:
   name: mailpit
   namespace: default
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "mail.whoverse.dev"
   rules:

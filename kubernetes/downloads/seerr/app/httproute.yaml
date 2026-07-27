@@ -5,11 +5,11 @@ metadata:
   name: seerr
   namespace: downloads
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
-  - name: external
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
+    - name: external
+      namespace: network
   hostnames:
     - "seerr.whoverse.dev"
     - "requests.whoverse.nexus"

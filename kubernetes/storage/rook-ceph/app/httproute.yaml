@@ -5,9 +5,9 @@ metadata:
   name: ceph-dashboard
   namespace: storage
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "ceph.whoverse.dev"
   rules:

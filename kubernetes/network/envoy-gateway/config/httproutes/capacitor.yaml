@@ -5,9 +5,9 @@ metadata:
   name: capacitor
   namespace: monitoring
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "capacitor.whoverse.dev"
   rules:

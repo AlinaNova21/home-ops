@@ -5,9 +5,9 @@ metadata:
   name: radarr-hd
   namespace: downloads
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "radarr-hd.whoverse.dev"
   rules:

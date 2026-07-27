@@ -5,9 +5,9 @@ metadata:
   name: radarr-anime
   namespace: downloads
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "radarr-anime.whoverse.dev"
   rules:

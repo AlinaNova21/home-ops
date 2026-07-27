@@ -5,9 +5,9 @@ metadata:
   name: sabnzbd
   namespace: downloads
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - "sabnzbd.whoverse.dev"
   rules:

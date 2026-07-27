@@ -5,9 +5,9 @@ metadata:
   name: errors-whoverse-dev
   namespace: default
 spec:
-parentRefs:
-  - name: internal
-    namespace: network
+  parentRefs:
+    - name: internal
+      namespace: network
   hostnames:
     - errors.whoverse.dev
   rules:
