@@ -51,7 +51,7 @@ nodes:
     controlPlane: false
     installDisk: /dev/sda
     patches:
-      - "@./hostpath-volume.yaml"
+      - "@./miroir-disk-w2.yaml"
     schematic:
       customization:
         systemExtensions:

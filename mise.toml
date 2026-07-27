@@ -45,6 +45,7 @@ kopia = "latest"
 flux-operator = "latest"
 flux-operator-mcp = "latest"
 kubeconform = "latest"
+"github:home-operations/flate" = "latest"
 
 [hooks]
 # Install the helm-diff plugin (mise manages binaries, not helm plugins).
