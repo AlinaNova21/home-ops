@@ -8,8 +8,6 @@ spec:
   targetNamespace: default
   components:
         - ../../../components/kopiur/backup
-  dependsOn:
-    - name: default-database
   interval: 30m
   path: ./default/speedtest-tracker/app
   postBuild:
