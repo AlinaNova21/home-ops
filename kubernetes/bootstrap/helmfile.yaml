@@ -1,6 +1,7 @@
 repositories:
   - name: cilium
-    url: https://helm.cilium.io
+    url: oci://quay.io/cilium/charts
+    oci: true
   - name: controlplaneio
     url: ghcr.io/controlplaneio-fluxcd/charts
     oci: true
@@ -9,7 +10,7 @@ releases:
   # Cilium CNI - must be first for networking
   - name: cilium
     namespace: kube-system
-    chart: cilium/cilium
+    chart: cilium
     version: 1.19.6
     values:
       - cilium-values.yaml

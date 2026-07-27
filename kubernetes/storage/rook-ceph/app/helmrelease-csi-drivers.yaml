@@ -8,14 +8,10 @@ spec:
   interval: 30m
   dependsOn:
     - name: rook-ceph-operator
-  chart:
-    spec:
-      chart: ceph-csi-drivers
-      version: "1.0.4"
-      sourceRef:
-        kind: HelmRepository
-        name: ceph-csi-operator
-        namespace: flux-system
+  chartRef:
+    kind: OCIRepository
+    name: ceph-csi-drivers
+    namespace: storage
   install:
     remediation:
       retries: 3

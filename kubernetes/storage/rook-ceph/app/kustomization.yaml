@@ -4,5 +4,6 @@ resources:
   - helmrelease-operator.yaml
   - helmrelease-cluster.yaml
   - helmrelease-csi-drivers.yaml
+  - ocirepository-csi-drivers.yaml
   - httproute.yaml
   - pushsecret.yaml
