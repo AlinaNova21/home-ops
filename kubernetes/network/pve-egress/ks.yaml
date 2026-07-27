@@ -11,4 +11,6 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
+  timeout: 5m
+  wait: true
   prune: false

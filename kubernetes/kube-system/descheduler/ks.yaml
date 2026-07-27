@@ -14,3 +14,21 @@ spec:
   timeout: 5m
   wait: true
   prune: false
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: descheduler-config
+  namespace: kube-system
+spec:
+  dependsOn:
+    - name: descheduler
+  interval: 30m
+  path: "./kube-system/descheduler/config"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  prune: false
