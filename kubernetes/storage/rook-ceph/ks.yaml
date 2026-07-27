@@ -19,4 +19,4 @@ spec:
       namespace: storage
   timeout: 15m
   wait: true
-  prune: false
+  prune: true

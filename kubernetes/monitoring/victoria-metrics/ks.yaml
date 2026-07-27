@@ -14,7 +14,7 @@ spec:
   targetNamespace: monitoring
   timeout: 10m
   wait: true
-  prune: false
+  prune: true
 ---
 # VMServiceScrapes depend on operator CRDs (vmservicescrapes.operator.victoriametrics.com,
 # vmpodscrapes.operator.victoriametrics.com) installed by the chart above. Kept
@@ -36,4 +36,4 @@ spec:
     - name: victoria-metrics
   timeout: 5m
   wait: true
-  prune: false
+  prune: true
