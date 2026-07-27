@@ -1,0 +1,30 @@
+---
+# kro RBAC for the backup RGD. With rbac.mode: aggregation, kro uses
+# an aggregated ClusterRole (kro:controller) that only includes the
+# chart's static defaults. Generated CRDs and the kopiur resources the
+# backup RGD manages must be granted explicitly via additional ClusterRoles
+# with label rbac.kro.run/aggregate-to-controller: "true".
+#
+# See https://kro.run/docs/advanced/access-control for the aggregation
+# pattern. Permissions follow the example in that doc.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kro:controller:backup
+  labels:
+    rbac.kro.run/aggregate-to-controller: "true"
+rules:
+  - apiGroups:
+      - kro.run
+    resources:
+      - backups
+    verbs:
+      - "*"
+  - apiGroups:
+      - kopiur.home-operations.com
+    resources:
+      - snapshotpolicies
+      - snapshotschedules
+      - restores
+    verbs:
+      - "*"
