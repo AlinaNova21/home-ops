@@ -30,6 +30,8 @@ spec:
     - name: envoy-gateway
     - name: cert-manager-config
       namespace: cert-manager
+    - name: origin-ca-issuer
+      namespace: cert-manager
   interval: 10m
   path: "./network/envoy-gateway/config"
   sourceRef:

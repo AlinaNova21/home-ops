@@ -7,8 +7,9 @@ spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
 ---
 # External Gateway - accessed via Cloudflare Tunnel
-# Cloudflare handles TLS termination, so no certs needed here
-# Uses ClusterIP since it's only accessed by cloudflared internally
+# TLS terminated at origin using a Cloudflare Origin CA cert (cloudflared trusts it natively).
+# HTTPRoutes remain bound to sectionName: http during Phase 1; both listeners coexist until Phase 2.
+# Uses ClusterIP since it's only accessed by cloudflared internally.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -16,6 +17,9 @@ metadata:
   namespace: network
   annotations:
     external-dns.alpha.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
+    cert-manager.io/cluster-issuer: cloudflare-origin
+    cert-manager.io/duration: 168h
+    cert-manager.io/renew-before: 24h
 spec:
   gatewayClassName: eg
   infrastructure:
@@ -28,6 +32,18 @@ spec:
       protocol: HTTP
       port: 80
       hostname: "*.whoverse.nexus"
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.whoverse.nexus"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: whoverse-nexus-wildcard-tls
+            kind: Secret
       allowedRoutes:
         namespaces:
           from: All
