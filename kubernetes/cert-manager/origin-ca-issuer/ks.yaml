@@ -11,6 +11,9 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
+  dependsOn:
+    - name: origin-ca-issuer-crds
+      namespace: cert-manager
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment

@@ -4,3 +4,4 @@ resources:
   - ns.yaml
   - cert-manager/ks.yaml
   - origin-ca-issuer/ks.yaml
+  - origin-ca-issuer/crds/ks.yaml

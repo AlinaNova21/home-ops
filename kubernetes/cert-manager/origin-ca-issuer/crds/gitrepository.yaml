@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: origin-ca-issuer-upstream
+  namespace: cert-manager
+spec:
+  interval: 24h
+  ref:
+    tag: v0.14.4
+  url: https://github.com/cloudflare/origin-ca-issuer

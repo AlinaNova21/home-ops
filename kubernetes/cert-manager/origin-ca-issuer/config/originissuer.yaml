@@ -1,11 +1,11 @@
 ---
-apiVersion: origin-ca-issuer.io/v1
-kind: OriginIssuer
+apiVersion: cert-manager.k8s.cloudflare.com/v1
+kind: ClusterOriginIssuer
 metadata:
   name: cloudflare-origin
 spec:
-  requestDuration: 0
-  ref:
-    name: cloudflare-origin-ca-token
-    namespace: cert-manager
-    key: api-token
+  requestType: OriginRSA
+  auth:
+    tokenRef:
+      name: cloudflare-origin-ca-token
+      key: api-token
