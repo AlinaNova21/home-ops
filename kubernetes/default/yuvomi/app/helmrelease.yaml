@@ -31,6 +31,15 @@ spec:
   values:
     controllers:
       yuvomi:
+        initContainers:
+          perm-fix:
+            image: busybox
+            command: ["sh", "-c", "chown -R 1000:1000 /data && chmod -R 755 /data"]
+            securityContext:
+              runAsUser: 0
+            volumeMounts:
+              - name: data
+                mountPath: /data
         containers:
           yuvomi:
             image:
@@ -38,7 +47,7 @@ spec:
               tag: latest
             env:
               TZ: America/Chicago
-              TRUST_PROXY: loopback
+              TRUST_PROXY: "2"
               DOCUMENT_STORAGE_LOCAL_ENABLED: "true"
               DOCUMENT_STORAGE_LOCAL_PATH: /data/documents
               BACKUP_DIR: /data/backups
