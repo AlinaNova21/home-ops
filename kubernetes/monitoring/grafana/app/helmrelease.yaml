@@ -41,7 +41,7 @@ spec:
 
     persistence:
       enabled: true
-      storageClassName: openebs-hostpath
+      storageClassName: miroir-replicated
       size: 2Gi
 
     # Recreate ensures old pod fully releases the RWO PVC before new pod starts,

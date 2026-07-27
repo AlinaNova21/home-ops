@@ -43,7 +43,7 @@ spec:
           memory: 128Mi
       persistentVolume:
         enabled: true
-        storageClassName: openebs-hostpath
+        storageClassName: miroir-replicated
         size: 20Gi
       # Spread storage replicas across different nodes
       affinity:
