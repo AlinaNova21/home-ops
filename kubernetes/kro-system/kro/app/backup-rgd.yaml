@@ -68,8 +68,8 @@ spec:
             cron: ${schema.spec.schedule}
 
     - id: restore
-      forEach: ${schema.spec.pvcNames}
-      var: pvc
+      forEach:
+        - pvc: ${schema.spec.pvcNames}
       template:
         apiVersion: kopiur.home-operations.com/v1alpha1
         kind: Restore
