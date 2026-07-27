@@ -15,3 +15,25 @@ spec:
   timeout: 10m
   wait: true
   prune: false
+---
+# VMServiceScrapes depend on operator CRDs (vmservicescrapes.operator.victoriametrics.com,
+# vmpodscrapes.operator.victoriametrics.com) installed by the chart above. Kept
+# in a separate Kustomization so a missing CRD can't block the HelmRelease from
+# rolling out and bringing storage/PVCs back online.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: victoria-metrics-scrapes
+  namespace: monitoring
+spec:
+  interval: 30m
+  path: "./monitoring/victoria-metrics/scrapes"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  dependsOn:
+    - name: victoria-metrics
+  timeout: 5m
+  wait: true
+  prune: false
