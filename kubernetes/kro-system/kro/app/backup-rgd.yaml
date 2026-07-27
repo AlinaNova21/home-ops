@@ -31,10 +31,10 @@ spec:
         keepMonthly: integer | default=3
 
     status:
-      ready: boolean
-      activeSnapshotCount: integer
-      lastSnapshotTime: string
-      restoreReady: boolean
+      ready: ${policy.status.conditions.exists(c, c.type == 'Ready' && c.status == 'True')}
+      activeSnapshotCount: ${policy.status.retention.activeSnapshotCount}
+      lastSnapshotTime: ${string(policy.status.lastSuccessfulSnapshot)}
+      restoreReady: ${restore.all(r, r.status.phase == 'Completed')}
 
   resources:
     - id: policy
