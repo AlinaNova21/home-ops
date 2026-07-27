@@ -4,10 +4,9 @@ metadata:
   name: kopia-ui
   namespace: kopiur-system
 spec:
-  parentRefs:
-    - name: internal
-      namespace: network
-      sectionName: https
+parentRefs:
+  - name: internal
+    namespace: network
   hostnames:
     - kopia.whoverse.dev
   rules:

@@ -5,10 +5,9 @@ metadata:
   name: seafile
   namespace: sync
 spec:
-  parentRefs:
-    - name: internal
-      namespace: network
-      sectionName: https
+parentRefs:
+  - name: internal
+    namespace: network
   hostnames:
     - "seafile.whoverse.dev"
   rules:

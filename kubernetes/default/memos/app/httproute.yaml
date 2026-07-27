@@ -5,13 +5,9 @@ metadata:
   name: memos
   namespace: default
 spec:
-  parentRefs:
-    - name: internal
-      namespace: network
-      sectionName: http
-    - name: internal
-      namespace: network
-      sectionName: https
+parentRefs:
+  - name: internal
+    namespace: network
   hostnames:
     - "memos.whoverse.dev"
   rules:

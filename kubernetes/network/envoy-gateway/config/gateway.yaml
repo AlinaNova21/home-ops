@@ -39,7 +39,8 @@ spec:
           from: All
 ---
 # Internal Gateway - accessed via LAN LoadBalancer
-# Uses wildcard cert for *.whoverse.dev via DNS-01 challenge
+# Uses wildcard cert for *.whoverse.dev via DNS-01 challenge (cert-manager)
+# HTTPS-only listener; HTTPRoutes bind to all listeners on this Gateway.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -55,13 +56,6 @@ spec:
       kind: EnvoyProxy
       name: internal-proxy-config
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      hostname: "*.whoverse.dev"
-      allowedRoutes:
-        namespaces:
-          from: All
     - name: https
       protocol: HTTPS
       port: 443

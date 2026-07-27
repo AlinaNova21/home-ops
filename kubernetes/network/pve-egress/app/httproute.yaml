@@ -5,10 +5,9 @@ metadata:
   name: pve
   namespace: network
 spec:
-  parentRefs:
-    - name: internal
-      namespace: network
-      sectionName: https
+parentRefs:
+  - name: internal
+    namespace: network
   hostnames:
     - "pve.whoverse.dev"
   rules:
