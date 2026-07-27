@@ -9,6 +9,8 @@ spec:
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
+  ref:
+    tag: 4.2.4
   url: oci://ghcr.io/tarampampam/error-pages/charts/error-pages
   verify:
     provider: cosign
