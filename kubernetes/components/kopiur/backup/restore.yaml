@@ -6,9 +6,9 @@ metadata:
 spec:
   source:
     fromPolicy:
-      policyRef:
-        name: ${APP}
-    latest: true
-  destination:
-    populator: {}
+      name: ${APP}
+      offset: 0
+  policy:
     onMissingSnapshot: Continue
+  target:
+    populator: {}
