@@ -1,8 +1,9 @@
 ---
 apiVersion: cert-manager.k8s.cloudflare.com/v1
-kind: ClusterOriginIssuer
+kind: OriginIssuer
 metadata:
   name: cloudflare-origin
+  namespace: network
 spec:
   requestType: OriginRSA
   auth:
