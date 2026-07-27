@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - ns.yaml
   # - storage/ks.yaml  # Not needed - using S3 for data storage
-  - seafile/ks.yaml
+  # - seafile/ks.yaml  # temp disabled
