@@ -7,7 +7,8 @@ spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
 ---
 # External Gateway - accessed via Cloudflare Tunnel
-# TLS terminated at origin using a Cloudflare Origin CA cert (cloudflared trusts it natively).
+# TLS terminated at origin using a Cloudflare Origin CA cert loaded from 1Password via ExternalSecret
+# (cloudflared trusts Cloudflare Origin CA natively).
 # HTTPRoutes remain bound to sectionName: http during Phase 1; both listeners coexist until Phase 2.
 # Uses ClusterIP since it's only accessed by cloudflared internally.
 apiVersion: gateway.networking.k8s.io/v1
@@ -17,11 +18,6 @@ metadata:
   namespace: network
   annotations:
     external-dns.alpha.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
-    cert-manager.io/issuer: cloudflare-origin
-    cert-manager.io/issuer-group: cert-manager.k8s.cloudflare.com
-    cert-manager.io/issuer-kind: OriginIssuer
-    cert-manager.io/duration: 168h
-    cert-manager.io/renew-before: 24h
 spec:
   gatewayClassName: eg
   infrastructure:

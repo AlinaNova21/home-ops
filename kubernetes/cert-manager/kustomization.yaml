@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - ns.yaml
   - cert-manager/ks.yaml
-  - origin-ca-issuer/ks.yaml

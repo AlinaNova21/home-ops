@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - clusterissuer-le.yaml
   - externalsecret.yaml
-  - originissuer.yaml
