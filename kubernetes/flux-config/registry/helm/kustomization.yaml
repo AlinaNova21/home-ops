@@ -28,3 +28,4 @@ resources:
   - headlamp.yaml
   - sympozium.yaml
   - error-pages.yaml
+  - kro.yaml
