@@ -24,6 +24,8 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./miroir-disk.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/zimaboard.yaml"
 
   - hostname: whoverse-cp2  # ZimaBoard
     ipAddress: 192.168.2.22
@@ -31,6 +33,8 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./miroir-disk.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/zimaboard.yaml"
 
   - hostname: whoverse-cp3  # ZimaBoard
     ipAddress: 192.168.2.23
@@ -38,6 +42,8 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./miroir-disk.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/zimaboard.yaml"
 
   - hostname: whoverse-w1  # ZimaBoard 2
     ipAddress: 192.168.2.24
@@ -45,6 +51,8 @@ nodes:
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
       - "@./miroir-disk.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/zimaboard2.yaml"
 
   - hostname: whoverse-w2  # VM (libvirt)
     ipAddress: 192.168.2.225
@@ -52,6 +60,8 @@ nodes:
     installDisk: /dev/sda
     patches:
       - "@./miroir-disk-w2.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/vm.yaml"
     schematic:
       customization:
         systemExtensions:
@@ -64,18 +74,6 @@ nodes:
             - siderolabs/i915
             - siderolabs/xe
             - siderolabs/drbd
-    networkInterfaces:
-      - interface: ens18
-        dhcp: false
-      - interface: br0
-        dhcp: true
-        bridge:
-          stp:
-            enabled: false
-          interfaces:
-            - ens18
-        vip:
-          ip: 192.168.2.20
 
 controlPlane:
   schematic:
@@ -111,13 +109,10 @@ controlPlane:
               - os:admin
             allowedKubernetesNamespaces:
               - system-upgrade
-    - |-
-      machine:
-        sysctls:
-          user.max_user_namespaces: "11255"
     - "@./patches/spegel-containerd-config.yaml"
     - "@./patches/watchdog.yaml"
-    - "@./miroir-kernel.yaml"
+    - "@./patches/kernel-miroir.yaml"
+    - "@./patches/kubelet-miroir.yaml"
   # Limit ephemeral volume size
   volumes: &sharedVolumes
     - name: EPHEMERAL
@@ -130,16 +125,6 @@ controlPlane:
   # which creates an r-miroir RawVolumeConfig consumed by the home-operations/miroir
   # CSI driver as its LVM-thin backing device. The user-volume approach is
   # retired once every pool node is on mirror storage.
-  networkInterfaces:
-    - interface: br0
-      dhcp: true
-      bridge:
-        stp:
-          enabled: true
-        interfaces:
-          - enp2s0
-      vip:
-        ip: 192.168.2.20
 
 worker:
   schematic:
@@ -158,21 +143,10 @@ worker:
       cluster:
         proxy:
           disabled: true
-    - |-
-      machine:
-        sysctls:
-          user.max_user_namespaces: "11255"
     - "@./patches/spegel-containerd-config.yaml"
     - "@./patches/watchdog.yaml"
-    - "@./miroir-kernel.yaml"
+    - "@./patches/kernel-miroir.yaml"
+    - "@./patches/kubelet-miroir.yaml"
   volumes: *sharedVolumes
   nodeLabels:
     miroir.home-operations.com/enabled: "true"
-  networkInterfaces:
-    - interface: br0
-      dhcp: true
-      bridge:
-        stp:
-          enabled: true
-        interfaces:
-          - enp2s0

@@ -1,0 +1,5 @@
+machine:
+  kubelet:
+    extraConfig:
+      shutdownGracePeriod: 120s
+      shutdownGracePeriodCriticalPods: 60s

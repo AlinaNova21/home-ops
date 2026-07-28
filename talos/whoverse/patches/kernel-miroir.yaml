@@ -7,7 +7,5 @@ machine:
           - usermode_helper=disabled
       - name: drbd_transport_tcp
       - name: dm_thin_pool
-  kubelet:
-    extraConfig:
-      shutdownGracePeriod: 120s
-      shutdownGracePeriodCriticalPods: 60s
+  sysctls:
+    user.max_user_namespaces: "11255"
