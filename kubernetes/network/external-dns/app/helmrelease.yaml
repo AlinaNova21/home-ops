@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
 # External DNS for .nexus domain (Cloudflare proxied via tunnel)
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -52,6 +53,7 @@ spec:
       requests:
         memory: 64Mi
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
 # External DNS for .dev domain (DNS-only, internal LAN)
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease

@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.networking.k8s.io/gatewayclass_v1.json
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
@@ -6,6 +7,7 @@ metadata:
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.networking.k8s.io/gateway_v1.json
 # External Gateway - accessed via Cloudflare Tunnel
 # TLS terminated at origin using a Cloudflare Origin CA cert loaded from 1Password via ExternalSecret
 # (cloudflared trusts Cloudflare Origin CA natively).
@@ -38,6 +40,7 @@ spec:
         namespaces:
           from: All
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.networking.k8s.io/gateway_v1.json
 # Internal Gateway - accessed via LAN LoadBalancer
 # Uses wildcard cert for *.whoverse.dev via DNS-01 challenge (cert-manager)
 # HTTPS-only listener; HTTPRoutes bind to all listeners on this Gateway.

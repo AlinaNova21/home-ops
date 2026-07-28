@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/notification.toolkit.fluxcd.io/alert_v1beta3.json
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
@@ -14,6 +15,7 @@ spec:
       namespace: flux-system
   suspend: false
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/notification.toolkit.fluxcd.io/provider_v1beta3.json
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
