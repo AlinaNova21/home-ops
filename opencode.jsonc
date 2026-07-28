@@ -1,0 +1,11 @@
+{
+  // Migrated from mcp.json (Claude/Cursor convention). opencode reads MCP config inline.
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "flux-operator-mcp": {
+      "type": "local",
+      "command": ["flux-operator-mcp", "serve"],
+      "enabled": true
+    }
+  }
+}
