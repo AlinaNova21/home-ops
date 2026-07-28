@@ -8,6 +8,13 @@ spec:
   repository:
     kind: ClusterRepository
     name: whoverse
+  copyMethod: Snapshot
+  volumeSnapshotClassName: miroir-snap
+  staging:
+    storageClassName: miroir-local
+  mover:
+    inheritSecurityContextFrom:
+      pvcConsumer: {}
   credentialProjection:
     enabled: true
   sources:
