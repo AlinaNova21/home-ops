@@ -6,6 +6,11 @@
       "type": "local",
       "command": ["flux-operator-mcp", "serve"],
       "enabled": true
+    },
+    "konflate": {
+      "type": "remote",
+      "url": "https://konflate.whoverse.nexus/mcp",
+      "enabled": true
     }
   }
 }
