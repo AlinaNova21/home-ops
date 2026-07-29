@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kopiur-mirror
+  namespace: kopiur-system
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          serviceAccountName: kopiur-mirror
+          restartPolicy: OnFailure
+          containers:
+            - name: kopia
+              image: ghcr.io/kopia/kopia:latest
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: kopiur-mirror-secret
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -euo pipefail
+
+                  kopia repository connect s3 \
+                    --bucket=k8s-cluster-backup \
+                    --prefix=kopiur/ \
+                    --endpoint=http://192.168.2.193:30188 \
+                    --region=garage \
+                    --access-key=${GARAGE_ACCESS_KEY_ID} \
+                    --secret-access-key=${GARAGE_SECRET_ACCESS_KEY} \
+                    --password=${KOPIA_PASSWORD} \
+                    --disable-tls
+
+                  kopia repository sync-to s3 \
+                    --bucket=whoverse-k8s-backups \
+                    --prefix=kopiur/ \
+                    --endpoint=s3.us-west-001.backblazeb2.com \
+                    --region=us-west-001 \
+                    --access-key=${B2_ACCESS_KEY_ID} \
+                    --secret-access-key=${B2_SECRET_ACCESS_KEY} \
+                    --password=${KOPIA_PASSWORD} \
+                    --update \
+                    --delete \
+                    --parallel=4 \
+                    --progress

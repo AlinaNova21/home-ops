@@ -11,10 +11,10 @@ spec:
     all: true
   backend:
     s3:
-      bucket: whoverse-k8s-backups
+      bucket: k8s-cluster-backup
       prefix: kopiur
-      endpoint: s3.us-west-001.backblazeb2.com
-      region: us-west-001
+      endpoint: http://192.168.2.193:30188
+      region: garage
       auth:
         secretRef:
           name: kopiur-repository-secret

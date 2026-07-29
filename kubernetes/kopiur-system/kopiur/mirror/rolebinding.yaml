@@ -1,0 +1,14 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kopiur-mirror
+  namespace: kopiur-system
+subjects:
+  - kind: ServiceAccount
+    name: kopiur-mirror
+    namespace: kopiur-system
+roleRef:
+  kind: Role
+  name: kopiur-mirror
+  apiGroup: rbac.authorization.k8s.io

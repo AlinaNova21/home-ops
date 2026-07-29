@@ -32,3 +32,20 @@ spec:
     namespace: flux-system
   wait: false
   prune: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kopiur-mirror
+  namespace: kopiur-system
+spec:
+  dependsOn:
+    - name: kopiur-repository
+  interval: 1h
+  path: "./kopiur-system/kopiur/mirror"
+  sourceRef:
+    kind: OCIRepository
+    name: home-ops
+    namespace: flux-system
+  prune: true
