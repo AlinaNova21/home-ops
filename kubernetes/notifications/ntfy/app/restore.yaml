@@ -11,11 +11,11 @@ spec:
       name: ntfy-config
       offset: 0
   mover:
-    inheritSecurityContextFrom:
-      workloadSelector:
-        podSelector:
-          matchLabels:
-            app.kubernetes.io/name: ntfy
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+    podSecurityContext:
+      fsGroup: 1000
   policy:
     onMissingSnapshot: Continue
   target:
@@ -34,11 +34,11 @@ spec:
       name: ntfy-data
       offset: 0
   mover:
-    inheritSecurityContextFrom:
-      workloadSelector:
-        podSelector:
-          matchLabels:
-            app.kubernetes.io/name: ntfy
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+    podSecurityContext:
+      fsGroup: 1000
   policy:
     onMissingSnapshot: Continue
   target:
