@@ -6,7 +6,7 @@ metadata:
   name: kopiur-mirror
   namespace: kopiur-system
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 9 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
