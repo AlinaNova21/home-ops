@@ -7,13 +7,8 @@ metadata:
   namespace: default
 spec:
   targetNamespace: default
-  components:
-        - ../../../components/kopiur/backup
   interval: 30m
   path: ./default/barcodebuddy/app
-  postBuild:
-    substitute:
-      APP: barcodebuddy
   sourceRef:
     kind: OCIRepository
     name: home-ops

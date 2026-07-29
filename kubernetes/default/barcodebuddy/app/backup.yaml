@@ -1,0 +1,9 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kro.run/backup_v1alpha1.json
+apiVersion: kro.run/v1alpha1
+kind: Backup
+metadata:
+  name: barcodebuddy
+  namespace: default
+spec:
+  pvcNames: [barcodebuddy]
