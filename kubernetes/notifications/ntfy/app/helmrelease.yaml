@@ -57,7 +57,6 @@ spec:
               runAsGroup: 1000
         podSecurityContext:
           fsGroup: 1000
-          fsGroupChangePolicy: OnRootMismatch
 
     service:
       ntfy:
