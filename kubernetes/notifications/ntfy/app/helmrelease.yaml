@@ -25,6 +25,13 @@ spec:
       name: RetryOnFailure
       retryInterval: 5m
   values:
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "Always"
+
     controllers:
       ntfy:
         containers:
@@ -52,11 +59,6 @@ spec:
                 memory: 128Mi
               limits:
                 memory: 512Mi
-            securityContext:
-              runAsUser: 1000
-              runAsGroup: 1000
-        podSecurityContext:
-          fsGroup: 1000
 
     service:
       ntfy:
