@@ -26,6 +26,8 @@ spec:
       name: kopiur-repository-secret
       namespace: kopiur-system
       key: KOPIA_PASSWORD
+  create:
+    enabled: true
   server:
     namespace: kopiur-system
     readOnly: true
