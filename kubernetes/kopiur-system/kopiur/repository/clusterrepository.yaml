@@ -12,7 +12,7 @@ spec:
   backend:
     s3:
       bucket: k8s-cluster-backup
-      prefix: kopiur
+      prefix: kopiur/
       endpoint: 192.168.2.193:30188
       region: garage
       tls:
@@ -26,8 +26,6 @@ spec:
       name: kopiur-repository-secret
       namespace: kopiur-system
       key: KOPIA_PASSWORD
-  create:
-    enabled: true
   server:
     namespace: kopiur-system
     readOnly: true
