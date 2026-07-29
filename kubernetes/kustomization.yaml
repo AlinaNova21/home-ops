@@ -6,6 +6,7 @@ resources:
   - entertainment
   - default
   - downloads
+  - notifications
   - sync
   - agent-sandbox-system
   - spegel

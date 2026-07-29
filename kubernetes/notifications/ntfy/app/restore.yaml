@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/restore_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: Restore
+metadata:
+  name: ntfy-config
+  namespace: notifications
+spec:
+  source:
+    fromPolicy:
+      name: ntfy-config
+      offset: 0
+  mover:
+    inheritSecurityContextFrom:
+      workloadSelector:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: ntfy
+  policy:
+    onMissingSnapshot: Continue
+  target:
+    populator: {}
+  credentialProjection:
+    enabled: true
+---
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: Restore
+metadata:
+  name: ntfy-data
+  namespace: notifications
+spec:
+  source:
+    fromPolicy:
+      name: ntfy-data
+      offset: 0
+  mover:
+    inheritSecurityContextFrom:
+      workloadSelector:
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: ntfy
+  policy:
+    onMissingSnapshot: Continue
+  target:
+    populator: {}
+  credentialProjection:
+    enabled: true
