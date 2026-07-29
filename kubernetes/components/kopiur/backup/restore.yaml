@@ -9,12 +9,6 @@ spec:
     fromPolicy:
       name: ${APP}
       offset: 0
-  mover:
-    inheritSecurityContextFrom:
-      workloadSelector:
-        podSelector:
-          matchLabels:
-            app.kubernetes.io/name: ${APP}
   policy:
     onMissingSnapshot: Continue
   target:
