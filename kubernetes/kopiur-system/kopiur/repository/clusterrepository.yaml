@@ -13,8 +13,10 @@ spec:
     s3:
       bucket: k8s-cluster-backup
       prefix: kopiur
-      endpoint: http://192.168.2.193:30188
+      endpoint: 192.168.2.193:30188
       region: garage
+      tls:
+        disableTls: true
       auth:
         secretRef:
           name: kopiur-repository-secret
