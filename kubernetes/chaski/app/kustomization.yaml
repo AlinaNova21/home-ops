@@ -6,6 +6,8 @@ configMapGenerator:
   - name: chaski-config
     files:
       - config.d/10-holmes.yaml
+    options:
+      disableNameSuffixHash: true
 resources:
   - ocirepository.yaml
   - helmrelease.yaml
