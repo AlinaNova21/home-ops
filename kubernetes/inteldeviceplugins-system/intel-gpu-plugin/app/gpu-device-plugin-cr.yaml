@@ -5,7 +5,7 @@ metadata:
   name: gpudeviceplugin-sample
   namespace: inteldeviceplugins-system
 spec:
-  image: intel/intel-gpu-plugin:0.36.0
+  image: intel/intel-gpu-plugin:0.36.0@sha256:2db679be62b52ac985169084ca711cab6e6c59fe543ab2ddee58163d6f8d29e0
   sharedDevNum: 10
   logLevel: 4
   enableMonitoring: true

@@ -31,7 +31,7 @@ spec:
           memos:
             image:
               repository: neosmemo/memos
-              tag: stable
+              tag: stable@sha256:71a5b4738d1bed96e92112004054f0888e92791b64eb78afd79077c96e6f9327
             env:
               MEMOS_PG_USER:
                 valueFrom:

@@ -12,6 +12,7 @@ spec:
     operation: copy
   ref:
     tag: "0.24.1"
+    digest: sha256:849a51111a99adbde9ad5f159a581be0e65509364d0ab455e81cc39380c5ef04
   url: oci://ghcr.io/home-operations/charts-mirror/dex
   verify:
     provider: cosign

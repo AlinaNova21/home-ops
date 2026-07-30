@@ -12,6 +12,7 @@ spec:
     operation: copy
   ref:
     tag: 0.3.1
+    digest: sha256:1db0dedf5e10873e67c0b6a915ea26d5ac67debf06bbbf346c90b3c0dc467c38
   url: oci://ghcr.io/home-operations/charts/tuppr
   verify:
     provider: cosign
