@@ -186,9 +186,11 @@ flate-test *args:
 
 # Destroy Flux and applications (keeps cluster)
 destroy-flux:
+    kubectl delete helmreleases --all -n flux-system || true
     kubectl delete kustomizations --all -n flux-system || true
     kubectl delete ocirepositories --all -n flux-system || true
     kubectl delete gitrepositories --all -n flux-system || true
+    kubectl delete helmrepositories --all -n flux-system || true
     kubectl delete namespace flux-system || true
 
 # Destroy everything (Pulumi + FluxCD)
