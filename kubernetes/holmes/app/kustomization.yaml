@@ -11,3 +11,4 @@ resources:
   - probe.yaml
   - flux-provider.yaml
   - alert.yaml
+  - serviceaccount.yaml
