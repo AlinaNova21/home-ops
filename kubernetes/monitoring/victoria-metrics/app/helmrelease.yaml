@@ -97,17 +97,12 @@ spec:
           group_wait: 30s
           group_interval: 5m
           repeat_interval: 12h
-          receiver: "chaski"
+          receiver: "null"
           routes:
             - match:
                 alertname: Watchdog
               receiver: "null"
-            - receiver: "chaski"
         receivers:
-          - name: "chaski"
-            webhook_configs:
-              - url: "http://chaski.chaski.svc.cluster.local:8080/hooks/alertmanager"
-                send_resolved: true
           - name: "null"
         inhibit_rules:
           - source_match:
