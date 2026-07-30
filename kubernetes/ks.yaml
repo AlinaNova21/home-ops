@@ -7,9 +7,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: "./"
+  path: "./kubernetes"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
   timeout: 15m
   wait: true

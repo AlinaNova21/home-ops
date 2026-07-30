@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kube-system/descheduler/app"
+  path: "./kubernetes/kube-system/descheduler/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m
@@ -26,9 +26,9 @@ spec:
   dependsOn:
     - name: descheduler
   interval: 30m
-  path: "./kube-system/descheduler/config"
+  path: "./kubernetes/kube-system/descheduler/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

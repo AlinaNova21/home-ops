@@ -7,9 +7,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 1h
-  path: "./monitoring/capacitor/app"
+  path: "./kubernetes/monitoring/capacitor/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

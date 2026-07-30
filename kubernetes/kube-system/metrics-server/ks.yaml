@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kube-system/metrics-server/app"
+  path: "./kubernetes/kube-system/metrics-server/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

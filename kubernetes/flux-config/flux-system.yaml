@@ -7,9 +7,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: "./flux-config"
+  path: "./kubernetes/flux-config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
   healthChecks:
     - apiVersion: fluxcd.controlplane.io/v1

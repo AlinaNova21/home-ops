@@ -10,12 +10,12 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 30m
-  path: ./default/barcodebuddy/app
+  path: ./kubernetes/default/barcodebuddy/app
   postBuild:
     substitute:
       APP: barcodebuddy
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

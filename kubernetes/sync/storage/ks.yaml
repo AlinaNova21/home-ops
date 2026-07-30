@@ -7,9 +7,9 @@ metadata:
   namespace: sync
 spec:
   interval: 15m
-  path: "./sync/storage/config"
+  path: "./kubernetes/sync/storage/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 10m
-  path: "./network/cert-issuers/config"
+  path: "./kubernetes/network/cert-issuers/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   dependsOn:

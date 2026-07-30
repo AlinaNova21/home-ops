@@ -10,12 +10,12 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./downloads/prowlarr/app"
+  path: "./kubernetes/downloads/prowlarr/app"
   postBuild:
     substitute:
       APP: prowlarr
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

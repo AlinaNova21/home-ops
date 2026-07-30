@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kube-system/gvisor/app"
+  path: "./kubernetes/kube-system/gvisor/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

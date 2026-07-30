@@ -8,6 +8,7 @@
 registry := "ghcr.io/alinanova21"
 repo_name := "home-ops"
 oci_url := registry + "/" + repo_name
+git_url := "https://github.com/AlinaNova21/home-ops"
 
 talos_dir := "talos/whoverse"
 talos_config := talos_dir + "/clusterconfig"
@@ -112,6 +113,12 @@ flux-sync:
         reconcile.fluxcd.io/requestedAt="$(date +%s)"
     flux reconcile kustomization cluster -n flux-system || true
 
+# Reconcile Git source (new GitRepository-based flow)
+git-flux-sync:
+    kubectl annotate --overwrite gitrepository/home-ops -n flux-system \
+        reconcile.fluxcd.io/requestedAt="$(date +%s)"
+    flux reconcile kustomization cluster -n flux-system || true
+
 # Check Flux status
 flux-status:
     @echo "Controllers:"
@@ -125,6 +132,9 @@ flux-status:
 
 # Deploy: push OCI artifact and sync
 deploy: flux-push flux-sync
+
+# Deploy via Git source (new GitRepository-based flow)
+git-deploy: git-flux-sync
 
 # =============================================================================
 # Cilium Operations
@@ -153,9 +163,10 @@ flate-build *args:
     set -e
     tmp=$(mktemp -d)
     trap "rm -rf '$tmp'" EXIT
-    cp -r kubernetes "$tmp/kubernetes"
+    mkdir -p "$tmp/repo"
+    cp -r kubernetes "$tmp/repo/"
     set -- {{args}}
-    flate build all -p "$tmp/kubernetes" "$@"
+    flate build all -p "$tmp/repo" "$@"
 
 # Validate all Kustomizations, HelmReleases, and Flux sources (using temp copy)
 # Usage: just flate-test [extra flate args]
@@ -164,9 +175,10 @@ flate-test *args:
     set -e
     tmp=$(mktemp -d)
     trap "rm -rf '$tmp'" EXIT
-    cp -r kubernetes "$tmp/kubernetes"
+    mkdir -p "$tmp/repo"
+    cp -r kubernetes "$tmp/repo/"
     set -- {{args}}
-    flate test all -p "$tmp/kubernetes" "$@"
+    flate test all -p "$tmp/repo" "$@"
 
 # =============================================================================
 # Cleanup
@@ -174,8 +186,11 @@ flate-test *args:
 
 # Destroy Flux and applications (keeps cluster)
 destroy-flux:
+    kubectl delete helmreleases --all -n flux-system || true
     kubectl delete kustomizations --all -n flux-system || true
     kubectl delete ocirepositories --all -n flux-system || true
+    kubectl delete gitrepositories --all -n flux-system || true
+    kubectl delete helmrepositories --all -n flux-system || true
     kubectl delete namespace flux-system || true
 
 # Destroy everything (Pulumi + FluxCD)

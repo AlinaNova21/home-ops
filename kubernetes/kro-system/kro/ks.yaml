@@ -7,9 +7,9 @@ metadata:
   namespace: kro-system
 spec:
   interval: 30m
-  path: "./kro-system/kro/app"
+  path: "./kubernetes/kro-system/kro/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -31,9 +31,9 @@ spec:
   dependsOn:
     - name: kro
   interval: 30m
-  path: "./kro-system/kro/config"
+  path: "./kubernetes/kro-system/kro/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

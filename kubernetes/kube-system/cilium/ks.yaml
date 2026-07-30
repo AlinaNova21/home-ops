@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kube-system/cilium/app"
+  path: "./kubernetes/kube-system/cilium/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -31,9 +31,9 @@ spec:
   dependsOn:
     - name: cilium
   interval: 10m
-  path: "./kube-system/cilium/config"
+  path: "./kubernetes/kube-system/cilium/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 30m
-  path: "./network/cloudflared/app"
+  path: "./kubernetes/network/cloudflared/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:

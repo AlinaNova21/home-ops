@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 30m
-  path: "./network/tailscale/app"
+  path: "./kubernetes/network/tailscale/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m
@@ -24,9 +24,9 @@ metadata:
   namespace: network
 spec:
   interval: 10m
-  path: "./network/tailscale/config"
+  path: "./kubernetes/network/tailscale/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   dependsOn:

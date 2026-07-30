@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 30m
-  path: "./kube-system/node-feature-discovery/app"
+  path: "./kubernetes/kube-system/node-feature-discovery/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m
@@ -26,9 +26,9 @@ spec:
   dependsOn:
     - name: node-feature-discovery
   interval: 10m
-  path: "./kube-system/node-feature-discovery/config"
+  path: "./kubernetes/kube-system/node-feature-discovery/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m
