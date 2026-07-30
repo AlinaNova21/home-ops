@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_probe_v1.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: holmes
+  namespace: holmes
+spec:
+  jobName: holmes
+  interval: 60s
+  scrapeTimeout: 30s
+  prober:
+    url: holmes.holmes.svc.cluster.local:8080/health

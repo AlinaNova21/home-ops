@@ -10,6 +10,8 @@ resources:
   - sync
   - agent-sandbox-system
   - spegel
+  - chaski
+  - holmes
   - cert-manager
   - external-secrets-system
   - flux-system
