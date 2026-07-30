@@ -82,6 +82,49 @@ spec:
       create: true
 ```
 
+## Pod security context — match the image, not the *arr default
+
+Most LinuxServer.io images run as UID/GID `1000:1000` and the *arr cluster convention
+in this repo mirrors that. **Not every image does.** For non-LSI images (or anything
+migrating from existing data), discover the actual user before picking UID/GID:
+
+```bash
+# From the source host (Docker bind-mount, host dir, etc.)
+stat -c 'uid=%u gid=%g %n' /path/to/data/{,.env,version.json,artisan}
+
+# From the running container
+docker exec {container} id
+docker exec {container} stat -c 'uid=%u gid=%g' /path/to/image-layer/file
+```
+
+Then declare the matching securityContext on the workload:
+
+```yaml
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 100       # matches image USER + data file owner
+        runAsGroup: 101
+        fsGroup: 101         # lets fsGroup see group-readable data files
+        fsGroupChangePolicy: "OnRootMismatch"
+```
+
+If `runAsUser` doesn't match, entrypoint scripts with `set -eu` abort on the first
+permission-denied write and the container CrashLoopBackOffs before the app starts.
+This is the #1 cause of "works in docker, fails in k8s" migrations.
+
+**Kopiur `Restore` mover** must use the same UID/GID as the data it writes back, so the
+freshly-restored PVC files match what the running container expects to read:
+
+```yaml
+spec:
+  mover:
+    securityContext:
+      runAsUser: 100
+      runAsGroup: 101
+    podSecurityContext:
+      fsGroup: 101
+```
+
 ## See also
 
 - `home-ops-add-new-app` — full workflow for adding a new app
