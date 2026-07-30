@@ -35,6 +35,8 @@ spec:
         memory: 128Mi
       limits:
         memory: 256Mi
+    serviceMonitor:
+      enabled: true
     deschedulerPolicy:
       profiles:
         - name: default

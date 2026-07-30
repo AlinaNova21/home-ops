@@ -65,6 +65,8 @@ spec:
     gatewayAPI:
       enabled: false
     operator:
+      prometheus:
+        enabled: true
       replicas: 1
       resources:
         requests:
@@ -89,6 +91,8 @@ spec:
         service:
           type: NodePort
           nodePort: 31234
+    prometheus:
+      enabled: true
     envoy:
       enabled: false
     # Top-level resources: applies to the cilium-agent DaemonSet container

@@ -13,5 +13,7 @@ spec:
   values:
     controller:
       replicaCount: 2
+      serviceMonitor:
+        enabled: true
     webhook:
       enabled: false
