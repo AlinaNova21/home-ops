@@ -287,7 +287,7 @@ The full `spec.resources[0]` after the edit:
 Run:
 
 ```bash
-kustomize build kubernetes/flux-system/webhook | kubeconform -strict -ignore-missing-schemas \
+kustomize build kubernetes/flux-system/webhook/app | kubeconform -strict -ignore-missing-schemas \
   -schema-location default \
   -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 ```
@@ -337,7 +337,7 @@ Resulting `spec.eventSources`:
 Run:
 
 ```bash
-kustomize build kubernetes/flux-system/webhook | kubeconform -strict -ignore-missing-schemas \
+kustomize build kubernetes/flux-system/webhook/app | kubeconform -strict -ignore-missing-schemas \
   -schema-location default \
   -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 ```
