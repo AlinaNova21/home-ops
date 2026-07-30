@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - clusterissuer-le.yaml
   - externalsecret.yaml
+  - externalsecret-beee-gay.yaml
