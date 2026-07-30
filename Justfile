@@ -172,6 +172,28 @@ flate-diff:
     flate diff all -p kubernetes --base main
 
 # =============================================================================
+# Worktree Management
+# =============================================================================
+
+# Create a new worktree for a feature branch (based on main)
+worktree-create branch:
+	git worktree add .worktrees/{{branch}} -b {{branch}} main
+
+# Check out an existing remote branch as a worktree (e.g. Renovate PRs)
+worktree-add branch:
+	git fetch origin {{branch}} 2>/dev/null || true
+	git worktree add .worktrees/{{branch}} origin/{{branch}}
+
+# Remove a worktree (with local branch cleanup)
+worktree-clean branch:
+	git worktree remove .worktrees/{{branch}} && \
+	git branch -D {{branch}} 2>/dev/null || true
+
+# List all linked worktrees
+worktree-list:
+	git worktree list
+
+# =============================================================================
 # Cleanup
 # =============================================================================
 

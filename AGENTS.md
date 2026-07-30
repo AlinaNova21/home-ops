@@ -70,6 +70,30 @@ question is always cheaper than an unwanted merge.
   say X?", halt immediately. Summarize current state and wait for
   direction — do not try to "fix" the situation with more changes.
 
+### Worktree Operating Rules
+
+All agents MUST follow these rules when modifying files in this repo:
+
+1. **Load the `home-ops-worktree-workflow` skill** before making any file changes
+2. **Work in a worktree** unless already in one (`.worktrees/<branch-name>`)
+3. **No nested worktrees** — detect existing isolation first
+4. **Clean up** when done — `just worktree-clean <branch-name>`
+5. The explicit-orders gates above still apply regardless of worktree isolation
+
+Validation gates:
+- Run `just flate-test` **before** making changes (baseline)
+- Run `pre-commit run --all-files` + `just flate-test` **before** every commit
+- Do not commit through failing validation
+
+Secrets:
+- `.env` is gitignored and not shared across worktrees
+- Run `mise run secrets:env` in each new worktree to regenerate `.env`
+
+Branch naming:
+- Feature branches: `feat/<short-description>`
+- Fix branches: `fix/<short-description>`
+- Worktree directory mirrors branch name: `.worktrees/<branch-name>`
+
 ## Architecture Overview
 
 - **GitOps Engine**: Flux CD with GitRepository (HTTPS, branch=main, poll interval; OCI artifact retained dormant as rollback insurance)
@@ -189,6 +213,10 @@ kubectl rollout restart deployment/<app> -n <namespace>
 | `just flux-sync` | Annotate OCIRepository + reconcile cluster (dormant) |
 | `just cilium-status` | `cilium status --wait` |
 | `just destroy-flux` | Remove all Flux resources (keeps cluster) |
+| `just worktree-create <branch>` | Create feature branch worktree from `main` |
+| `just worktree-add <branch>` | Check out existing remote branch as worktree |
+| `just worktree-clean <branch>` | Remove worktree + local branch |
+| `just worktree-list` | Show all linked worktrees |
 
 See `talos/AGENTS.md` for Talos recipes (`talos-gen`, `talos-apply`, `talos-bootstrap`, etc.).
 
@@ -228,6 +256,7 @@ done
   - `home-ops-network-troubleshooting` — Gateway/Tailscale/ExternalDNS/cert diagnostics
   - `home-ops-initial-bootstrap` — Cilium CA + Hubble TLS one-time setup
   - `home-ops-external-secrets` — 1Password Connect `ExternalSecret` convention
+  - `home-ops-worktree-workflow` — Isolation via git worktrees (load before any file changes)
 
 ## Workstation Secrets
 
