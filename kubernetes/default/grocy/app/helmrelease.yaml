@@ -31,7 +31,7 @@ spec:
           grocy:
             image:
               repository: lscr.io/linuxserver/grocy
-              tag: latest@sha256:35b2c85b1238f8249c9b349fb03619d1915917e61b2e4bff580729ec87397b4c
+              tag: 4.6.0@sha256:35b2c85b1238f8249c9b349fb03619d1915917e61b2e4bff580729ec87397b4c
             env:
               TZ: America/Chicago
               GROCY_BASE_URL: https://grocy.whoverse.nexus
