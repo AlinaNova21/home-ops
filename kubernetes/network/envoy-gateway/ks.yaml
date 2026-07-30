@@ -30,8 +30,6 @@ metadata:
 spec:
   dependsOn:
     - name: envoy-gateway
-    - name: cert-issuers
-      namespace: network
   interval: 10m
   path: "./network/envoy-gateway/config"
   sourceRef:

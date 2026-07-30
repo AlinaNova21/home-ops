@@ -12,9 +12,6 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
-  dependsOn:
-    - name: external-secrets-config
-      namespace: external-secrets-system
   timeout: 10m
   wait: true
   prune: true

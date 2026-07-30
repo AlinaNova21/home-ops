@@ -6,13 +6,6 @@ metadata:
   name: dex-internal
   namespace: auth
 spec:
-  dependsOn:
-    - name: external-secrets
-      namespace: external-secrets-system
-    - name: onepassword-connect
-      namespace: onepassword-connect
-    - name: envoy-gateway-config
-      namespace: network
   interval: 30m
   path: "./auth/dex-internal/app"
   sourceRef:

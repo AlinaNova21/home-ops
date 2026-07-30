@@ -15,6 +15,3 @@ spec:
   timeout: 5m
   wait: true
   prune: true
-  dependsOn:
-    - name: dex-security-policies
-      namespace: auth

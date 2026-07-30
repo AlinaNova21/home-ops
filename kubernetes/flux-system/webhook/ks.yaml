@@ -6,9 +6,6 @@ metadata:
   name: flux-webhook
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: external-secrets-config
-      namespace: external-secrets-system
   interval: 30m
   path: "./flux-system/webhook/app"
   sourceRef:

@@ -15,8 +15,6 @@ spec:
   dependsOn:
     - name: cert-manager-config
       namespace: cert-manager
-    - name: external-secrets-config
-      namespace: external-secrets-system
   timeout: 5m
   wait: true
   prune: true

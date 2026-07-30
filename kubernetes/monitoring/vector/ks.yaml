@@ -12,8 +12,6 @@ spec:
     kind: OCIRepository
     name: home-ops
     namespace: flux-system
-  dependsOn:
-    - name: victoria-logs
   timeout: 10m
   wait: true
   prune: true

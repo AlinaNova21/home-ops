@@ -38,8 +38,6 @@ metadata:
 spec:
   dependsOn:
     - name: cert-manager
-    - name: external-secrets-config
-      namespace: external-secrets-system
   interval: 10m
   path: "./cert-manager/cert-manager/config"
   sourceRef:

@@ -6,9 +6,6 @@ metadata:
   name: external-dns
   namespace: network
 spec:
-  dependsOn:
-    - name: external-secrets-config
-      namespace: external-secrets-system
   interval: 30m
   path: "./network/external-dns/app"
   sourceRef:
