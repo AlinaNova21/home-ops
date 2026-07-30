@@ -1,12 +1,6 @@
 name: Build and Push Kubernetes OCI
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'kubernetes/**'
-      - '.github/workflows/kubernetes-oci.yml'
   workflow_dispatch:
 
 env:
@@ -15,6 +9,7 @@ env:
 
 jobs:
   build-and-push:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
