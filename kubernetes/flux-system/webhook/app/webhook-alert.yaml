@@ -3,11 +3,11 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
-  name: oci-webhook-alert
+  name: github-webhook-alert
   namespace: flux-system
 spec:
   providerRef:
-    name: oci-webhook-provider
+    name: github-webhook-provider
   eventSeverity: info
   eventSources:
     - kind: OCIRepository
@@ -22,8 +22,8 @@ spec:
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
-  name: oci-webhook-provider
+  name: github-webhook-provider
   namespace: flux-system
 spec:
   type: generic
-  address: http://notification-controller.flux-system.svc.cluster.local./receiver/oci-webhook-receiver
+  address: http://notification-controller.flux-system.svc.cluster.local./receiver/github
