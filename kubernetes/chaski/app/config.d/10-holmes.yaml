@@ -1,7 +1,7 @@
 targets:
   holmes:
     http:
-      url: http://holmes.holmes.svc.cluster.local:5000/api/chat
+      url: http://holmes-holmes.holmes.svc.cluster.local/api/chat
       headers:
         Content-Type: application/json
         X-API-Key: '{{ env "HOLMES_API_KEY" }}'
