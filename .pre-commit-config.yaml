@@ -4,7 +4,7 @@ repos:
       - id: flate-test
         name: Validate Flux resources (flate test)
         description: Validate all Kustomizations and HelmReleases
-        entry: flate test all -p .
+        entry: flate test all -p kubernetes
         language: system
         pass_filenames: false
         stages: [pre-commit]

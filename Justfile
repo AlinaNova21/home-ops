@@ -159,17 +159,17 @@ pulumi-up:
 # Render all Flux objects to YAML
 # Usage: just flate-build [extra flate args]
 flate-build *args:
-    flate build all -p . {{args}}
+    flate build all -p kubernetes {{args}}
 
 # Validate all Kustomizations, HelmReleases, and Flux sources
 # Usage: just flate-test [extra flate args]
 flate-test *args:
-    flate test all -p . {{args}}
+    flate test all -p kubernetes {{args}}
 
 # Diff rendered output against main branch
 # Usage: just flate-diff
 flate-diff:
-    flate diff all -p . --base main
+    flate diff all -p kubernetes --base main
 
 # =============================================================================
 # Cleanup
