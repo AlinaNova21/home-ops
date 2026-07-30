@@ -56,6 +56,7 @@ spec:
               SONARR__AUTH__METHOD: External
               SONARR__AUTH__REQUIRED: Enabled
               SONARR__LOG__LEVEL: info
+              SONARR__METRICS__ENABLED: "true"
               SONARR__SERVER__PORT: "8989"
               SONARR__UPDATE__BRANCH: main
               SONARR__UPDATE__MECHANISM: External
@@ -121,3 +122,13 @@ spec:
         existingClaim: media-tv-anime
         globalMounts:
           - path: /data/tv/anime
+
+    serviceMonitor:
+      main:
+        enabled: true
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
+        service:
+          identifier: sonarr-anime

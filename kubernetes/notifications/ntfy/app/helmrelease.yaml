@@ -106,3 +106,13 @@ spec:
         sizeLimit: 1Gi
         globalMounts:
           - path: /var/cache/ntfy
+
+    serviceMonitor:
+      main:
+        enabled: true
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
+        service:
+          identifier: ntfy
