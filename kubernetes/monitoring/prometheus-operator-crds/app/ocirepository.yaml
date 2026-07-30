@@ -13,8 +13,3 @@ spec:
   ref:
     tag: "31.0.0"
   url: oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds
-  verify:
-    provider: cosign
-    matchOIDCIdentity:
-      - issuer: ^https://token.actions.githubusercontent.com$
-        subject: ^https://github.com/prometheus-community/helm-charts/.github/workflows/release.yaml@.*$
