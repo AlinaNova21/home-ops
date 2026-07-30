@@ -92,8 +92,34 @@ spec:
           - namespace: monitoring
             url: "https://alerts.whoverse.dev"
 
-    # Disable VMAlert — no notifier configured
+    # VMAlert — rule evaluator; picks up PrometheusRule + VMRule CRDs,
+    # queries vmselect, writes back to vminsert, notifies bundled alertmanager.
+    # All three sinks auto-discovered from the same chart release.
+    # HA: 2 replicas with leader election (chart default `replicaCount: 1`
+    # would bind the PVC to a single node and stall on node loss).
     vmalert:
-      enabled: false
+      enabled: true
+      spec:
+        replicaCount: 2
+        # Empty matchLabels + matchExpressions = select everything cluster-wide.
+        # Mirrors vmagent.spec.selectAllByDefault: true above.
+        ruleSelector:
+          matchLabels: {}
+          matchExpressions: []
+        evaluationInterval: 30s
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+        # WAL persists rule + alert state across restarts.
+        # miroir-replicated (DRBD, 2 replicas) matches the storage class
+        # convention used by vmstorage/vmselect in this release.
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: miroir-replicated
+              resources:
+                requests:
+                  storage: 1Gi
 
     defaultDashboardsEnabled: false

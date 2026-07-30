@@ -1,0 +1,51 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-operator-crds
+  namespace: monitoring
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: prometheus-operator-crds
+    namespace: monitoring
+  timeout: 10m
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    crds:
+      servicemonitors:
+        enabled: true
+      podmonitors:
+        enabled: true
+      probes:
+        enabled: true
+      scrapeconfigs:
+        enabled: true
+      # Accepted cluster-wide, evaluated once vmalert is enabled.
+      prometheusrules:
+        enabled: true
+      alertmanagerconfigs:
+        enabled: false
+      alertmanagers:
+        enabled: false
+      prometheusagents:
+        enabled: false
+      prometheuses:
+        enabled: false
+      thanosrulers:
+        enabled: false
