@@ -6,6 +6,8 @@ metadata:
   name: intel-gpu-plugin
   namespace: inteldeviceplugins-system
 spec:
+  dependsOn:
+    - name: intel-device-plugins-operator
   interval: 30m
   path: "./kubernetes/inteldeviceplugins-system/intel-gpu-plugin/app"
   sourceRef:

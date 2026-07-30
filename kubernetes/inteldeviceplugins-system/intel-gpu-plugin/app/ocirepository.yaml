@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/ocirepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: intel-gpu-plugin
+  namespace: inteldeviceplugins-system
+spec:
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "0.36.0"
+    digest: sha256:6f09a445227e1bec9d625f0c384182480ce7fc3c63c634549c8f813f1a77a3d0
+  url: oci://ghcr.io/intel/helm-charts/intel-device-plugins-gpu

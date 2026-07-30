@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/gitrepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: agent-sandbox-crds
+  namespace: agent-sandbox-system
+spec:
+  interval: 1h
+  url: https://github.com/Unique-AG/helm-charts
+  ref:
+    tag: agent-sandbox-controller-0.4.6-rc.1

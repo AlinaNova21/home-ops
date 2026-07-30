@@ -6,6 +6,8 @@ metadata:
   name: agent-sandbox-controller
   namespace: agent-sandbox-system
 spec:
+  dependsOn:
+    - name: agent-sandbox-crds
   interval: 15m
   path: "./kubernetes/agent-sandbox-system/agent-sandbox-controller/app"
   sourceRef:
