@@ -37,6 +37,11 @@ spec:
 
     service:
       enabled: true
+      ports:
+        - name: prom-exporter
+          port: 8686
+          protocol: TCP
+          targetPort: 8686
     podMonitor:
       enabled: true
       port: prom-exporter
