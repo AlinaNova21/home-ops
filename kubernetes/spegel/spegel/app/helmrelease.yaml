@@ -30,4 +30,6 @@ spec:
                   - NET_RAW
                   - SYS_ADMIN
     service:
-      enabled: false
+      enabled: true
+    serviceMonitor:
+      enabled: true

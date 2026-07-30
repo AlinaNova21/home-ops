@@ -44,6 +44,7 @@ spec:
               PROWLARR__AUTH__METHOD: External
               PROWLARR__AUTH__REQUIRED: Enabled
               PROWLARR__LOG__LEVEL: info
+              PROWLARR__METRICS__ENABLED: "true"
               PROWLARR__SERVER__PORT: "9696"
               PROWLARR__UPDATE__BRANCH: develop
               PROWLARR__UPDATE__MECHANISM: External
@@ -101,3 +102,13 @@ spec:
           name: prowlarr
         globalMounts:
           - path: /config
+
+    serviceMonitor:
+      main:
+        enabled: true
+        endpoints:
+          - port: http
+            path: /metrics
+            interval: 30s
+        service:
+          identifier: prowlarr

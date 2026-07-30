@@ -49,6 +49,9 @@ spec:
 
     # Configure localpv-provisioner for hostpath
     localpv-provisioner:
+      metrics:
+        serviceMonitor:
+          enabled: true
       localpv:
         # Base path for hostpath volumes - matches Talos userVolume mount
         basePath: "/var/mnt/hostpath"

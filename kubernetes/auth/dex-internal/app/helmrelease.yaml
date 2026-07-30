@@ -92,3 +92,5 @@ spec:
     resources:
       requests:
         memory: 96Mi
+    serviceMonitor:
+      enabled: true

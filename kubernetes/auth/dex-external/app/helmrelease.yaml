@@ -75,3 +75,5 @@ spec:
     resources:
       requests:
         memory: 64Mi
+    serviceMonitor:
+      enabled: true

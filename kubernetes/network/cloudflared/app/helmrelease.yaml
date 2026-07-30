@@ -84,3 +84,13 @@ spec:
           metrics:
             port: 2000
             protocol: TCP
+
+    serviceMonitor:
+      main:
+        enabled: true
+        endpoints:
+          - port: metrics
+            path: /metrics
+            interval: 30s
+        service:
+          identifier: main

@@ -35,9 +35,12 @@ spec:
       requests:
         memory: 256Mi
 
-    # No Service needed for a log-shipping agent
     service:
-      enabled: false
+      enabled: true
+    podMonitor:
+      enabled: true
+      port: prom-exporter
+      path: /metrics
 
     customConfig:
       data_dir: /vector-data-dir

@@ -154,3 +154,5 @@ spec:
 
     plugins:
       - victoriametrics-logs-datasource
+    serviceMonitor:
+      enabled: true

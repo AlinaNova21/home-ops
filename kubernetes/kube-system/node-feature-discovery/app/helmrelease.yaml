@@ -28,11 +28,15 @@ spec:
     master:
       enableTaints: false
       replicaCount: 1
+      serviceMonitor:
+        enabled: true
       resources:
         limits:
           memory: 512Mi
     worker:
       enable: true
+      serviceMonitor:
+        enabled: true
       resources:
         limits:
           memory: 512Mi

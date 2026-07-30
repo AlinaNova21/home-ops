@@ -36,4 +36,4 @@ spec:
         type: ClusterIP
         port: 8078
       serviceMonitor:
-        enabled: false
+        enabled: true

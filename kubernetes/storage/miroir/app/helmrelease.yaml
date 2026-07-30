@@ -34,6 +34,6 @@ spec:
     replicaCount: 1
     monitoring:
       podMonitor:
-        enabled: false
+        enabled: true
       prometheusRule:
-        enabled: false
+        enabled: true
