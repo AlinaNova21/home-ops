@@ -8,5 +8,6 @@ resources:
   - externalsecret.yaml
   - github-mcp-externalsecret.yaml
   - pvc.yaml
-  - provider.yaml
+  - probe.yaml
+  - flux-provider.yaml
   - alert.yaml
