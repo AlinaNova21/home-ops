@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/restore_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: Restore
+metadata:
+  name: linkstack-data
+  namespace: default
+spec:
+  source:
+    fromPolicy:
+      name: linkstack-data
+      offset: 0
+  mover:
+    securityContext:
+      runAsUser: 33
+      runAsGroup: 33
+    podSecurityContext:
+      fsGroup: 33
+  policy:
+    onMissingSnapshot: Continue
+  target:
+    populator: {}
+  credentialProjection:
+    enabled: true

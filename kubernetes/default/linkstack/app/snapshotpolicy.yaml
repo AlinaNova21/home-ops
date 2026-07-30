@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/snapshotpolicy_v1alpha1.json
+# Snapshot identity matches the kopia snapshot taken from dockge:
+#   linkstack@default:/pvc/linkstack-data
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: linkstack-data
+  namespace: default
+spec:
+  identity:
+    username: linkstack
+    hostname: default
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  copyMethod: Snapshot
+  volumeSnapshotClassName: miroir-snap
+  staging:
+    storageClassName: miroir-local
+  mover:
+    inheritSecurityContextFrom:
+      pvcConsumer: {}
+  credentialProjection:
+    enabled: true
+  sources:
+    - pvc:
+        name: linkstack-data
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3

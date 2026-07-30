@@ -8,6 +8,7 @@ resources:
   - error-pages/ks.yaml
   - grocy/ks.yaml
   - konflate/ks.yaml
+  - linkstack/ks.yaml
   - mailpit/ks.yaml
   #- memos/ks.yaml
   - speedtest-tracker/ks.yaml
