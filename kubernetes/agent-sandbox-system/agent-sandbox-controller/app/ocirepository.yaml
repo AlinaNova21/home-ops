@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/ocirepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: agent-sandbox-controller
+  namespace: agent-sandbox-system
+spec:
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "0.4.6-rc.1"
+    digest: sha256:2eca7f113777f44129562cdcfaaac2d2132496c8b338d0ae5e0b0c62fdc9f11e
+  url: oci://ghcr.io/unique-ag/helm-charts/agent-sandbox-controller
