@@ -32,9 +32,9 @@ metadata:
   namespace: {namespace}
 spec:
   interval: 15m
-  path: "./{namespace}/{component}/app"
+  path: "./kubernetes/{namespace}/{component}/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   dependsOn:
@@ -101,7 +101,7 @@ kubectl apply -k kubernetes/{namespace}/{component}/app
 git add kubernetes/{namespace}/{component}
 git commit -m "Add {component} to {namespace}"
 git push
-# OCI artifact auto-built; Flux picks up automatically
+# Flux picks up automatically (poll interval); `just git-deploy` to force reconcile
 ```
 
 ## Common gotchas
@@ -110,4 +110,4 @@ git push
 - The namespace's `kustomization.yaml` must reference `ns.yaml` **first** (enforced)
 - `bjw-s/app-template` chart structure — see `home-ops-app-pattern` skill
 - App chart version: pin explicitly (don't use `latest`)
-- Use `./{namespace}/{component}/app` for `spec.path` (3-level path from OCI artifact root)
+- Use `./kubernetes/{namespace}/{component}/app` for `spec.path` (2-level path from repo root)

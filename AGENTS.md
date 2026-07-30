@@ -25,7 +25,7 @@ Tuning:
 
 ## Architecture Overview
 
-- **GitOps Engine**: Flux CD with OCI artifacts (auto-built by GitHub Actions on push to main)
+- **GitOps Engine**: Flux CD with GitRepository (HTTPS, branch=main, poll interval; OCI artifact retained dormant as rollback insurance)
 - **Resource Composition**: Kustomize layering with Helm charts
 - **Helm Charts**: bjw-s app-template for applications
 - **Secrets**: External Secrets Operator syncing from 1Password Connect (`ClusterSecretStore: onepassword-connect`)
@@ -98,7 +98,7 @@ kubernetes/
 ├── storage/                  # rook-ceph, openebs-localpv
 ├── system-upgrade/           # tuppr
 ├── components/               # Cross-cutting bundles (e.g. kopiur)
-├── flux-config/              # Flux CD self-management (HelmRelease, OCIRepository, cluster root)
+├── flux-config/              # Flux CD self-management (HelmRelease, GitRepository, cluster root)
 ├── bootstrap/                # Cilium + Flux helmfile for first install
 ├── scripts/                  # deploy-infrastructure.sh
 └── bootstrap.sh              # Initial Flux install (alternative to helmfile bootstrap)
@@ -115,9 +115,8 @@ git add .
 git commit -m "..."
 git push
 
-# 3. OCI artifact auto-built by .github/workflows/kubernetes-oci.yml
-# 4. Flux picks up automatically (poll interval); force reconcile if needed:
-flux reconcile source oci home-ops -n flux-system
+# 3. Flux picks up automatically (poll interval); force reconcile if needed:
+flux reconcile source git home-ops -n flux-system
 flux reconcile kustomization cluster -n flux-system
 ```
 
@@ -135,10 +134,12 @@ kubectl rollout restart deployment/<app> -n <namespace>
 
 | Recipe | Purpose |
 |---|---|
-| `just flux-status` | Pods, OCIRepositories, Kustomizations, HelmReleases |
-| `just deploy` | `flux-push` + `flux-sync` (build OCI + reconcile) |
-| `just flux-sync` | Annotate OCIRepository + reconcile cluster |
-| `just flux-push` | Build OCI artifact locally and annotate OCIRepository |
+| `just flux-status` | Pods, OCIRepositories, GitRepositories, Kustomizations, HelmReleases |
+| `just git-deploy` | `git-flux-sync` (annotate GitRepository + reconcile cluster) |
+| `just git-flux-sync` | Annotate GitRepository + reconcile cluster |
+| `just deploy` | `flux-push` + `flux-sync` (OCI flow — dormant, for rollback only) |
+| `just flux-push` | Build OCI artifact locally and annotate OCIRepository (dormant) |
+| `just flux-sync` | Annotate OCIRepository + reconcile cluster (dormant) |
 | `just cilium-status` | `cilium status --wait` |
 | `just destroy-flux` | Remove all Flux resources (keeps cluster) |
 
