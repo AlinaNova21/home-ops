@@ -3,8 +3,8 @@ repos:
     hooks:
       - id: flate-test
         name: Validate Flux resources (flate test)
-        description: Validate all Kustomizations and HelmReleases using a temp copy
-        entry: bash -c 'tmp=$(mktemp -d) && trap "rm -rf $tmp" EXIT && mkdir -p "$tmp/repo" && cp -r kubernetes "$tmp/repo/" && flate test all -p "$tmp/repo"'
+        description: Validate all Kustomizations and HelmReleases
+        entry: flate test all -p .
         language: system
         pass_filenames: false
         stages: [pre-commit]

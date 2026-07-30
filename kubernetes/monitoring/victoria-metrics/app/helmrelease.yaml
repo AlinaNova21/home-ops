@@ -111,15 +111,11 @@ spec:
           requests:
             memory: 128Mi
             cpu: 100m
-        # WAL persists rule + alert state across restarts.
-        # miroir-replicated (DRBD, 2 replicas) matches the storage class
-        # convention used by vmstorage/vmselect in this release.
-        storage:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: miroir-replicated
-              resources:
-                requests:
-                  storage: 1Gi
+        # VMAlert runs as a Deployment (operator v0.73.x) and the VMAlert CRD
+        # exposes no `spec.storage` field — only `volumes` + `volumeMounts`
+        # for attaching an external PVC. WAL therefore lives on the pod's
+        # root filesystem (emptyDir) and alert state resets on restart; rule
+        # definitions re-load from PrometheusRule/VMRule CRDs and any active
+        # alerts re-fire on the next evaluation cycle.
 
     defaultDashboardsEnabled: false

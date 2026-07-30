@@ -153,32 +153,23 @@ pulumi-up:
     cd pulumi && pulumi up
 
 # =============================================================================
-# Flate (temp-dir workaround)
+# Flate
 # =============================================================================
 
-# Render all Flux objects to YAML (using temp copy)
+# Render all Flux objects to YAML
 # Usage: just flate-build [extra flate args]
 flate-build *args:
-    #!/usr/bin/env bash
-    set -e
-    tmp=$(mktemp -d)
-    trap "rm -rf '$tmp'" EXIT
-    mkdir -p "$tmp/repo"
-    cp -r kubernetes "$tmp/repo/"
-    set -- {{args}}
-    flate build all -p "$tmp/repo" "$@"
+    flate build all -p . {{args}}
 
-# Validate all Kustomizations, HelmReleases, and Flux sources (using temp copy)
+# Validate all Kustomizations, HelmReleases, and Flux sources
 # Usage: just flate-test [extra flate args]
 flate-test *args:
-    #!/usr/bin/env bash
-    set -e
-    tmp=$(mktemp -d)
-    trap "rm -rf '$tmp'" EXIT
-    mkdir -p "$tmp/repo"
-    cp -r kubernetes "$tmp/repo/"
-    set -- {{args}}
-    flate test all -p "$tmp/repo" "$@"
+    flate test all -p . {{args}}
+
+# Diff rendered output against main branch
+# Usage: just flate-diff
+flate-diff:
+    flate diff all -p . --base main
 
 # =============================================================================
 # Cleanup
