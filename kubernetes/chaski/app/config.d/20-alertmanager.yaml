@@ -1,0 +1,6 @@
+routes:
+  alertmanager:
+    target: holmes
+    whenExpr: "true"
+    message: |-
+      {"ask": "Investigate alert: [{{ .payload.status }}] {{ index .payload.commonLabels "alertname" | default "unknown" }} (severity={{ index .payload.commonLabels "severity" | default "none" }}): {{ index .payload.commonAnnotations "summary" | default "no summary" }}"}

@@ -7,6 +7,7 @@ configMapGenerator:
   - name: chaski-config
     files:
       - config.d/10-holmes.yaml
+      - config.d/20-alertmanager.yaml
     options:
       disableNameSuffixHash: true
 resources:
