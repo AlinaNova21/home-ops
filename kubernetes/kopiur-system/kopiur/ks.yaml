@@ -7,9 +7,9 @@ metadata:
   namespace: kopiur-system
 spec:
   interval: 1h
-  path: "./kopiur-system/kopiur/app"
+  path: "./kubernetes/kopiur-system/kopiur/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   wait: false
@@ -25,9 +25,9 @@ spec:
   dependsOn:
     - name: kopiur
   interval: 1h
-  path: "./kopiur-system/kopiur/repository"
+  path: "./kubernetes/kopiur-system/kopiur/repository"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   wait: false
@@ -43,9 +43,9 @@ spec:
   dependsOn:
     - name: kopiur-repository
   interval: 1h
-  path: "./kopiur-system/kopiur/mirror"
+  path: "./kubernetes/kopiur-system/kopiur/mirror"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   prune: true

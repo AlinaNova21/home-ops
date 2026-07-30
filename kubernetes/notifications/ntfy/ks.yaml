@@ -7,9 +7,9 @@ metadata:
   namespace: notifications
 spec:
   interval: 30m
-  path: "./notifications/ntfy/app"
+  path: "./kubernetes/notifications/ntfy/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

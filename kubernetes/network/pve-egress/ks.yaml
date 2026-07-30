@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 15m
-  path: "./network/pve-egress/app"
+  path: "./kubernetes/network/pve-egress/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

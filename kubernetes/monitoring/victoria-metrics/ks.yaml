@@ -7,9 +7,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 30m
-  path: "./monitoring/victoria-metrics/app"
+  path: "./kubernetes/monitoring/victoria-metrics/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   targetNamespace: monitoring
@@ -29,9 +29,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 30m
-  path: "./monitoring/victoria-metrics/scrapes"
+  path: "./kubernetes/monitoring/victoria-metrics/scrapes"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   dependsOn:

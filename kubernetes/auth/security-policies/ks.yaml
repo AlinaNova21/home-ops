@@ -7,9 +7,9 @@ metadata:
   namespace: auth
 spec:
   interval: 10m
-  path: "./auth/security-policies"
+  path: "./kubernetes/auth/security-policies"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

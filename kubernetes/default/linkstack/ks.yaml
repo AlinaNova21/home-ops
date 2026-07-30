@@ -7,9 +7,9 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: "./default/linkstack/app"
+  path: "./kubernetes/default/linkstack/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

@@ -7,9 +7,9 @@ metadata:
   namespace: monitoring
 spec:
   interval: 30m
-  path: "./monitoring/prometheus-operator-crds/app"
+  path: "./kubernetes/monitoring/prometheus-operator-crds/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   targetNamespace: monitoring

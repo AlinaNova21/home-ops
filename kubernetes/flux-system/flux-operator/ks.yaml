@@ -7,9 +7,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30m
-  path: "./flux-system/flux-operator/app"
+  path: "./kubernetes/flux-system/flux-operator/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
   wait: true
   prune: true

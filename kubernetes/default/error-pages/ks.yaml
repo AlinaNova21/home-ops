@@ -7,9 +7,9 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: "./default/error-pages/app-internal"
+  path: "./kubernetes/default/error-pages/app-internal"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m
@@ -24,9 +24,9 @@ metadata:
   namespace: default
 spec:
   interval: 30m
-  path: "./default/error-pages/app-external"
+  path: "./kubernetes/default/error-pages/app-external"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

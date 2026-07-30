@@ -7,9 +7,9 @@ metadata:
   namespace: cert-manager
 spec:
   interval: 30m
-  path: "./cert-manager/cert-manager/app"
+  path: "./kubernetes/cert-manager/cert-manager/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -39,9 +39,9 @@ spec:
   dependsOn:
     - name: cert-manager
   interval: 10m
-  path: "./cert-manager/cert-manager/config"
+  path: "./kubernetes/cert-manager/cert-manager/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

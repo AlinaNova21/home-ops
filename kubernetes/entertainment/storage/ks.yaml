@@ -7,9 +7,9 @@ metadata:
   namespace: entertainment
 spec:
   interval: 15m
-  path: "./entertainment/storage/config"
+  path: "./kubernetes/entertainment/storage/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

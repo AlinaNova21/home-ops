@@ -8,9 +8,9 @@ metadata:
 spec:
   suspend: true
   interval: 30m
-  path: "./storage/rook-ceph/app"
+  path: "./kubernetes/storage/rook-ceph/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:

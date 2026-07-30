@@ -7,9 +7,9 @@ metadata:
   namespace: agent-sandbox-system
 spec:
   interval: 15m
-  path: "./agent-sandbox-system/agent-sandbox-controller/app"
+  path: "./kubernetes/agent-sandbox-system/agent-sandbox-controller/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

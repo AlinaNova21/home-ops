@@ -7,9 +7,9 @@ metadata:
   namespace: system-upgrade
 spec:
   interval: 30m
-  path: "./system-upgrade/tuppr/app"
+  path: "./kubernetes/system-upgrade/tuppr/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -31,9 +31,9 @@ spec:
   dependsOn:
     - name: tuppr
   interval: 30m
-  path: "./system-upgrade/tuppr/config"
+  path: "./kubernetes/system-upgrade/tuppr/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   prune: true

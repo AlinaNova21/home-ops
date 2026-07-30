@@ -153,9 +153,10 @@ flate-build *args:
     set -e
     tmp=$(mktemp -d)
     trap "rm -rf '$tmp'" EXIT
-    cp -r kubernetes "$tmp/kubernetes"
+    mkdir -p "$tmp/repo"
+    cp -r kubernetes "$tmp/repo/"
     set -- {{args}}
-    flate build all -p "$tmp/kubernetes" "$@"
+    flate build all -p "$tmp/repo" "$@"
 
 # Validate all Kustomizations, HelmReleases, and Flux sources (using temp copy)
 # Usage: just flate-test [extra flate args]
@@ -164,9 +165,10 @@ flate-test *args:
     set -e
     tmp=$(mktemp -d)
     trap "rm -rf '$tmp'" EXIT
-    cp -r kubernetes "$tmp/kubernetes"
+    mkdir -p "$tmp/repo"
+    cp -r kubernetes "$tmp/repo/"
     set -- {{args}}
-    flate test all -p "$tmp/kubernetes" "$@"
+    flate test all -p "$tmp/repo" "$@"
 
 # =============================================================================
 # Cleanup

@@ -7,9 +7,9 @@ metadata:
   namespace: headlamp
 spec:
   interval: 30m
-  path: "./headlamp/headlamp/app"
+  path: "./kubernetes/headlamp/headlamp/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

@@ -7,9 +7,9 @@ metadata:
   namespace: downloads
 spec:
   interval: 15m
-  path: "./downloads/recyclarr/app"
+  path: "./kubernetes/downloads/recyclarr/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   dependsOn:

@@ -7,9 +7,9 @@ metadata:
   namespace: spegel
 spec:
   interval: 15m
-  path: "./spegel/spegel/app"
+  path: "./kubernetes/spegel/spegel/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   wait: true

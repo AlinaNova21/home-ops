@@ -10,12 +10,12 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 30m
-  path: ./default/speedtest-tracker/app
+  path: ./kubernetes/default/speedtest-tracker/app
   postBuild:
     substitute:
       APP: speedtest-tracker
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

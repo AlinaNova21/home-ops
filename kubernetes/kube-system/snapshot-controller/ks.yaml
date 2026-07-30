@@ -7,9 +7,9 @@ metadata:
   namespace: kube-system
 spec:
   interval: 15m
-  path: ./kube-system/snapshot-controller
+  path: ./kubernetes/kube-system/snapshot-controller
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   wait: true

@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 30m
-  path: "./network/external-dns/app"
+  path: "./kubernetes/network/external-dns/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:

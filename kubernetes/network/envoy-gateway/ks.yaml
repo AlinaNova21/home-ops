@@ -7,9 +7,9 @@ metadata:
   namespace: network
 spec:
   interval: 30m
-  path: "./network/envoy-gateway/app"
+  path: "./kubernetes/network/envoy-gateway/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -31,9 +31,9 @@ spec:
   dependsOn:
     - name: envoy-gateway
   interval: 10m
-  path: "./network/envoy-gateway/config"
+  path: "./kubernetes/network/envoy-gateway/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

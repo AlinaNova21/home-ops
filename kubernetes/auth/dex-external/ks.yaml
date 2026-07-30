@@ -7,9 +7,9 @@ metadata:
   namespace: auth
 spec:
   interval: 30m
-  path: "./auth/dex-external/app"
+  path: "./kubernetes/auth/dex-external/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

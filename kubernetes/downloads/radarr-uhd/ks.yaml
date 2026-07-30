@@ -10,12 +10,12 @@ spec:
   components:
         - ../../../components/kopiur/backup
   interval: 15m
-  path: "./downloads/radarr-uhd/app"
+  path: "./kubernetes/downloads/radarr-uhd/app"
   postBuild:
     substitute:
       APP: radarr-uhd
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m

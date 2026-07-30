@@ -7,9 +7,9 @@ metadata:
   namespace: storage
 spec:
   interval: 30m
-  path: "./storage/miroir/app"
+  path: "./kubernetes/storage/miroir/app"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   healthChecks:
@@ -31,9 +31,9 @@ spec:
   dependsOn:
     - name: miroir
   interval: 30m
-  path: "./storage/miroir/config"
+  path: "./kubernetes/storage/miroir/config"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 5m

@@ -10,12 +10,12 @@ spec:
   components:
     - ../../../components/kopiur/backup
   interval: 30m
-  path: ./default/yuvomi/app
+  path: ./kubernetes/default/yuvomi/app
   postBuild:
     substitute:
       APP: yuvomi
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
     namespace: flux-system
   timeout: 10m
