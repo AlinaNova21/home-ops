@@ -1,5 +1,14 @@
 name: Build and Push Kubernetes OCI
 
+# NOTE: This workflow is INTENTIONALLY DORMANT as of the OCIRepository →
+# GitRepository migration. The cluster now sources from a GitRepository
+# (anonymous clone of https://github.com/AlinaNova21/home-ops main branch)
+# instead of this OCI artifact. The file is retained in tree as a historical
+# reference and for emergency OCI rollback — re-enabling requires flipping
+# `if: ${{ false }}` below AND restoring the push trigger.
+#
+# See docs/superpowers/specs/2026-07-29-gitrepository-migration-design.md.
+
 on:
   workflow_dispatch:
 
