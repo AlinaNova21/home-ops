@@ -13,6 +13,9 @@ spec:
     - kind: OCIRepository
       name: '*'
       namespace: flux-system
+    - kind: GitRepository
+      name: '*'
+      namespace: flux-system
   suspend: false
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/notification.toolkit.fluxcd.io/provider_v1beta3.json
