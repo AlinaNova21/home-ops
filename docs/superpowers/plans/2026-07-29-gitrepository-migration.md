@@ -167,7 +167,7 @@ git commit -m "feat(flux): switch flux-config Kustomizations to GitRepository"
 
 ## Task 4: Bulk-update all component `ks.yaml` files
 
-**Files:** Modify every file matching `kubernetes/**/ks.yaml` that was not touched in Tasks 1–3. This is **64 files, 67 Kustomizations** (some files contain multiple Kustomizations).
+**Files:** Modify every file matching `kubernetes/**/ks.yaml` that was not touched in Tasks 1–3. **Actual count discovered during implementation: 62 files, 76 Kustomizations** (the plan/spec estimated 64/67 — actual is 62 component files because `kubernetes/ks.yaml` was already migrated in Task 2 and three flux-config files were already migrated in Task 3; component Kustomizations run higher than estimated because the repo has grown since the plan was authored).
 
 - [ ] **Step 1: Discover the file set**
 
@@ -182,7 +182,7 @@ Expected: 64 file paths (component `ks.yaml` files, excluding the three flux-con
 
 - [ ] **Step 2: Apply the two edits to every file**
 
-For each path returned in Step 1, apply exactly two sed replacements (GNU sed semantics, in-place, with backup):
+For each path returned in Step 1, apply exactly two sed replacements (GNU sed semantics, in-place, with backup). **NOTE: the plan's original simple sed was not idempotent for unquoted paths.** Use the **guarded** form below, which skips already-prefixed lines:
 
 ```bash
 COMPONENT_KS_FILES=$(grep -rln "sourceRef:" kubernetes --include="ks.yaml" \
@@ -191,14 +191,16 @@ COMPONENT_KS_FILES=$(grep -rln "sourceRef:" kubernetes --include="ks.yaml" \
 echo "$COMPONENT_KS_FILES" | while read -r f; do
   sed -i \
     -e 's|kind: OCIRepository|kind: GitRepository|g' \
-    -e 's|^  path: \./|  path: \./kubernetes/|g' \
+    -e '/^  path: \.\/kubernetes\//!s|^  path: \./|  path: \./kubernetes/|g' \
     "$f"
 done
 ```
 
 Notes:
-- The `kind: OCIRepository` substitution matches every manifest with that string (component ks.yaml files reference only `OCIRepository/home-ops` because the 50 upstream chart OCI repositories are not referenced as `sourceRef` — they live in `HelmRelease.spec.chartRef`). Verify before running: `grep -l "kind: OCIRepository" $COMPONENT_KS_FILES` must return all 64 files and ONLY those files.
-- The `path: \./` substitution prepends `./kubernetes/` to every `spec.path` that starts with `./`. Component paths do not include the upstream chart OCIRepository references because HelmRelease `chartRef.kind` lives in `app/ocirepository.yaml`, not in `ks.yaml`.
+- The `kind: OCIRepository` substitution matches every manifest with that string (component ks.yaml files reference only `OCIRepository/home-ops` because the 50 upstream chart OCI repositories are not referenced as `sourceRef` — they live in `HelmRelease.spec.chartRef`). Verify before running: `grep -l "kind: OCIRepository" $COMPONENT_KS_FILES` must return all intended files and ONLY those files.
+- The `path:` substitution uses a guard (`/^  path: \.\/kubernetes\//!`) so a re-run does NOT double-prefix already-prefixed unquoted paths. (Quoted paths like `"./foo/bar"` are self-protecting because the regex anchor `path: "./` won't match `path: "./kubernetes/...` — but the guard makes the unquoted case safe too.)
+- The substitution covers BOTH quoted (`"./..."`) and unquoted (`./...`) path styles (the unquoted form is rare — only 6 of 76 Kustomizations).
+- Component paths do not include the upstream chart OCIRepository references because HelmRelease `chartRef.kind` lives in `app/ocirepository.yaml`, not in `ks.yaml`.
 
 - [ ] **Step 3: Sanity-check the substitution**
 
