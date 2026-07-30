@@ -23,30 +23,73 @@ Tuning:
 - gitleaks config: `.gitleaks.toml` (path-based allowlists, e.g. `charts/kasm/*.lock`)
 - Allow inline: append `# gitleaks:allow` or `# trufflehog:ignore` on the matching line
 
-## Worktree Operating Rules
+## Agent Operating Rules
+
+These rules apply to every agent operating in this repo, regardless of model
+or session. They override any heuristic that would otherwise optimize for
+"just getting it done."
+
+### Explicit-orders gates
+
+The following actions require the user to give an **explicit, scoped** order
+in the current turn ("merge it", "yes, push to main", "do it"). Do **not**
+infer consent from a green CI, a passing plan, or a previous "create a PR"
+request.
+
+| Action | Why it's gated |
+|---|---|
+| `gh pr merge …` (any flag combo: `--merge`, `--squash`, `--rebase`, `--auto`, `--delete-branch`) | Merges publish to `main` and trigger Flux reconciliation cluster-wide. |
+| `git push` to `main` / `master` (including Renovate's auto-merge targets) | Direct push bypasses PR review. |
+| `git push --force` / `--force-with-lease` to any shared branch | Rewrites published history. |
+| `git reset --hard` / `git commit --amand` on a published commit | Destroys or rewrites published history. |
+| `git branch -D` on a branch that exists on `origin` | Deletes shared work. |
+| `kubectl delete` against `flux-system`, `kube-system`, `cert-manager`, `external-secrets-system`, `storage`, `network`, `monitoring`, `auth` — or any resource with `reconcile.external-secrets.io/managed=true` | Cluster state damage; some are irrecoverable without reinstall. |
+| `kubectl scale --replicas=0` or `kubectl drain` on control-plane / storage nodes | Cluster availability impact. |
+| `flux suspend …` / `flux uninstall` | Disables or removes GitOps control plane. |
+| `terraform apply` / `terraform destroy` | Infra state changes. |
+| `rm -rf` against paths outside `/tmp/opencode` | Data loss. |
+| Modifying `~/.config/opencode/`, `opencode.json`, or this repo's `.opencode/` | Changes the agent itself. |
+
+Safe without explicit orders: `git add`, `git commit` (local only), `git push`
+to a feature branch, `gh pr create` / `gh pr edit` / `gh pr comment`,
+`kubectl get` / `describe` / `logs`, `flux reconcile`, `flux resume`,
+`kustomize build`, `kubeconform`, pre-commit hooks, file edits within the
+working tree.
+
+If unsure whether an action is gated: **ask before doing it**. A two-line
+question is always cheaper than an unwanted merge.
+
+### Workflow expectations
+
+- **Stage, don't surprise.** Announce what you're about to do when the
+  action is destructive or visible (cluster-wide reconcile, secret
+  rotation, mass deletion).
+- **Verify before claiming done.** Per the project's `verification-before-completion`
+  expectation: run the check, paste the output, then assert success.
+- **Stop on user pushback.** If the user says "wait", "stop", or "did I
+  say X?", halt immediately. Summarize current state and wait for
+  direction — do not try to "fix" the situation with more changes.
+
+### Worktree Operating Rules
 
 All agents MUST follow these rules when modifying files in this repo:
-
-### Mandatory worktree isolation
 
 1. **Load the `home-ops-worktree-workflow` skill** before making any file changes
 2. **Work in a worktree** unless already in one (`.worktrees/<branch-name>`)
 3. **No nested worktrees** — detect existing isolation first
 4. **Clean up** when done — `just worktree-clean <branch-name>`
+5. The explicit-orders gates above still apply regardless of worktree isolation
 
-### Validation gates
-
+Validation gates:
 - Run `just flate-test` **before** making changes (baseline)
 - Run `pre-commit run --all-files` + `just flate-test` **before** every commit
 - Do not commit through failing validation
 
-### Secrets
-
+Secrets:
 - `.env` is gitignored and not shared across worktrees
 - Run `mise run secrets:env` in each new worktree to regenerate `.env`
 
-### Branch naming
-
+Branch naming:
 - Feature branches: `feat/<short-description>`
 - Fix branches: `fix/<short-description>`
 - Worktree directory mirrors branch name: `.worktrees/<branch-name>`
