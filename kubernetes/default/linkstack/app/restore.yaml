@@ -12,10 +12,10 @@ spec:
       offset: 0
   mover:
     securityContext:
-      runAsUser: 33
-      runAsGroup: 33
+      runAsUser: 100
+      runAsGroup: 101
     podSecurityContext:
-      fsGroup: 33
+      fsGroup: 101
   policy:
     onMissingSnapshot: Continue
   target:

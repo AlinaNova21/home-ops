@@ -27,9 +27,9 @@ spec:
   values:
     defaultPodOptions:
       securityContext:
-        runAsUser: 33
-        runAsGroup: 33
-        fsGroup: 33
+        runAsUser: 100
+        runAsGroup: 101
+        fsGroup: 101
         fsGroupChangePolicy: "Always"
 
     controllers:
