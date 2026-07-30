@@ -26,3 +26,4 @@ resources:
   - inteldeviceplugins-system
   - kopiur-system
   - kro-system
+  - reloader
