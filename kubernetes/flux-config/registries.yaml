@@ -7,9 +7,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  path: "./flux-config/registry"
+  path: "./kubernetes/flux-config/registry"
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: home-ops
   timeout: 5m
   wait: true
