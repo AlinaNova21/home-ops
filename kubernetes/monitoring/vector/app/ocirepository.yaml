@@ -12,4 +12,5 @@ spec:
     operation: copy
   ref:
     tag: "0.57.0"
+    digest: sha256:f734c9d98f9a2165277ff1b6f026210e07141ecd8812dcc9a5af9524ad1e3ca8
   url: oci://ghcr.io/vectordotdev/helm-charts/vector

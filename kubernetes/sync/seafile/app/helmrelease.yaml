@@ -143,7 +143,7 @@ spec:
           mariadb:
             image:
               repository: mariadb
-              tag: "10.11"
+              tag: "10.11@sha256:be981e4113326ada8d6004174dd09eeaefc03094037f811182a52d4f2e737350"
             env:
               MYSQL_ROOT_PASSWORD:
                 valueFrom:
@@ -229,7 +229,7 @@ spec:
           memcached:
             image:
               repository: memcached
-              tag: 1.6-alpine
+              tag: 1.6-alpine@sha256:c29847751abb41f4c268c84fb3087fee05d4edcbda44409ccb5086e26148e8a7
             args:
               - "-m"
               - "256"

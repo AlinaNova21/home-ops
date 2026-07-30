@@ -12,6 +12,7 @@ spec:
     operation: copy
   ref:
     tag: 0.7.5
+    digest: sha256:1ac0c5be0b3695870470624a0f6fa459e4593fe792677a977be477c2e1bc4a7c
   url: oci://ghcr.io/home-operations/charts/kopiur
   verify:
     provider: cosign

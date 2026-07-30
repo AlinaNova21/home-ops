@@ -12,4 +12,5 @@ spec:
     operation: copy
   ref:
     tag: "31.0.0"
+    digest: sha256:1632a0e96a3047b0761685378e3a63f9f8a21ff7e567920323eb66d8c438c5c0
   url: oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds
