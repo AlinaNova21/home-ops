@@ -1,0 +1,10 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/notification.toolkit.fluxcd.io/provider_v1beta3.json
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: holmes
+  namespace: holmes
+spec:
+  type: generic
+  address: http://chaski.chaski.svc.cluster.local:8080/hooks/flux-alert
