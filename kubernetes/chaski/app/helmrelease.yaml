@@ -31,6 +31,8 @@ spec:
     envFrom:
       - secretRef:
           name: holmes-secrets
+      - secretRef:
+          name: ntfy-token
     resources:
       requests:
         cpu: 10m

@@ -1,6 +1,14 @@
 routes:
   alertmanager:
-    target: holmes
+    target: ntfy
     whenExpr: "true"
+    headers:
+      Title: '{{ index .payload.commonLabels "alertname" | default "unknown" }} ({{ index .payload.commonLabels "severity" | default "none" | toUpper }})'
+      Priority: '{{ if eq (index .payload.commonLabels "severity") "critical" }}max{{ else if eq (index .payload.commonLabels "severity") "error" }}high{{ else }}default{{ end }}'
+      Tags: '{{ if eq (index .payload.commonLabels "severity") "critical" }}rotating_light{{ else if eq (index .payload.commonLabels "severity") "error" }}warning{{ else }}info{{ end }}'
+      Click: 'https://alerts.whoverse.dev'
     message: |-
-      {"ask": "Investigate alert: [{{ .payload.status }}] {{ index .payload.commonLabels "alertname" | default "unknown" }} (severity={{ index .payload.commonLabels "severity" | default "none" }}): {{ index .payload.commonAnnotations "summary" | default "no summary" }}"}
+      {{ index .payload.commonAnnotations "summary" | default "no summary" }}
+
+      {{ range .payload.alerts }}- [{{ .status | toUpper }}] {{ index .labels "alertname" | default "unknown" }} ({{ index .labels "namespace" | default "unknown" }}): {{ index .annotations "summary" | default "no summary" }}
+      {{ end }}

@@ -99,11 +99,18 @@ spec:
           repeat_interval: 12h
           receiver: "null"
           routes:
+            - match_re:
+                severity: "error|critical"
+              receiver: "chaski"
             - match:
                 alertname: Watchdog
               receiver: "null"
         receivers:
           - name: "null"
+          - name: "chaski"
+            webhook_configs:
+              - url: http://chaski.chaski.svc.cluster.local:8080/hooks/alertmanager
+                send_resolved: true
         inhibit_rules:
           - source_match:
               severity: critical
