@@ -1,0 +1,10 @@
+targets:
+  ntfy:
+    http:
+      url: http://ntfy.notifications.svc.cluster.local/alerts
+      headers:
+        Authorization: 'Bearer {{ env "NTFY_TOKEN" }}'
+      timeout: 10s
+      retry:
+        attempts: 3
+        backoff: 1s
