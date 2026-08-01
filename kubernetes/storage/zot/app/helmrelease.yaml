@@ -1,0 +1,70 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: zot
+  namespace: storage
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: zot
+    namespace: storage
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    replicaCount: 1
+    image:
+      repository: ghcr.io/project-zot/zot
+      tag: "v2.1.18"
+    service:
+      type: ClusterIP
+      port: 5000
+    httpGet:
+      scheme: HTTP
+      port: 5000
+    startupProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      failureThreshold: 30
+    configFiles:
+      config.json: |-
+        {
+          "storage": {
+            "rootDirectory": "/var/lib/registry",
+            "readOnly": false
+          },
+          "http": {
+            "address": "0.0.0.0",
+            "port": "5000",
+            "readTimeout": "60s",
+            "writeTimeout": "60s"
+          },
+          "log": { "level": "info" }
+        }
+    persistence:
+      enabled: true
+      storageClassName: miroir-replicated
+      storage: 8Gi
+      create: true
+      accessModes: ["ReadWriteOnce"]
+    strategy:
+      type: Recreate
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+    serviceAccount:
+      create: true
