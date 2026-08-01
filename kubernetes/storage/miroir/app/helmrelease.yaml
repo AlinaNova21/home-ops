@@ -46,6 +46,8 @@ spec:
       verify:
         algorithm: crc32c
     autoTieBreaker: true
+    # Convert settled diskless client legs (e.g. after failover) into diskful replicas.
+    autoDiskfulAfter: 30m
     replicaCount: 1
     monitoring:
       podMonitor:
