@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kopiur.home-operations.com/snapshotpolicy_v1alpha1.json
+apiVersion: kopiur.home-operations.com/v1alpha1
+kind: SnapshotPolicy
+metadata:
+  name: ${APP}
+spec:
+  repository:
+    kind: ClusterRepository
+    name: whoverse
+  copyMethod: Snapshot
+  volumeSnapshotClassName: csi-rbdplugin-snapclass
+  # staging:
+  #   storageClassName: miroir-local
+  mover:
+    inheritSecurityContextFrom:
+      pvcConsumer: {}
+  credentialProjection:
+    enabled: true
+  sources:
+    - pvc:
+        name: ${APP}
+  retention:
+    keepDaily: 7
+    keepWeekly: 4
+    keepMonthly: 3

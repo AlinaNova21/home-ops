@@ -8,7 +8,7 @@ metadata:
 spec:
   targetNamespace: downloads
   components:
-        - ../../../components/kopiur/backup
+        - ../../../components/kopiur/backup-ceph
   interval: 15m
   path: "./kubernetes/downloads/sabnzbd/app"
   postBuild:
