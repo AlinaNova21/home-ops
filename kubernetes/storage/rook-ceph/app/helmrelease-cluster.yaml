@@ -50,7 +50,7 @@ spec:
         allowMultiplePerNode: false
         volumeClaimTemplate:
           spec:
-            storageClassName: miroir-replicated
+            storageClassName: miroir-local
             resources:
               requests:
                 storage: 10Gi
