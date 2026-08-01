@@ -4,5 +4,5 @@ kind: RawVolumeConfig
 name: miroir
 provisioning:
   diskSelector:
-    match: "!system_disk"
+    match: system_disk
   minSize: 128GiB

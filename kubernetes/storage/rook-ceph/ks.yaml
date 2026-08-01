@@ -6,7 +6,6 @@ metadata:
   name: rook-ceph
   namespace: storage
 spec:
-  suspend: true
   interval: 30m
   path: "./kubernetes/storage/rook-ceph/app"
   sourceRef:

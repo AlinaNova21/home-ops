@@ -5,5 +5,5 @@ kind: Kustomization
 resources:
   - ns.yaml
   # - openebs-localpv/ks.yaml  # disabled pending cluster reset
-  # - rook-ceph/ks.yaml  # disabled pending cluster reset
+  - rook-ceph/ks.yaml  # re-enabled
   - miroir/ks.yaml

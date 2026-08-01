@@ -23,6 +23,7 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
+      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -32,6 +33,7 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
+      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -41,6 +43,7 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
+      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -50,6 +53,7 @@ nodes:
     controlPlane: false
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
+      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard2.yaml"
