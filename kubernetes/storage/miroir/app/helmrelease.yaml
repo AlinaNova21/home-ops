@@ -25,6 +25,21 @@ spec:
       name: RetryOnFailure
       retryInterval: 5m
   values:
+    image:
+      repository: zot.whoverse.dev/miroir-controller
+      tag: 0.11.15-restoretopology
+      # Chart-default digest must be cleared: digest wins over tag in the chart helpers.
+      digest: ""
+    agent:
+      image:
+        repository: zot.whoverse.dev/miroir-agent
+        tag: 0.11.15-restoretopology
+        digest: ""
+    gateway:
+      image:
+        repository: zot.whoverse.dev/miroir-gateway
+        tag: 0.11.15-restoretopology
+        digest: ""
     drbd:
       resync:
         minRate: 10M
