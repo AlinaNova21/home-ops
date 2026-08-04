@@ -80,6 +80,27 @@ spec:
     prometheus-node-exporter:
       enabled: true
 
+    # Kubelet + cadvisor + probes + resources node scrapes (VMNodeScrape).
+    # The chart's default relabelConfigs labelmaps *every* node label onto
+    # each scraped series. NFD/Talos device-plugin hardware lists
+    # (feature.node.kubernetes.io/*, extensions.talos.dev/*, gpu.intel.com/*,
+    # intel.feature.node.kubernetes.io/*) push series past vminsert's
+    # -maxLabelsPerTimeseries=40, so those series are rejected on ingestion
+    # (RowsRejectedOnIngestion + log spam). Drop them after the labelmap.
+    kubelet:
+      enabled: true
+      vmScrape:
+        spec:
+          relabelConfigs:
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+            - action: labeldrop
+              regex: (feature_node_kubernetes_io_.+|extensions_talos_dev_.+|gpu_intel_com_.+|intel_feature_node_kubernetes_io_.+)
+            - sourceLabels: [__metrics_path__]
+              targetLabel: metrics_path
+            - targetLabel: job
+              replacement: kubelet
+
     # Disable bundled Grafana — we deploy separately
     grafana:
       enabled: false
