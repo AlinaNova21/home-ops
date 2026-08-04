@@ -63,6 +63,13 @@ spec:
       storageClassName: miroir-replicated
     strategy:
       type: Recreate
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
     metrics:
       enabled: true
       serviceMonitor:

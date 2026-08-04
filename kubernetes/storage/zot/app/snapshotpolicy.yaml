@@ -16,12 +16,6 @@ spec:
   mover:
     inheritSecurityContextFrom:
       pvcConsumer: {}
-    # zot's image runs as root (uid 0) and its data is root-owned; pin the
-    # mover to uid 0 so it can read the source. Requires namespace storage to
-    # be opted into privileged movers:
-    #   kubectl annotate namespace storage kopiur.home-operations.com/privileged-movers=true
-    securityContext:
-      runAsUser: 0
   credentialProjection:
     enabled: true
   sources:
