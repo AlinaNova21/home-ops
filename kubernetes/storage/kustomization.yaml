@@ -5,6 +5,6 @@ kind: Kustomization
 resources:
   - ns.yaml
   # - openebs-localpv/ks.yaml  # disabled pending cluster reset
-  - rook-ceph/ks.yaml  # re-enabled
+  # - rook-ceph/ks.yaml  # disabled — no workloads use ceph-rbd; mon PVCs on miroir-replicated
   - miroir/ks.yaml
   - zot/ks.yaml
