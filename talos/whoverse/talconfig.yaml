@@ -117,6 +117,18 @@ controlPlane:
     - "@./patches/watchdog.yaml"
     - "@./patches/kernel-miroir.yaml"
     - "@./patches/kubelet-miroir.yaml"
+    # Bind control-plane component metrics ports (10257/10259) to all
+    # interfaces. Talos defaults to 127.0.0.1 (loopback only), so vmagent
+    # gets connection-refused scraping https://<node-ip>:10257/:10259.
+    # Ports stay TLS + token-authenticated + SAR-authorized.
+    - |-
+      cluster:
+        controllerManager:
+          extraArgs:
+            bind-address: 0.0.0.0
+        scheduler:
+          extraArgs:
+            bind-address: 0.0.0.0
   # Limit ephemeral volume size
   volumes: &sharedVolumes
     - name: EPHEMERAL

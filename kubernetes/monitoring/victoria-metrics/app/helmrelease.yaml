@@ -80,6 +80,26 @@ spec:
     prometheus-node-exporter:
       enabled: true
 
+    # Control-plane component scrapes: kube-controller-manager (:10257) and
+    # kube-scheduler (:10259). Talos binds these to 0.0.0.0 (see
+    # talos/whoverse/talconfig.yaml) but serves self-signed certs (no
+    # --tls-cert-file), so the scrape must skip verification. RBAC for the
+    # vmagent SA (/metrics nonResourceURLs) is already chart-generated.
+    kubeControllerManager:
+      enabled: true
+      vmScrape:
+        spec:
+          endpoints:
+            - tlsConfig:
+                insecureSkipVerify: true
+    kubeScheduler:
+      enabled: true
+      vmScrape:
+        spec:
+          endpoints:
+            - tlsConfig:
+                insecureSkipVerify: true
+
     # Disable bundled Grafana — we deploy separately
     grafana:
       enabled: false
