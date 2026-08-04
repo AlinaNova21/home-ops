@@ -56,10 +56,11 @@ spec:
         }
     persistence:
       enabled: true
-      storageClassName: miroir-replicated
-      storage: 8Gi
+    pvc:
       create: true
       accessModes: ["ReadWriteOnce"]
+      storage: 8Gi
+      storageClassName: miroir-replicated
     strategy:
       type: Recreate
     metrics:
