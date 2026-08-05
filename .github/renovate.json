@@ -28,10 +28,11 @@
   ],
   "packageRules": [
     {
-      "description": "Auto-merge patch updates silently",
+      "description": "Auto-merge patch updates silently (excluding pre-1.0)",
       "matchUpdateTypes": [
         "patch"
       ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "branch"
     },
@@ -83,7 +84,7 @@
       "automergeType": "branch"
     },
     {
-      "description": "All other Helm charts: auto-merge minor, patch, and digest",
+      "description": "All other Helm charts: auto-merge minor, patch, and digest (excluding pre-1.0)",
       "matchManagers": [
         "flux"
       ],
@@ -92,11 +93,12 @@
         "patch",
         "digest"
       ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "branch"
     },
     {
-      "description": "Arr app images: auto-merge minor and digest",
+      "description": "Arr app images: auto-merge minor and digest (excluding pre-1.0)",
       "matchDatasources": [
         "docker"
       ],
@@ -104,6 +106,7 @@
         "minor",
         "digest"
       ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "branch",
       "matchPackageNames": [
@@ -123,13 +126,14 @@
       "separateMinorPatch": true
     },
     {
-      "description": "Auto-merge npm minor updates",
+      "description": "Auto-merge npm minor updates (excluding pre-1.0)",
       "matchManagers": [
         "npm"
       ],
       "matchUpdateTypes": [
         "minor"
       ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "branch"
     },
@@ -172,6 +176,7 @@
       "addLabels": [
         "manager/github-actions"
       ],
+      "matchCurrentVersion": "!/^0/",
       "automerge": true,
       "automergeType": "branch"
     },
