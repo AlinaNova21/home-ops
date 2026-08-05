@@ -1,27 +1,70 @@
 ---
 name: home-ops-app-pattern
-description: Use when authoring a HelmRelease for an application using the bjw-s app-template chart - the standard chart shape used across all apps in the home-ops repository
+description: Use when authoring a HelmRelease for an application in the home-ops repository - the standard OCI chartRef + bjw-s app-template values shape used across all apps
 ---
 
-# App Deployment Pattern (bjw-s app-template)
+# App Deployment Pattern (bjw-s app-template via OCI)
 
-Every application in this repo uses the [bjw-s app-template](https://github.com/bjwjwj/helm-charts) chart. This skill documents the canonical shape.
+Every application in this repo runs the [bjw-s app-template](https://github.com/bjw-s-labs/helm-charts) chart, delivered as an **OCI chart** (`helm.toolkit.fluxcd.io/v2` + `chartRef`). No HelmRepository chart sources for apps — charts come from `ghcr.io/bjw-s-labs/helm/app-template` with cosign signature verification.
 
-## Chart reference
+## Chart source — `app/ocirepository.yaml`
+
+Each app pins its own `OCIRepository` (same namespace as the app):
 
 ```yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: {app}
+  namespace: {namespace}
 spec:
-  chart:
-    spec:
-      chart: app-template
-      version: "4.5.0"   # pin explicitly
-      sourceRef:
-        kind: HelmRepository
-        name: bjw-s
-        namespace: flux-system
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "5.0.1"          # pin explicitly (Renovate updates via PR)
+    digest: sha256:...    # pin digest
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
+  verify:
+    provider: cosign
+    matchOIDCIdentity:
+      - issuer: ^https://token.actions.githubusercontent.com$
+        subject: ^https://github.com/bjw-s-labs/helm-charts/.github/workflows/chart-release-steps.yaml@.*$
 ```
 
-## Standard values structure
+## HelmRelease — `app/helmrelease.yaml`
+
+```yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: {app}
+  namespace: {namespace}
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: {app}            # matches the OCIRepository above, same namespace
+    namespace: {namespace}
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    ...
+```
+
+**Standard values structure** (bjw-s app-template v4 shape):
 
 ```yaml
 spec:
@@ -31,50 +74,58 @@ spec:
         containers:
           {app}:
             image:
-              repository: ...
-              tag: ...
-            env: ...
+              repository: ghcr.io/linuxserver/sonarr
+              tag: ...        # pin explicitly
+            env:
+              TZ: America/Chicago
     service:
       {app}:
         controller: {app}
         ports:
           http:
-            port: ...
+            port: 80
     persistence:
       config:
         type: persistentVolumeClaim
-        storageClass: ceph-rbd
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: {app}
 ```
 
 ## Conventions
 
 - **`{app}`** is the controller/workload name (e.g. `sonarr-hd`, `plex`)
-- **`storageClass`**: use `ceph-rbd` (primary, distributed) or `openebs-hostpath` (local, faster)
-- **`image.tag`**: pin explicitly; Renovate manages updates via PR
-- **`image.repository`**: full image path (e.g. `ghcr.io/linuxserver/sonarr`)
-- **Service ports**: name them (`http`, not `80`); bjw-s template wires them up
+- **`image.tag`**: pin explicitly (digest or tag); Renovate manages updates via PR
+- **`image.repository`**: full image path
+- **Service ports**: name them (`http`, not `80`)
+- **storageClass**: use `miroir-replicated` (default SC) or `miroir-local`; do NOT reference `ceph-rbd`/`openebs-hostpath` — rook-ceph and openebs-localpv are disabled. Only set `storageClass` when you need a non-default class; the cluster default (`miroir-replicated`) applies otherwise.
+- **Backup persistence**: apps with PVCs use the kopiur `Restore` populator via `dataSourceRef` (as above) — added automatically when the `ks.yaml` includes the `kopiur/backup` component (see `home-ops-add-new-app`). Jellyfin uses an NFS `cache` volume (`type: nfs`, `globalMounts`) in addition — see its `helmrelease.yaml` for the shape.
 
 ## Common extras
 
 ```yaml
     # Probes
-    containers:
+    controllers:
       {app}:
-        probes:
-          liveness:
-            tcpSocket:
-              port: http
-          readiness:
-            tcpSocket:
-              port: http
+        containers:
+          {app}:
+            probes:
+              liveness:
+                tcpSocket:
+                  port: http
+              readiness:
+                tcpSocket:
+                  port: http
 
-    # Resources (bjw-s uses simpleResources)
+    # Resources
     resources:
       requests:
         cpu: 100m
         memory: 128Mi
       limits:
-        cpu: 1000m
         memory: 512Mi
 
     # ServiceAccount / RBAC

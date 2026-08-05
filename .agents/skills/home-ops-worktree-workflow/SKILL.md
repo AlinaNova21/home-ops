@@ -121,7 +121,7 @@ just worktree-clean <branch-name>
 
 - **`.env` is not shared** across worktrees. Always regenerate: `mise run secrets:env`
 - **SOPS decryption works natively** — worktrees share the `.git` dir, personal age key at `~/.config/sops/age/keys.txt`
-- **mise tools are user-level**, not repo-level — they work across all worktrees
+- **mise.toml pins the toolchain** (repo-level); the mise binary is user-level — installs are cached globally, so they work across all worktrees
 - **`git worktree remove` fails if the worktree has uncommitted changes** — commit or stash first
 - **Pre-commit hooks** are installed per-worktree — run `mise run hooks:install` in each new worktree
 - **Renovate branches** can be checked out with `just worktree-add origin/renovate/...` for local validation before merge

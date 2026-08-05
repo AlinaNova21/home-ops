@@ -6,8 +6,8 @@ description: Use when diagnosing network/ingress issues in home-ops - Gateway/Ta
 # Network Troubleshooting
 
 Two gateways:
-- **internal** — Tailscale (`*.whoverse.dev`)
-- **external** — Cloudflare Tunnel (`*.whoverse.nexus`)
+- **internal** — Tailscale (`*.whoverse.dev`), HTTPS listener `https`
+- **external** — Cloudflare Tunnel (`*.whoverse.nexus` + `*.beee.gay`), HTTPS at origin (Cloudflare Origin CA); the gateway Service is ClusterIP, reached only by cloudflared
 
 ## Gateway / Envoy
 
@@ -22,6 +22,8 @@ kubectl get envoyproxy -n network
 kubectl describe envoyproxy internal-proxy-config -n network
 kubectl describe envoyproxy external-proxy-config -n network
 ```
+
+Note: `envoy-external` is **ClusterIP** (cloudflared talks to it in-cluster); only `envoy-internal` is a Tailscale LoadBalancer.
 
 ## Tailscale
 
@@ -71,6 +73,9 @@ dig {app}.whoverse.nexus
 kubectl get certificate -n network whoverse-dev-wildcard-tls
 kubectl describe certificate -n network whoverse-dev-wildcard-tls
 
+# External gateway certs (Cloudflare Origin CA, from 1Password via ExternalSecret)
+kubectl get secret -n network whoverse-nexus-wildcard-tls beee-gay-wildcard-tls
+
 # cert-manager logs
 kubectl logs -n cert-manager -l app.kubernetes.io/name=cert-manager
 ```
@@ -91,14 +96,15 @@ kubectl get cm cilium-config -n kube-system -o yaml | grep -A1 socketLB
 files.whoverse.dev       → specific record (Tailscale IP, overrides wildcard)
 app.whoverse.dev         → specific record (Tailscale IP, overrides wildcard)
 unmapped.whoverse.dev    → uses wildcard catchall
+*.beee.gay               → second public domain (Cloudflare proxy)
 ```
 
 ## Common failure modes
 
 | Symptom | Check |
 |---|---|
-| `502 Bad Gateway` from external | `kubectl logs -n network -l app.kubernetes.io/name=external-dns-nexus` for tunnel token issues |
+| `502 Bad Gateway` from external | `kubectl logs -n network -l app.kubernetes.io/name=external-dns-nexus` for tunnel token issues; also check cloudflared pods (`kubectl get pods -n network -l app.kubernetes.io/name=cloudflared`) |
 | `connection refused` on internal | `kubectl get svc envoy-internal -n network` EXTERNAL-IP must be 100.x |
-| HTTPRoute `Accepted: False` | `kubectl describe httproute` → check parentRefs and listener section |
+| HTTPRoute `Accepted: False` | `kubectl describe httproute` → check parentRefs and listener section (external listeners: `whoverse-nexus`, `beee-gay`; internal: `https`) |
 | DNS not resolving | `dig` to confirm record exists; check external-dns logs for rate-limit / API token errors |
 | Cert not issuing | `kubectl describe certificate` → check ACME challenge and cert-manager logs |

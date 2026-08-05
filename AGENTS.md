@@ -4,7 +4,7 @@ Primary agent instructions for the home-ops repository. Covers Kubernetes infras
 
 ## Tooling
 
-This repo's `mise.toml` pins only the **pre-commit stack** (`pre-commit`, `gitleaks`, `trufflehog`). User-level CLI tools (`kubectl`, `helm`, `helmfile`, `flux`, `cilium`, `k9s`, `sops`, `age`, `jq`, `yq`, `just`, `kustomize`, `kubeconform`) are managed outside the repo via `~/.config/mise/conf.d/`.
+The repo's `mise.toml` pins the full toolchain: `talosctl`, `talhelper`, `kubectl`, `helm`, `helmfile`, `flux2`, `cilium-cli`, `k9s`, `sops`, `age`, `just`, `jq`, `yq`, `pre-commit`, `gitleaks`, `trufflehog`, `k8sgpt`, `kopia`, `flux-operator`, `flux-operator-mcp`, `kubeconform`, `flate`, `crane`. Note: `kustomize` is **not** pinned — use `flate` for local rendering/validation (CI installs kustomize itself).
 
 ```bash
 mise install                # installs pre-commit hook (auto-runs when .git exists)
@@ -41,7 +41,7 @@ request.
 | `gh pr merge …` (any flag combo: `--merge`, `--squash`, `--rebase`, `--auto`, `--delete-branch`) | Merges publish to `main` and trigger Flux reconciliation cluster-wide. |
 | `git push` to `main` / `master` (including Renovate's auto-merge targets) | Direct push bypasses PR review. |
 | `git push --force` / `--force-with-lease` to any shared branch | Rewrites published history. |
-| `git reset --hard` / `git commit --amand` on a published commit | Destroys or rewrites published history. |
+| `git reset --hard` / `git commit --amend` on a published commit | Destroys or rewrites published history. |
 | `git branch -D` on a branch that exists on `origin` | Deletes shared work. |
 | `kubectl delete` against `flux-system`, `kube-system`, `cert-manager`, `external-secrets-system`, `storage`, `network`, `monitoring`, `auth` — or any resource with `reconcile.external-secrets.io/managed=true` | Cluster state damage; some are irrecoverable without reinstall. |
 | `kubectl scale --replicas=0` or `kubectl drain` on control-plane / storage nodes | Cluster availability impact. |
@@ -96,15 +96,22 @@ Branch naming:
 
 ## Architecture Overview
 
-- **GitOps Engine**: Flux CD with GitRepository (HTTPS, branch=main, poll interval; OCI artifact retained dormant as rollback insurance)
+- **GitOps Engine**: Flux CD deployed via Flux Operator (`FluxInstance/flux` in `flux-system`); `GitRepository home-ops` (HTTPS, branch=main, poll interval; OCI artifact retained dormant as rollback insurance). The single `Kustomization/cluster` lives at `kubernetes/ks.yaml` and reconciles `./kubernetes`
 - **Resource Composition**: Kustomize layering with Helm charts
-- **Helm Charts**: bjw-s app-template for applications
+- **Helm Charts**: bjw-s app-template delivered via OCI — per-app `OCIRepository` (`oci://ghcr.io/bjw-s-labs/helm/app-template`, cosign-verified) + `helm.toolkit.fluxcd.io/v2` HelmRelease using `chartRef`
 - **Secrets**: External Secrets Operator syncing from 1Password Connect (`ClusterSecretStore: onepassword-connect`)
 - **Ingress**: Envoy Gateway with Gateway API HTTPRoutes
-  - External Gateway: Cloudflare Tunnel for public access (`*.whoverse.nexus`)
+  - External Gateway: Cloudflare Tunnel, TLS terminated at origin (Cloudflare Origin CA) — `*.whoverse.nexus` + `*.beee.gay`
   - Internal Gateway: Tailscale VPN with HA for private access (`*.whoverse.dev`)
 - **Networking**: Cilium CNI with BGP, Tailscale operator for VPN LoadBalancer
-- **Storage**: `ceph-rbd` (primary), `openebs-hostpath` (fallback)
+- **Storage**: miroir (`miroir-replicated` default, `miroir-local`); rook-ceph and openebs-localpv disabled (pending cluster reset); zot OCI registry
+
+### Networks
+
+| Network | Range | Notes |
+|---|---|---|
+| LAN (br0, native/untagged) | `192.168.2.0/24` | Talos nodes; API VIP `192.168.2.20` |
+| Tailscale | `100.x` | Internal gateway (`*.whoverse.dev`), pve-egress relay |
 
 ## Directory Structure
 
@@ -125,7 +132,7 @@ The Kubernetes directory follows a flat **Namespace → Component → Resources*
 - **component**: Single deployed unit (`sonarr-hd/`, `plex/`, `cilium/`)
 - **resources**: Actual K8s manifests (`helmrelease.yaml`, `externalsecret.yaml`, `httproute.yaml`, `config/`, `repository/`, `policies/`, etc.)
 
-A single Flux `Kustomization/cluster` reconciles `./` (the whole `kubernetes/` tree). There is no `apps/` or `infrastructure/` group directory.
+The `Kustomization/cluster` at `kubernetes/ks.yaml` reconciles `./kubernetes` (the whole tree). There is no `apps/` or `infrastructure/` group directory.
 
 ### File Types
 
@@ -143,37 +150,20 @@ A single Flux `Kustomization/cluster` reconciles `./` (the whole `kubernetes/` t
 3. No `**/ns.yaml` outside namespace level (except `bootstrap/`)
 4. Component `ks.yaml` `metadata.namespace` must match parent namespace directory
 
-### Tree
+### Layout guide
 
-```
-kubernetes/
-├── kustomization.yaml        # Top-level namespace aggregator
-├── entertainment/            # jellyfin + storage (NFS PVCs)
-├── default/                  # barcodebuddy, database, error-pages, grocy, mailpit, memos, speedtest-tracker
-├── downloads/                # prowlarr, radarr-*, recyclarr, sabnzbd, seerr, sonarr-*, storage
-├── sync/                     # seafile, storage
-├── agent-sandbox-system/
-├── auth/                     # dex-internal, dex-external, security-policies
-├── cert-manager/
-├── external-secrets-system/
-├── flux-system/              # webhook receiver
-├── headlamp/
-├── inteldeviceplugins-system/
-├── kopiur-system/            # Snapshot CRDs
-├── kube-system/              # cilium, descheduler, gvisor, metrics-server, nfd, snapshot-controller
-├── kyverno/                  # policies + rbac
-├── monitoring/               # capacitor, grafana, vector, victoria-logs, victoria-metrics
-├── network/                  # cloudflared, envoy-gateway, external-dns, pve-egress, tailscale
-├── onepassword-connect/
-├── spegel/                   # P2P image distribution
-├── storage/                  # rook-ceph, openebs-localpv
-├── system-upgrade/           # tuppr
-├── components/               # Cross-cutting bundles (e.g. kopiur)
-├── flux-config/              # Flux CD self-management (HelmRelease, GitRepository, cluster root)
-├── bootstrap/                # Cilium + Flux helmfile for first install
-├── scripts/                  # deploy-infrastructure.sh
-└── bootstrap.sh              # Initial Flux install (alternative to helmfile bootstrap)
-```
+The namespace list changes often — `ls kubernetes/` is the live view and the top-level `kubernetes/kustomization.yaml` aggregator is the authoritative list of active namespaces. Don't trust a static tree.
+
+Reconcile scope: everything under `kubernetes/` is app code except the meta dirs below. Layout follows the flat Namespace → Component → Resources hierarchy above; the pre-commit hook enforces rules 1–4.
+
+Meta directories (not reconciled as namespaces):
+
+| Dir | Purpose |
+|---|---|
+| `components/` | Cross-cutting Kustomize components (e.g. `kopiur/backup`), referenced via component `ks.yaml` `components:` |
+| `bootstrap/` | Cilium + Flux helmfile, one-shot first install |
+| `flux-config/` | Flux self-management: GitRepository, registry sources, sops (`flux-sops` Kustomization) |
+| `scripts/` | deploy-infrastructure.sh, add-yaml-modelines.py |
 
 ## Deployment Workflow
 
@@ -213,6 +203,13 @@ kubectl rollout restart deployment/<app> -n <namespace>
 | `just flux-sync` | Annotate OCIRepository + reconcile cluster (dormant) |
 | `just cilium-status` | `cilium status --wait` |
 | `just destroy-flux` | Remove all Flux resources (keeps cluster) |
+| `just flate-test` | Validate Flux resources (`flate test all`) — pre-commit gate |
+| `just flate-build` | Render all Flux objects to YAML |
+| `just flate-diff` | Diff rendered output against `main` |
+| `just bootstrap` | Full bootstrap: Cilium + Flux Operator + Flux self-management |
+| `just bootstrap-helmfile` | Cilium + Flux Operator via helmfile |
+| `just bootstrap-cilium` | Install Cilium CNI only |
+| `just bootstrap-sops-key` | Install Flux SOPS age key (one-shot per cluster rebuild) |
 | `just worktree-create <branch>` | Create feature branch worktree from `main` |
 | `just worktree-add <branch>` | Check out existing remote branch as worktree |
 | `just worktree-clean <branch>` | Remove worktree + local branch |
@@ -224,20 +221,18 @@ See `talos/AGENTS.md` for Talos recipes (`talos-gen`, `talos-apply`, `talos-boot
 
 **CI** runs in `.github/workflows/validate-kubernetes.yml`: `kustomize build` + `kubeconform` against `kubernetes/flux-config` and `kubernetes/` (root aggregator).
 
-**Local equivalent**:
+**Local equivalent** — flate is the primary gate (no `helm`/`kustomize`/`flux` binaries needed):
 
 ```bash
-# Install once (user-level via mise conf.d)
-mise install
+just flate-test                    # validate every Kustomization/HelmRelease/source
+just flate-test --allow-missing-secrets   # skip refs that only exist in the cluster
+just flate-build                   # render all resources
+just flate-diff                    # diff against main
+```
 
-# Validate a directory
-kustomize build kubernetes | kubeconform \
-  -strict \
-  -ignore-missing-schemas \
-  -schema-location default \
-  -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
+CI-equivalent kubeconform check (matches `.github/workflows/validate-kubernetes.yml`):
 
-# Or the two top-level dirs in a loop
+```bash
 for dir in kubernetes/flux-config kubernetes; do
   echo "=== $dir ==="
   kustomize build "$dir" | kubeconform -strict -ignore-missing-schemas \
@@ -256,6 +251,7 @@ done
   - `home-ops-network-troubleshooting` — Gateway/Tailscale/ExternalDNS/cert diagnostics
   - `home-ops-initial-bootstrap` — Cilium CA + Hubble TLS one-time setup
   - `home-ops-external-secrets` — 1Password Connect `ExternalSecret` convention
+  - `home-ops-flate` — flate validation and diff (the local validation gate)
   - `home-ops-worktree-workflow` — Isolation via git worktrees (load before any file changes)
 
 ## Workstation Secrets
