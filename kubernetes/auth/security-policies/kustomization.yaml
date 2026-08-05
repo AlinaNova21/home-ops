@@ -6,6 +6,5 @@ resources:
   - externalsecret-storage.yaml
   - externalsecret-default.yaml
   - externalsecret-monitoring.yaml
-  - security-policy-ceph.yaml
   - security-policy-mailpit.yaml
   - security-policy-capacitor.yaml
