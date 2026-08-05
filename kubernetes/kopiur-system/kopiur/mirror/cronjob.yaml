@@ -19,7 +19,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: kopia
-              image: ghcr.io/kopia/kopia:latest
+              image: kopia/kopia:0.23.1
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:
