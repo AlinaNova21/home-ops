@@ -28,11 +28,20 @@
   ],
   "packageRules": [
     {
-      "description": "Auto-merge patch updates silently (excluding pre-1.0)",
+      "description": "Auto-merge patch updates silently",
       "matchUpdateTypes": [
         "patch"
       ],
       "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Pre-1.0 releases: auto-merge patch updates only (SemVer bugfixes; 0.x minor bumps may break)",
+      "matchCurrentVersion": "/^0/",
+      "matchUpdateTypes": [
+        "patch"
+      ],
       "automerge": true,
       "automergeType": "branch"
     },
