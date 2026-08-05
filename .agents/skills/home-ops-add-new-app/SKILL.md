@@ -1,6 +1,6 @@
 ---
 name: home-ops-add-new-app
-description: Use when adding a new application to the home-ops Kubernetes GitOps repository - creates directory structure, ks.yaml, helmrelease.yaml, externalsecret.yaml, httproute.yaml, and kustomization.yaml for a new app following the bjw-s app-template pattern
+description: Use when adding a new application to the home-ops Kubernetes GitOps repository - creates directory structure, ks.yaml, ocirepository.yaml, helmrelease.yaml, externalsecret.yaml, httproute.yaml, and kustomization.yaml for a new app
 ---
 
 # Adding a New App to home-ops
@@ -19,30 +19,36 @@ Where:
 - `{namespace}` = Kubernetes namespace (e.g. `downloads`, `entertainment`, `default`)
 - `{component}` = app name (e.g. `sonarr-hd`, `plex`)
 
-If the namespace doesn't exist yet, also create `ns.yaml` and `kustomization.yaml` at the namespace level (see existing namespaces for pattern).
+If the namespace doesn't exist yet, also create `ns.yaml` and `kustomization.yaml` at the namespace level (see existing namespaces for pattern), and add the namespace to the top-level `kubernetes/kustomization.yaml` aggregator.
 
 ## Step 2: Create `ks.yaml` (Flux Kustomization)
 
 ```yaml
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: {component}
   namespace: {namespace}
 spec:
-  interval: 15m
+  targetNamespace: {namespace}
+  components:
+    - ../../../components/kopiur/backup   # only if the app has persistent data (PVCs)
+  interval: 30m
   path: "./kubernetes/{namespace}/{component}/app"
+  postBuild:
+    substitute:
+      APP: {component}
   sourceRef:
     kind: GitRepository
     name: home-ops
     namespace: flux-system
-  dependsOn:
-    - name: {dependency}  # optional: e.g. {namespace}-database
   timeout: 10m
   wait: true
   prune: true
 ```
+
+- `components: ../../../components/kopiur/backup` wires the kopiur `Restore` populator + snapshot policy into the app's PVCs (backup-enabled apps only — skip for infra/storage components; compare with a similar existing app).
+- `postBuild.substitute: APP: {component}` — the kopiur component files use the `${APP}` placeholder, so the **component name must match the PVC/HelmRelease name** for the restore to line up.
 
 Then reference this in the namespace-level `kustomization.yaml`:
 
@@ -54,45 +60,59 @@ resources:
   - {component}/ks.yaml
 ```
 
-And add the namespace to the top-level `kubernetes/kustomization.yaml` aggregator:
+## Step 3: Create `app/ocirepository.yaml` (chart source)
+
+Apps pull the bjw-s app-template chart as an OCI artifact with cosign verification (see `home-ops-app-pattern`):
 
 ```yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - {namespace}
-  # ...other namespaces
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: {component}
+  namespace: {namespace}
+spec:
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "5.0.1"        # pin explicitly (Renovate manages)
+    digest: sha256:...
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
+  verify:
+    provider: cosign
+    matchOIDCIdentity:
+      - issuer: ^https://token.actions.githubusercontent.com$
+        subject: ^https://github.com/bjw-s-labs/helm-charts/.github/workflows/chart-release-steps.yaml@.*$
 ```
 
-## Step 3: Create resource files in `app/`
+## Step 4: Create `app/helmrelease.yaml`
 
-See `home-ops-app-pattern` for the bjw-s HelmRelease shape.
+`helm.toolkit.fluxcd.io/v2` with `chartRef` pointing at the OCIRepository, values per `home-ops-app-pattern`.
 
-Optional files (create only if needed):
+## Step 5: Optional resource files
+
 - `app/externalsecret.yaml` — for secrets (see `home-ops-external-secrets`)
 - `app/httproute.yaml` — for ingress (see `home-ops-create-httproute`)
 - `app/config/` — extra ConfigMaps/Secrets
-- `app/repository/` — additional HelmRepository/OCIRepository sources
+- `app/snapshotpolicy.yaml` / `app/restore.yaml` — only if not using the `kopiur/backup` component (default path is the component)
 
-## Step 4: Create `app/kustomization.yaml`
+## Step 6: Create `app/kustomization.yaml`
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - helmrelease.yaml
+  - ocirepository.yaml
   # add externalsecret.yaml, httproute.yaml as needed
 ```
 
-## Step 5: Add to namespace-level kustomization
-
-Edit `kubernetes/{namespace}/kustomization.yaml` and add the new component's `ks.yaml` reference.
-
-## Step 6: Deploy
+## Step 7: Deploy
 
 ```bash
-# Local validation (matches CI)
-kustomize build kubernetes | kubeconform -strict -ignore-missing-schemas
+# Local validation (matches pre-commit gate)
+just flate-test --allow-missing-secrets
 
 # Direct apply for quick iteration
 kubectl apply -k kubernetes/{namespace}/{component}/app
@@ -108,6 +128,7 @@ git push
 
 - **`metadata.namespace` in `ks.yaml` MUST match the parent namespace directory** (enforced by pre-commit hook)
 - The namespace's `kustomization.yaml` must reference `ns.yaml` **first** (enforced)
-- `bjw-s/app-template` chart structure — see `home-ops-app-pattern` skill
-- App chart version: pin explicitly (don't use `latest`)
-- Use `./kubernetes/{namespace}/{component}/app` for `spec.path` (2-level path from repo root)
+- `helmrelease.yaml` uses `helm.toolkit.fluxcd.io/v2` + `chartRef` (OCI) — not `chart.spec` with a HelmRepository
+- **`spec.path`** is a 2-level path from repo root: `./kubernetes/{namespace}/{component}/app`
+- If the app has PVCs and uses the `kopiur/backup` component, `metadata.name` of the HelmRelease/PVC must equal the `APP` substitute value
+- Run `just flate-test` after creating files; the pre-commit hook enforces the structure rules on commit

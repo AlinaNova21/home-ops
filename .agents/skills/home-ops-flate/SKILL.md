@@ -1,6 +1,6 @@
 ---
 name: home-ops-flate
-description: Use flate to validate and diff Flux CD Kubernetes resources — replaces kubeconform for structural validation, image tracking, and PR previews
+description: Use flate to validate and diff Flux CD Kubernetes resources — the local validation gate (pre-commit + just recipes); CI still runs kustomize build + kubeconform
 ---
 
 # flate — Flux Rendering and Diff Tool
@@ -75,12 +75,13 @@ flate get images -p kubernetes   # list all container images
 
 ## Pre-commit Hook
 
-The repo ships a `flate-test` hook in `.pre-commit-config.yaml` that copies `kubernetes/` to a temp dir before validation (avoiding git-related issues):
+The repo ships a `flate-test` hook in `.pre-commit-config.yaml` (also run via `just flate-test`):
 
 ```yaml
 - id: flate-test
   name: Validate Flux resources (flate test)
-  entry: bash -c 'tmp=$(mktemp -d) && trap "rm -rf $tmp" EXIT && cp -r kubernetes "$tmp/kubernetes" && flate test all -p "$tmp/kubernetes"'
+  description: Validate all Kustomizations and HelmReleases
+  entry: flate test all -p kubernetes
   language: system
   pass_filenames: false
   stages: [pre-commit]
