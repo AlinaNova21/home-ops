@@ -7,5 +7,4 @@ resources:
   - webhook-receiver.yaml
   - webhook-alert.yaml
   - webhook-httproute.yaml
-  - github-secret-sync-cronjob.yaml
   - networkpolicy.yaml
