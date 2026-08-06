@@ -24,5 +24,6 @@ resources:
   - headlamp
   - inteldeviceplugins-system
   - kopiur-system
+  - kubevirt
   - kro-system
   - reloader
