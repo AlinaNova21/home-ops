@@ -72,6 +72,16 @@ spec:
       spec:
         selectAllByDefault: true
         scrapeInterval: 30s
+        # No CPU limit: vmagent ran ~60-85m on 200m chart-default limit and hit
+        # it on 2026-08-06 (TooHighCPUUsage + TooHighGoroutineSchedulingLatency,
+        # ingestion throttled 13k -> 5.3k rows/s). CPU request bumped to match
+        # sustained usage; memory kept at chart defaults.
+        resources:
+          requests:
+            cpu: 200m
+            memory: 200Mi
+          limits:
+            memory: 500Mi
 
     # Bundled exporters — auto-discovered via CRDs with selectAllByDefault
     kube-state-metrics:
@@ -106,19 +116,24 @@ spec:
     # talos/whoverse/talconfig.yaml) but serves self-signed certs (no
     # --tls-cert-file), so the scrape must skip verification. RBAC for the
     # vmagent SA (/metrics nonResourceURLs) is already chart-generated.
+    # scheme must be explicit https: tlsConfig only applies to TLS connections,
+    # without scheme the endpoint defaults to http and the secure ports answer
+    # 400 "Client sent an HTTP request to an HTTPS server" (TooManyScrapeErrors).
     kubeControllerManager:
       enabled: true
       vmScrape:
         spec:
           endpoints:
-            - tlsConfig:
+            - scheme: https
+              tlsConfig:
                 insecureSkipVerify: true
     kubeScheduler:
       enabled: true
       vmScrape:
         spec:
           endpoints:
-            - tlsConfig:
+            - scheme: https
+              tlsConfig:
                 insecureSkipVerify: true
 
     # Disable bundled Grafana — we deploy our own via grafana-operator.

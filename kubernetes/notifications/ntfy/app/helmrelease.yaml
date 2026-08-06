@@ -46,6 +46,14 @@ spec:
               - name: http
                 containerPort: 80
                 protocol: TCP
+              # Prometheus metrics listener (ntfy --metrics-listen-http).
+              # The old ServiceMonitor scraped port 80 /metrics and got the
+              # SPA web UI HTML back (~100 parse errors per scrape, flooding
+              # vmagent logs/CPU). Metrics are disabled by default in ntfy;
+              # enabling this listener is what makes /metrics real.
+              - name: metrics
+                containerPort: 9090
+                protocol: TCP
             env:
               TZ:
                 value: America/Chicago
@@ -57,6 +65,8 @@ spec:
                 value: "true"
               NTFY_ENABLE_LOGIN:
                 value: "true"
+              NTFY_METRICS_LISTEN_HTTP:
+                value: ":9090"
             resources:
               requests:
                 cpu: 50m
@@ -71,6 +81,10 @@ spec:
           http:
             port: 80
             targetPort: http
+            protocol: TCP
+          metrics:
+            port: 9090
+            targetPort: metrics
             protocol: TCP
         labels:
           app.kubernetes.io/name: ntfy
@@ -111,7 +125,7 @@ spec:
       main:
         enabled: true
         endpoints:
-          - port: http
+          - port: metrics
             path: /metrics
             interval: 30s
         service:
