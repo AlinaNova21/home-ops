@@ -1,14 +1,15 @@
-# *arr Data Loss — Postmortem (prowlarr, sonarr-hd, radarr-uhd)
+# *arr Data Loss — Postmortem (prowlarr, sonarr-hd, radarr-uhd, sonarr-anime, radarr-anime)
 
 **Date:** 2026-07-28 to 2026-08-06
 **Duration:** ~9 days (detection lag)
-**Severity:** P2 — Three download-arr apps lost library/indexer data; recovered from backups
-**Status:** All three restored and verified; offsite mirror and alerting still open
+**Severity:** P2 — Five download-arr apps lost library/indexer data; recovered
+**Status:** All five apps restored and verified; offsite mirror and alerting still open
 
 > Backups never stopped — they faithfully captured each wipe. Detection relied on manual
 > inspection; the B2 offsite mirror was stale and initially masked the true state. Recovery
 > via one-off Kopiur `Restore` CRs (`pvcRef`, point-in-time snapshot pinning) succeeded for
-> all three affected apps.
+> the three k8s-backed-up apps; the two anime apps were recovered separately from the Docker
+> host `dockge` (see Addendum).
 
 ---
 
@@ -27,6 +28,10 @@ All three apps were restored from their last correct Garage snapshots using one-
 `Restore` CRs that wrote into the existing PVCs (no PVC deletion), with point-in-time snapshot
 pinning and per-app mover UIDs. Data loss window: prowlarr ~2 days, radarr-uhd ~4 days,
 sonarr-hd ~6 days.
+
+Later the same day, the two anime apps (**sonarr-anime**, **radarr-anime**) were also
+recovered — their k8s snapshots were empty all along because the data was never migrated from
+Docker (`dockge`). See the Addendum.
 
 ---
 
@@ -76,9 +81,10 @@ sonarr-hd ~6 days.
 | sonarr-hd | 141 series | 07-30 04:24 (793 MB) | 141 series (sonarr.db 397 MB) |
 | radarr-uhd | 966 movies | 08-01 18:51 (1.6 GB) | 966 movies, 1 import list |
 
-- **radarr-anime / sonarr-anime:** 0 movies/series in *all* snapshots and app self-backups
-  going back to Jul 7–14 — either always empty or lost before the backup window. **Not
-  recoverable from backups.** Separate investigation required.
+- **radarr-anime / sonarr-anime:** 0 movies/series in *all* k8s snapshots and app
+  self-backups — the k8s apps were created with empty DBs and the data was never migrated from
+  Docker. Recovered from the Docker host `dockge` (`/opt/stacks/arr/`, frozen Feb 23, 2026):
+  **130 series / 96 movies** — see Addendum.
 - Anything changed between the last good snapshot and the wipe is unrecoverable.
 
 ---
@@ -111,9 +117,41 @@ sonarr-hd ~6 days.
    snapshots); alert on failed snapshot jobs and snapshot `errors:` counts.
 3. **Determine the wipe trigger.** Review HelmRelease/deployment history for prowlarr,
    sonarr-hd, radarr-uhd around 07-28 → 08-04.
-4. **Investigate radarr-anime/sonarr-anime.** Confirm whether empty libraries are expected
-   (empty in every snapshot and self-backup back to Jul 7–14).
+4. **Radarr-anime/sonarr-anime — RESOLVED.** Empty k8s DBs were because the data was never
+   migrated from Docker (`dockge`); recovered from `root@dockge:/opt/stacks/arr/` (see
+   Addendum).
 5. **Housekeeping.** Delete the three `*-restore-manual` Restore CRs; address kopia
    "too many index blobs (1201)" maintenance warning.
 6. **Restore drills.** This was effectively the first real restore — it worked, but restore is
    currently a manual, unscripted path. Consider documenting/drilling it.
+
+---
+
+## Addendum — anime apps recovered from Docker host `dockge` (08-06, later same day)
+
+After the initial writeup, **sonarr-anime** and **radarr-anime** were recovered — not from
+Kopia (their k8s snapshots were empty all along), but from the Docker host `dockge`
+(`root@dockge:/opt/stacks/arr/`).
+
+**Root cause (different from the other three):** the anime apps ran as Docker containers on
+`dockge` until **Feb 23, 2026**. When they moved to Kubernetes, the deployments were created
+with fresh empty DBs — the old data was **never migrated**, so k8s snapshots were empty from
+day one (and the apps' own scheduled self-backups, which existed only on the Docker side,
+stopped when the containers were decommissioned).
+
+**Data found** (frozen Feb 23, 2026; owned by PUID/PGID 1000 = k8s `runAsUser: 1000`):
+
+| App | Series / Movies | Episodes / Files |
+|---|---|---|
+| sonarr-anime | 130 series | 7,860 episodes, 1,997 episode files |
+| radarr-anime | 96 movies | 45 movie files |
+
+**Recovery:** scale down → temporary `busybox` pod mounted the PVC → wiped the empty state →
+streamed tarballs from `dockge` (SSH `tar` → `kubectl exec` `tar`, keeping the current k8s
+`config.xml` — auth is External via env) → scale up. Both apps migrated the Feb-era DBs on
+first boot (k8s images newer: Sonarr 4.0.19 / Radarr 6.4.1; FluentMigrator) with zero restarts.
+Live DBs verified: **130 series / 7,860 episodes** and **96 movies / 45 movie files**.
+
+**Caveats:** data is ~5.5 months stale (nothing newer existed in k8s — the apps had empty
+libraries the entire time); DBs still carry docker-era download-client/indexer settings that
+may need re-pointing; hourly Kopiur snapshots now capture the restored data going forward.
