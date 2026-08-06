@@ -3,7 +3,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - helmrelease.yaml
-  - ocirepository.yaml
   - externalsecret.yaml
   - httproute.yaml
+  - grafana.yaml
+  - folders.yaml
+  - servicemonitor.yaml
+  - dashboards/ceph-cluster.yaml
+  - dashboards/ceph-osd.yaml
+  - dashboards/flux-cluster.yaml
+  - dashboards/kubernetes-cluster.yaml

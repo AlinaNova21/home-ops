@@ -121,9 +121,12 @@ spec:
             - tlsConfig:
                 insecureSkipVerify: true
 
-    # Disable bundled Grafana — we deploy separately
+    # Disable bundled Grafana — we deploy our own via grafana-operator.
+    # forceDeployDatasource renders the GrafanaDatasource CRs from
+    # defaultDatasources despite grafana.enabled=false.
     grafana:
       enabled: false
+      forceDeployDatasource: true
 
     # Enable Alertmanager
     alertmanager:
@@ -185,4 +188,23 @@ spec:
         # definitions re-load from PrometheusRule/VMRule CRDs and any active
         # alerts re-fire on the next evaluation cycle.
 
-    defaultDashboardsEnabled: false
+    defaultDashboards:
+      # Emit GrafanaDashboard CRs (grafana-operator) instead of sidecar ConfigMaps.
+      # The sync-job creates/updates/prunes them from upstream sources on chart
+      # config changes; instanceSelector defaults to dashboards=grafana which
+      # matches the Grafana CR in this namespace.
+      grafanaOperator:
+        enabled: true
+    defaultDatasources:
+      # Emit GrafanaDatasource CRs (grafana-operator) instead of sidecar CMs.
+      grafanaOperator:
+        enabled: true
+      victoriametrics:
+        datasources:
+          # Chart default for the main entry, minus the victoriametrics-
+          # metrics-datasource variant (its plugin is not installed).
+          - name: VictoriaMetrics
+            type: prometheus
+            access: proxy
+            uid: VictoriaMetrics
+            isDefault: true

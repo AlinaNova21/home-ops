@@ -1,0 +1,15 @@
+---
+# Ceph cluster dashboard (grafana.com ID 2842)
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-cluster
+  namespace: monitoring
+spec:
+  folderRef: ceph
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  grafanaCom:
+    id: 2842
+    revision: 17
