@@ -12,6 +12,10 @@ spec:
     kind: GitRepository
     name: home-ops
     namespace: flux-system
+  # Wait for grafana-operator to install its CRDs (grafana.integreatly.org)
+  # before applying Grafana/Dashboard/Datasource CRs.
+  dependsOn:
+    - name: grafana-operator
   timeout: 10m
   wait: true
   prune: true
