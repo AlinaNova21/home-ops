@@ -56,7 +56,6 @@ spec:
               SONARR__AUTH__METHOD: External
               SONARR__AUTH__REQUIRED: Enabled
               SONARR__LOG__LEVEL: info
-              SONARR__METRICS__ENABLED: "true"
               SONARR__SERVER__PORT: "8989"
               SONARR__UPDATE__BRANCH: main
               SONARR__UPDATE__MECHANISM: External
@@ -95,6 +94,53 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 1Gi
+          exportarr:
+            image:
+              repository: ghcr.io/onedr0p/exportarr
+              # renovate: datasource=docker depName=onedr0p/exportarr
+              tag: v2.3.0@sha256:af535d94061cf97a52e1661945ffba78c03f9443eae7c0da1a80a5a4be56b520
+            args:
+              - sonarr
+            env:
+              PORT: "9707"
+              URL: "http://localhost:8989"
+              API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-hd-config
+                    key: apikey
+            ports:
+              - name: metrics
+                containerPort: 9707
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 9707
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 9707
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
 
     service:
       sonarr-hd:
@@ -102,6 +148,8 @@ spec:
         ports:
           http:
             port: 8989
+          metrics:
+            port: 9707
 
     persistence:
       config:
@@ -131,8 +179,11 @@ spec:
       main:
         enabled: true
         endpoints:
-          - port: http
+          - port: metrics
             path: /metrics
             interval: 30s
+            relabelings:
+              - targetLabel: instance
+                replacement: sonarr-hd
         service:
           identifier: sonarr-hd

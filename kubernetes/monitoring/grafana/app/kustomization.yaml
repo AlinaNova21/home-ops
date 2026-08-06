@@ -16,3 +16,6 @@ resources:
   - dashboards/hubble.yaml
   - dashboards/kubernetes-cluster.yaml
   - dashboards/kguardian.yaml
+  - dashboards/media-dashboard.yaml
+  - dashboards/radarr-v3.yaml
+  - dashboards/sonarr-v3.yaml

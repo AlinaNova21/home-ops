@@ -56,7 +56,6 @@ spec:
               RADARR__AUTH__METHOD: External
               RADARR__AUTH__REQUIRED: Enabled
               RADARR__LOG__LEVEL: info
-              RADARR__METRICS__ENABLED: "true"
               RADARR__SERVER__PORT: "7878"
               RADARR__UPDATE__BRANCH: master
               RADARR__UPDATE__MECHANISM: External
@@ -95,6 +94,53 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 1Gi
+          exportarr:
+            image:
+              repository: ghcr.io/onedr0p/exportarr
+              # renovate: datasource=docker depName=onedr0p/exportarr
+              tag: v2.3.0@sha256:af535d94061cf97a52e1661945ffba78c03f9443eae7c0da1a80a5a4be56b520
+            args:
+              - radarr
+            env:
+              PORT: "9707"
+              URL: "http://localhost:7878"
+              API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-uhd-config
+                    key: apikey
+            ports:
+              - name: metrics
+                containerPort: 9707
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 9707
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 9707
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
 
     service:
       radarr-uhd:
@@ -102,6 +148,8 @@ spec:
         ports:
           http:
             port: 7878
+          metrics:
+            port: 9707
 
     persistence:
       config:
@@ -127,8 +175,11 @@ spec:
       main:
         enabled: true
         endpoints:
-          - port: http
+          - port: metrics
             path: /metrics
             interval: 30s
+            relabelings:
+              - targetLabel: instance
+                replacement: radarr-uhd
         service:
           identifier: radarr-uhd

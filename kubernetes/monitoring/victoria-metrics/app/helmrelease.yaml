@@ -128,6 +128,72 @@ spec:
       enabled: false
       forceDeployDatasource: true
 
+    # VictoriaLogs cluster — operator-managed via VLCluster CR (rendered by
+    # the chart's sync-job from these values). Replaces the standalone
+    # victoria-logs-cluster chart; operator services become
+    # vlinsert/vlselect/vlstorage-victoria-metrics.
+    # Enabling this also makes the chart emit the VictoriaLogs GrafanaDatasource
+    # CR pointing at the new vlselect service.
+    vlcluster:
+      enabled: true
+      spec:
+        vlstorage:
+          replicaCount: 2
+          # Match the old chart's effective retention (k8s-stack default is 14d).
+          retentionPeriod: 7d
+          storageDataPath: /vl-data
+          storage:
+            volumeClaimTemplate:
+              spec:
+                storageClassName: miroir-replicated
+                resources:
+                  requests:
+                    storage: 20Gi
+          resources:
+            requests:
+              memory: 128Mi
+          # Spread storage replicas across nodes. Selector matches the
+          # operator's labels (app.kubernetes.io/name: vlstorage), NOT the old
+          # chart's app.kubernetes.io/component label.
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: vlstorage
+                  topologyKey: kubernetes.io/hostname
+        vlselect:
+          replicaCount: 2
+          resources:
+            requests:
+              memory: 64Mi
+        vlinsert:
+          replicaCount: 2
+          resources:
+            requests:
+              memory: 64Mi
+
+    # Node-side log collector — VLAgent k8sCollector (DaemonSet, operator-
+    # generated). Replaces the standalone vector chart. Operator auto-creates
+    # the ClusterRole (nodes/pods/namespaces get/list/watch) and hostPath
+    # mounts (/var/log + /var/lib for checkpoints/buffer).
+    # remoteWrite is auto-wired by the chart to vlinsert-victoria-metrics.
+    vlagent:
+      enabled: true
+      spec:
+        k8sCollector:
+          enabled: true
+          # Attach pod labels (kubernetes.pod_labels.*) for filtering.
+          includePodLabels: true
+          # Don't collect vlagent's own logs (DaemonSet pods are named
+          # vlagent-victoria-metrics-<hash>). Positive regex match: rows
+          # matching this expression are excluded (a !~ negation here would
+          # exclude every pod NOT named vlagent-*, i.e. all real logs).
+          excludeFilter: 'kubernetes.pod_name:~"vlagent-victoria-metrics-.*"'
+        resources:
+          requests:
+            memory: 256Mi
+
     # Enable Alertmanager
     alertmanager:
       enabled: true
