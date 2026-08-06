@@ -15,3 +15,4 @@ resources:
   - dashboards/flux-cluster.yaml
   - dashboards/hubble.yaml
   - dashboards/kubernetes-cluster.yaml
+  - dashboards/kguardian.yaml
