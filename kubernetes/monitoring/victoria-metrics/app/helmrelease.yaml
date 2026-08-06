@@ -186,8 +186,10 @@ spec:
           # Attach pod labels (kubernetes.pod_labels.*) for filtering.
           includePodLabels: true
           # Don't collect vlagent's own logs (DaemonSet pods are named
-          # vlagent-victoria-metrics-<hash>).
-          excludeFilter: 'kubernetes.pod_name:!~"vlagent-victoria-metrics-.*"'
+          # vlagent-victoria-metrics-<hash>). Positive regex match: rows
+          # matching this expression are excluded (a !~ negation here would
+          # exclude every pod NOT named vlagent-*, i.e. all real logs).
+          excludeFilter: 'kubernetes.pod_name:~"vlagent-victoria-metrics-.*"'
         resources:
           requests:
             memory: 256Mi
