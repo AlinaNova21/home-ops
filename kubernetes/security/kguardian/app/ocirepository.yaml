@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/ocirepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kguardian
+  namespace: security
+spec:
+  interval: 1h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "1.17.1"
+    digest: sha256:8ac3be61ea8dd9846e57c5f3f393e86ac5bc7e431ded563210b5aa0b066fecf7
+  url: oci://ghcr.io/kguardian-dev/charts/kguardian
