@@ -34,21 +34,12 @@ spec:
       use_pkce: "true"
       role_attribute_path: "contains(groups[*], 'admins') && 'Admin' || 'Viewer'"
 
-  persistentVolumeClaim:
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      storageClassName: miroir-replicated
-      resources:
-        requests:
-          storage: 2Gi
-
+  # Storage is intentionally ephemeral: everything (dashboards, datasources,
+  # folders, plugins, admin creds, OAuth) is declaratively driven by CRs/env,
+  # so there is no authoritative state to persist. Avoids the RWO PVC +
+  # Recreate dance and keeps the deployment stateless (RollingUpdate).
   deployment:
     spec:
-      # Recreate ensures the old pod fully releases the RWO PVC before the new
-      # pod starts (operator default is RollingUpdate).
-      strategy:
-        type: Recreate
       template:
         spec:
           containers:
