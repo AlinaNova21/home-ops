@@ -12,6 +12,10 @@ spec:
     kind: GitRepository
     name: home-ops
     namespace: flux-system
+  # The chart renders GrafanaDatasource CRs (defaultDatasources.grafanaOperator),
+  # so wait for the grafana-operator CRDs before rolling out.
+  dependsOn:
+    - name: grafana-operator
   targetNamespace: monitoring
   timeout: 10m
   wait: true
