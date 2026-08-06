@@ -1,0 +1,39 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: victoriametrics
+  namespace: monitoring
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  # Fixed uid so dashboards hard-referencing "prometheus" (e.g. flux-cluster)
+  # resolve to this datasource.
+  uid: prometheus
+  datasource:
+    name: VictoriaMetrics
+    type: prometheus
+    access: proxy
+    url: http://vmselect-victoria-metrics.monitoring:8481/select/0/prometheus
+    isDefault: true
+    jsonData:
+      timeInterval: "30s"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: victorialogs
+  namespace: monitoring
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: VictoriaLogs
+    type: victoriametrics-logs-datasource
+    access: proxy
+    url: http://victoria-logs-victoria-logs-cluster-vlselect.monitoring:9471
+  plugins:
+    - name: victoriametrics-logs-datasource
+      version: 0.30.1

@@ -1,0 +1,71 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana
+  namespace: monitoring
+  labels:
+    dashboards: "grafana"
+spec:
+  # Pin the same Grafana image as the previous helm chart deployment.
+  version: 12.3.1
+
+  # Admin credentials come from the grafana-secrets ExternalSecret via env below;
+  # stop the operator from generating its own admin-credentials secret.
+  disableDefaultAdminSecret: true
+
+  config:
+    server:
+      root_url: https://grafana.whoverse.dev
+    auth:
+      disable_login_form: "true"
+    # ${VAR} is expanded by Grafana's env provider at startup; the env vars are
+    # wired from grafana-secrets in spec.deployment below.
+    "auth.generic_oauth":
+      enabled: "true"
+      name: "Authentik"
+      client_id: grafana
+      client_secret: ${GRAFANA_OAUTH_CLIENT_SECRET}
+      scopes: "openid email profile groups"
+      auto_login: "true"
+      auth_url: https://dex.whoverse.dev/auth
+      token_url: https://dex.whoverse.dev/token
+      api_url: https://dex.whoverse.dev/userinfo
+      use_pkce: "true"
+      role_attribute_path: "contains(groups[*], 'admins') && 'Admin' || 'Viewer'"
+
+  persistentVolumeClaim:
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: miroir-replicated
+      resources:
+        requests:
+          storage: 2Gi
+
+  deployment:
+    spec:
+      # Recreate ensures the old pod fully releases the RWO PVC before the new
+      # pod starts (operator default is RollingUpdate).
+      strategy:
+        type: Recreate
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_SECURITY_ADMIN_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secrets
+                      key: admin-user
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secrets
+                      key: admin-password
+                - name: GRAFANA_OAUTH_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secrets
+                      key: grafana-secret

@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana-operator
+  namespace: monitoring
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: grafana-operator
+    namespace: monitoring
+  timeout: 10m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    # Operator watches all namespaces by default (cluster-scoped RBAC via useClusterRole).
+    # CRD subchart (crds.immutable) ships the grafana.integreatly.org/v1beta1 CRDs.
+    defaultResyncPeriod: 10m
+    logging:
+      level: info

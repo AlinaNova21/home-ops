@@ -3,7 +3,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: grafana
+  name: grafana-operator
   namespace: monitoring
 spec:
   interval: 1h
@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "10.5.15"
-    digest: sha256:3d75dc3173c3fb07eaa8853283f38558c7c27259f7ed00cf8c096173667426a1
-  url: oci://ghcr.io/grafana/helm-charts/grafana
+    tag: "5.24.0"
+    digest: sha256:4f69cdaecfed2cc61d4e5f4a8e7142795e9b00997e4bcbd37a8c154a225a2f1f
+  url: oci://ghcr.io/grafana/helm-charts/grafana-operator
