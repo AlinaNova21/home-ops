@@ -173,6 +173,25 @@ spec:
             requests:
               memory: 64Mi
 
+    # Node-side log collector — VLAgent k8sCollector (DaemonSet, operator-
+    # generated). Replaces the standalone vector chart. Operator auto-creates
+    # the ClusterRole (nodes/pods/namespaces get/list/watch) and hostPath
+    # mounts (/var/log + /var/lib for checkpoints/buffer).
+    # remoteWrite is auto-wired by the chart to vlinsert-victoria-metrics.
+    vlagent:
+      enabled: true
+      spec:
+        k8sCollector:
+          enabled: true
+          # Attach pod labels (kubernetes.pod_labels.*) for filtering.
+          includePodLabels: true
+          # Don't collect vlagent's own logs (DaemonSet pods are named
+          # vlagent-victoria-metrics-<hash>).
+          excludeFilter: 'kubernetes.pod_name:!~"vlagent-victoria-metrics-.*"'
+        resources:
+          requests:
+            memory: 256Mi
+
     # Enable Alertmanager
     alertmanager:
       enabled: true
