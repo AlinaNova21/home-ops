@@ -73,8 +73,18 @@ spec:
           memory: 128Mi
     hubble:
       enabled: true
+      metrics:
+        enabled:
+          - drop
+          - tcp
+          - flow
+          - port-distribution
+          - icmp
+          - dns
       relay:
         enabled: true
+        prometheus:
+          enabled: true
         resources:
           requests:
             memory: 64Mi

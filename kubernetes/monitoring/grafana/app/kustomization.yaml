@@ -10,5 +10,8 @@ resources:
   - servicemonitor.yaml
   - dashboards/ceph-cluster.yaml
   - dashboards/ceph-osd.yaml
+  - dashboards/cilium-agent.yaml
+  - dashboards/cilium-operator.yaml
   - dashboards/flux-cluster.yaml
+  - dashboards/hubble.yaml
   - dashboards/kubernetes-cluster.yaml

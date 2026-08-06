@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/operator.victoriametrics.com/vmpodscrape_v1beta1.json
+# Scrapes Cilium agent (9962), operator (9963) and hubble-relay (9966) metrics.
+# Pod-scrape because only the envoy-metrics port is exposed via the cilium-agent
+# headless Service; the agent/operator/relay prometheus ports have no Service.
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: cilium
+  namespace: monitoring
+spec:
+  podMetricsEndpoints:
+    - port: prometheus
+      path: /metrics
+      interval: 30s
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  selector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - cilium-agent
+          - cilium-operator
+          - hubble-relay

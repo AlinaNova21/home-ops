@@ -6,3 +6,4 @@ resources:
   - vmservicescrape-flux.yaml
   - vmservicescrape-ceph.yaml
   - vmservicescrape-envoy-gateway.yaml
+  - vmpodscrape-cilium.yaml
