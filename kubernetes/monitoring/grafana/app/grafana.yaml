@@ -69,3 +69,9 @@ spec:
                     secretKeyRef:
                       name: grafana-secrets
                       key: grafana-secret
+                # Install the VictoriaLogs datasource plugin directly. The VM
+                # k8s-stack chart creates the VictoriaLogs GrafanaDatasource CR
+                # without plugin info (no version in its default entry), so we
+                # install it here rather than via the datasource CR.
+                - name: GF_INSTALL_PLUGINS
+                  value: victoriametrics-logs-datasource:0.30.1
