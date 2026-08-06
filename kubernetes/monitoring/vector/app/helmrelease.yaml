@@ -72,7 +72,7 @@ spec:
           type: http
           inputs:
             - remap_logs
-          uri: "http://victoria-logs-victoria-logs-cluster-vlinsert.monitoring:9481/insert/jsonline?_stream_fields=stream,namespace,pod_name,container_name"
+          uri: "http://vlinsert-victoria-metrics.monitoring:9481/insert/jsonline?_stream_fields=stream,namespace,pod_name,container_name"
           encoding:
             codec: json
           framing:
