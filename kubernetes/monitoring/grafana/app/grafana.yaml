@@ -73,5 +73,8 @@ spec:
                 # k8s-stack chart creates the VictoriaLogs GrafanaDatasource CR
                 # without plugin info (no version in its default entry), so we
                 # install it here rather than via the datasource CR.
+                # NOTE: no version pin — Grafana 12.3.1's background installer
+                # returns 404 for pinned versions (e.g. :0.30.1) even when the
+                # version exists in the catalog; bare name installs latest.
                 - name: GF_INSTALL_PLUGINS
-                  value: victoriametrics-logs-datasource:0.30.1
+                  value: victoriametrics-logs-datasource
