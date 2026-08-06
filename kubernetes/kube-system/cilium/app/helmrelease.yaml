@@ -27,6 +27,9 @@ spec:
   values:
     ipam:
       mode: kubernetes
+    routingMode: native
+    ipv4NativeRoutingCIDR: 10.244.0.0/16
+    autoDirectNodeRoutes: true
     kubeProxyReplacement: true
     bpf:
       masquerade: true
@@ -99,8 +102,7 @@ spec:
             requests:
               memory: 64Mi
         service:
-          type: NodePort
-          nodePort: 31234
+          type: ClusterIP
     prometheus:
       enabled: true
     envoy:
