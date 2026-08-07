@@ -126,6 +126,9 @@ controlPlane:
         controllerManager:
           extraArgs:
             bind-address: 0.0.0.0
+            # Force-delete terminal pods (Failed/Succeeded) once the
+            # cluster-wide count exceeds this; default is 12500 (= never).
+            terminated-pod-gc-threshold: "100"
         scheduler:
           extraArgs:
             bind-address: 0.0.0.0
