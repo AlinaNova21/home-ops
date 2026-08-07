@@ -87,6 +87,23 @@
       "automergeType": "branch"
     },
     {
+      "description": "Core infrastructure: no minor automerge (breaking-change risk); patches/digests still flow via general rules",
+      "matchManagers": [
+        "flux"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "matchPackageNames": [
+        "/cilium/",
+        "/cert-manager/",
+        "/external-secrets/",
+        "/rook-ceph/",
+        "/envoyproxy/"
+      ],
+      "automerge": false
+    },
+    {
       "description": "Arr app images: auto-merge minor and digest (excluding pre-1.0)",
       "matchDatasources": [
         "docker"
@@ -103,16 +120,29 @@
       ]
     },
     {
-      "description": "Never auto-merge Talos or Kubernetes version bumps",
-      "matchDatasources": [
-        "docker"
-      ],
+      "description": "Talos & Kubernetes version bumps: keep major/minor/patch sequencing separate (patches automerge via the patch group; minors/majors stay reviewable)",
       "matchPackageNames": [
+        "siderolabs/talos",
         "ghcr.io/siderolabs/installer",
         "ghcr.io/siderolabs/kubelet"
       ],
       "separateMajorMinor": true,
       "separateMinorPatch": true
+    },
+    {
+      "description": "Talos & Kubernetes patch bumps: one automerged branch covering talconfig talosVersion + tuppr upgrade CRs",
+      "matchPackageNames": [
+        "siderolabs/talos",
+        "ghcr.io/siderolabs/installer",
+        "ghcr.io/siderolabs/kubelet"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "groupName": "Talos & Kubernetes patch bumps",
+      "automerge": true,
+      "automergeType": "branch"
     },
     {
       "description": "Auto-merge npm minor updates (excluding pre-1.0)",
@@ -159,6 +189,7 @@
       ]
     },
     {
+      "description": "GitHub Actions: automerge all update types incl. major (intentional — reduces PR noise; revisit if a major ever breaks CI)",
       "matchManagers": [
         "github-actions"
       ],
