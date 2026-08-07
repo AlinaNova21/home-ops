@@ -8,6 +8,7 @@ resources:
   - cilium/ks.yaml
   - descheduler/ks.yaml
   - metrics-server/ks.yaml
+  - multus/ks.yaml
   - node-feature-discovery/ks.yaml
   - snapshot-controller/ks.yaml
 
