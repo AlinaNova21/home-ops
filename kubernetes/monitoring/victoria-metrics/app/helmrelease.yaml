@@ -75,13 +75,26 @@ spec:
         # No CPU limit: vmagent ran ~60-85m on 200m chart-default limit and hit
         # it on 2026-08-06 (TooHighCPUUsage + TooHighGoroutineSchedulingLatency,
         # ingestion throttled 13k -> 5.3k rows/s). CPU request bumped to match
-        # sustained usage; memory kept at chart defaults.
+        # sustained usage.
+        # Memory: limit raised 500Mi -> 1Gi after repeated OOMKills (exit 137;
+        # 12 restarts in 24h pre- and 5 in 3.5h post-2026-08-07 node disruption).
+        # Steady usage ~245Mi, but bursts >500Mi from oversized scrapes and
+        # scrape-error storms (see extraArgs).
         resources:
           requests:
             cpu: 200m
             memory: 200Mi
           limits:
-            memory: 500Mi
+            memory: 1Gi
+        # Scrape tuning to cut memory spikes + log churn:
+        #  - -promscrape.maxScrapeSize: apiserver /metrics uncompressed response
+        #    exceeds the 16MiB default, dropping the scrape every 30s.
+        #  - -promscrape.suppressScrapeErrorsDelay: with the default 0s every
+        #    scrape error logs its full response body every 30s (radarr exportarr
+        #    500s, cp 403s) — heavy log/CPU/memory churn during outage windows.
+        extraArgs:
+          -promscrape.maxScrapeSize: "67108864"
+          -promscrape.suppressScrapeErrorsDelay: 30s
 
     # Bundled exporters — auto-discovered via CRDs with selectAllByDefault
     kube-state-metrics:
@@ -115,7 +128,13 @@ spec:
     # kube-scheduler (:10259). Talos binds these to 0.0.0.0 (see
     # talos/whoverse/talconfig.yaml) but serves self-signed certs (no
     # --tls-cert-file), so the scrape must skip verification. RBAC for the
-    # vmagent SA (/metrics nonResourceURLs) is already chart-generated.
+    # vmagent SA (/metrics nonResourceURLs) is chart-generated, but the
+    # operator does NOT attach the vmagent SA token to these two endpoints on
+    # its own (verified in rendered config: apiserver/kubelet jobs carry
+    # bearer_token_file, cp jobs don't) — without explicit authorization the
+    # scrape goes out as system:anonymous and returns 403. Mirror the
+    # apiserver/kubelet pattern via credentialsFile (the vmagent SA token is
+    # projected at this path in every vmagent pod).
     # scheme must be explicit https: tlsConfig only applies to TLS connections,
     # without scheme the endpoint defaults to http and the secure ports answer
     # 400 "Client sent an HTTP request to an HTTPS server" (TooManyScrapeErrors).
@@ -127,6 +146,9 @@ spec:
             - scheme: https
               tlsConfig:
                 insecureSkipVerify: true
+              authorization:
+                type: Bearer
+                credentialsFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     kubeScheduler:
       enabled: true
       vmScrape:
@@ -135,6 +157,9 @@ spec:
             - scheme: https
               tlsConfig:
                 insecureSkipVerify: true
+              authorization:
+                type: Bearer
+                credentialsFile: /var/run/secrets/kubernetes.io/serviceaccount/token
 
     # Disable bundled Grafana — we deploy our own via grafana-operator.
     # forceDeployDatasource renders the GrafanaDatasource CRs from
