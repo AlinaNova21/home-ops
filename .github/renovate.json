@@ -1,31 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "github>home-operations/renovate-presets#6.0.0",
+    "github>home-operations/renovate-presets//apps/talosFactory.json5#6.0.0",
+    ":timezone(America/Chicago)"
   ],
   "pinDigests": true,
-  "flux": {
-    "managerFilePatterns": [
-      "/(^|/)kubernetes/.+\\.ya?ml$/"
-    ]
-  },
-  "kubernetes": {
-    "managerFilePatterns": [
-      "/(^|/)kubernetes/.+\\.ya?ml$/"
-    ]
-  },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/(^|/)kubernetes/.+\\.ya?ml$/",
-        "/(^|/)talos/.+\\.ya?ml$/"
-      ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+version: (?<currentValue>\\S+)"
-      ]
-    }
-  ],
   "packageRules": [
     {
       "description": "Auto-merge patch updates silently",
