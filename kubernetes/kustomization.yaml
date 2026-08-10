@@ -6,6 +6,7 @@ resources:
   - entertainment
   - default
   - downloads
+  - towonel
   - notifications
   - sync
   - agent-sandbox-system
