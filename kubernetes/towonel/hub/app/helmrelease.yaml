@@ -1,0 +1,68 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: towonel-hub
+  namespace: towonel
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: towonel-node
+    namespace: towonel
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    global:
+      fullnameOverride: towonel-hub
+    edge:
+      enabled: false
+    controllers:
+      main:
+        replicas: 1
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            env:
+              TOWONEL_DATA_DIR: /data
+              TOWONEL_HUB_PUBLIC_URL: https://hub.whoverse.dev
+              TOWONEL_HUB_TRUSTED_PROXIES: 10.244.0.0/16
+            envFrom:
+              - secretRef:
+                  name: towonel-hub-secrets
+    service:
+      link:
+        controller: main
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+        annotations:
+          tailscale.com/hostname: towonel-hub-link
+          tailscale.com/proxy-group: ingress-proxies
+        ports:
+          hub-link:
+            port: 51444
+            targetPort: hub-link
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: towonel-hub
+        globalMounts:
+          - path: /data
