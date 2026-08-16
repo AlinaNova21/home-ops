@@ -120,6 +120,22 @@
       ]
     },
     {
+      "description": "yuvomi: auto-merge minor and digest (updates frequently, patches flow via general rules)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "digest"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "branch",
+      "matchPackageNames": [
+        "ghcr.io/ulsklyc/yuvomi"
+      ]
+    },
+    {
       "description": "Talos & Kubernetes version bumps: keep major/minor/patch sequencing separate (patches automerge via the patch group; minors/majors stay reviewable)",
       "matchPackageNames": [
         "siderolabs/talos",
