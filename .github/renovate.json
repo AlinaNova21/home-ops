@@ -120,6 +120,36 @@
       ]
     },
     {
+      "description": "yuvomi: auto-merge minor and digest (updates frequently, patches flow via general rules)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "digest"
+      ],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "branch",
+      "matchPackageNames": [
+        "ghcr.io/ulsklyc/yuvomi"
+      ]
+    },
+    {
+      "description": "LinuxServer images pinned to a version tag: disable digest-only updates (LS republishes tag digests frequently; version bumps still flow)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "/^lscr\\.io\\//"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "matchCurrentVersion": "!/latest/",
+      "enabled": false
+    },
+    {
       "description": "Talos & Kubernetes version bumps: keep major/minor/patch sequencing separate (patches automerge via the patch group; minors/majors stay reviewable)",
       "matchPackageNames": [
         "siderolabs/talos",
