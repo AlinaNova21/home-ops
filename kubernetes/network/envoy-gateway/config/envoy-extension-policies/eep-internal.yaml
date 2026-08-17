@@ -25,12 +25,12 @@ spec:
           # from the OCI index and is what EG verifies. Verified via `crane manifest`.
           sha256: ca0a10167c543203acefa196e9e9123ec8bca8529e872b9301249824f28b33a0
       # Envoy Gateway serializes this object as JSON for the Wasm plugin.
+      # Omitted filterCodes => replace every 4xx/5xx response.
       config:
         theme: noise
         showDetails: false
         locale: auto
         logLevel: warn
-        # Omitted filterCodes => replace every 4xx/5xx response.
       # fail-open during rollout: if the Wasm module fails to load, traffic passes
       # through with default error bodies instead of breaking the gateway.
       failOpen: true
