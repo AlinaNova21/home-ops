@@ -1,0 +1,36 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/envoyextensionpolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyExtensionPolicy
+metadata:
+  name: eep-internal
+  namespace: network
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+  wasm:
+    - name: eep
+      # Must be unique among Wasm extensions attached to the same Envoy instance.
+      rootID: eep
+      code:
+        type: Image
+        image:
+          # Release tag + digest pinned; eep 0.2.1 (verified via `crane digest`).
+          url: oci://ghcr.io/ishioni/eep:0.2.1
+          # sha256 = amd64 platform-manifest digest, not the multi-arch index digest.
+          # Plan used `crane digest` -> 0d5b4e3f (index digest) which Envoy Gateway rejected
+          # (Accepted=False, "checksum does not match"). ca0a1016... is the amd64 manifest digest
+          # from the OCI index and is what EG verifies. Verified via `crane manifest`.
+          sha256: ca0a10167c543203acefa196e9e9123ec8bca8529e872b9301249824f28b33a0
+      # Envoy Gateway serializes this object as JSON for the Wasm plugin.
+      # Omitted filterCodes => replace every 4xx/5xx response.
+      config:
+        theme: noise
+        showDetails: false
+        locale: auto
+        logLevel: warn
+      # fail-open during rollout: if the Wasm module fails to load, traffic passes
+      # through with default error bodies instead of breaking the gateway.
+      failOpen: true

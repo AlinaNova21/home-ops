@@ -5,7 +5,6 @@ kind: Kustomization
 resources:
   - ns.yaml
   - barcodebuddy/ks.yaml
-  - error-pages/ks.yaml
   - grocy/ks.yaml
   - konflate/ks.yaml
   - linkstack/ks.yaml

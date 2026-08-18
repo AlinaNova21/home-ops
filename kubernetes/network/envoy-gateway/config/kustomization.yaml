@@ -6,4 +6,5 @@ resources:
   - gateway.yaml
   - envoy-proxy-config.yaml
   - httproutes
-  - backend-traffic-policies
+  - envoy-extension-policies
+  - client-traffic-policies
