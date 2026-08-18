@@ -83,7 +83,6 @@ spec:
           redirectURIs:
             - https://ceph.whoverse.dev/oauth2/callback
             - https://mail.whoverse.dev/oauth2/callback
-            - https://capacitor.whoverse.dev/oauth2/callback
         - id: grafana
           name: Grafana
           secretEnv: GRAFANA_CLIENT_SECRET

@@ -7,4 +7,3 @@ resources:
   - externalsecret-default.yaml
   - externalsecret-monitoring.yaml
   - security-policy-mailpit.yaml
-  - security-policy-capacitor.yaml

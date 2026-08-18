@@ -1,0 +1,28 @@
+# Flux Web UI access — maps Kanidm groups (via the `groups` OIDC claim) to the
+# operator-provided flux-web-admin / flux-web-user ClusterRoles.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: flux-web-admins
+subjects:
+  - kind: Group
+    name: admins
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: flux-web-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: flux-web-users
+subjects:
+  - kind: Group
+    name: users
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: flux-web-user
+  apiGroup: rbac.authorization.k8s.io
