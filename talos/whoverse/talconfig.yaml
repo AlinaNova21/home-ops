@@ -100,7 +100,7 @@ controlPlane:
       cluster:
         apiServer:
           extraArgs:
-            oidc-issuer-url: https://dex.whoverse.dev
+            oidc-issuer-url: https://idm.whoverse.nexus/oauth2/openid/kubernetes
             oidc-client-id: kubernetes
             oidc-username-claim: email
             oidc-groups-claim: groups
