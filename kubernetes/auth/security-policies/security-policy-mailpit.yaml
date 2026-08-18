@@ -1,6 +1,7 @@
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/securitypolicy_v1alpha1.json
 # Protects the Mailpit HTTPRoute (in default namespace)
+# OIDC via Kanidm RS 'mailpit' (mailpit_users group, access only)
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
@@ -13,10 +14,10 @@ spec:
     name: mailpit
   oidc:
     provider:
-      issuer: "https://dex.whoverse.dev"
-    clientID: "envoy-internal"
+      issuer: "https://idm.whoverse.nexus/oauth2/openid/mailpit"
+    clientID: "mailpit"
     clientSecret:
-      name: dex-envoy-client-secret
+      name: mailpit-oidc-client-secret
     redirectURL: "https://mail.whoverse.dev/oauth2/callback"
     scopes:
       - openid
