@@ -34,8 +34,8 @@ spec:
       watchPlugins: true
       oidc:
         clientID: "kubernetes"
-        issuerURL: "https://dex.whoverse.dev"
-        scopes: "openid,profile,email,groups"
+        issuerURL: "https://idm.whoverse.nexus/oauth2/openid/kubernetes"
+        scopes: "openid,profile,email"
     pluginsManager:
       enabled: true
       configContent: |
