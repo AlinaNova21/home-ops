@@ -23,8 +23,31 @@ spec:
     strategy:
       name: RetryOnFailure
       retryInterval: 5m
+  valuesFrom:
+    - kind: Secret
+      name: flux-web-client
+      valuesKey: client-secret
+      targetPath: web.config.authentication.oauth2.clientSecret
   values:
     installCRDs: true
+    web:
+      config:
+        baseURL: https://flux.whoverse.dev
+        authentication:
+          type: OAuth2
+          oauth2:
+            provider: OIDC
+            clientID: flux
+            issuerURL: https://idm.whoverse.nexus/oauth2/openid/flux
+            scopes:
+              - openid
+              - email
+              - profile
+              - offline_access
+            autoLogin: true
+        userActions:
+          audit:
+            - "*"
     resources:
       limits:
         cpu: 1000m
