@@ -1,21 +1,18 @@
 creation_rules:
-  # Bootstrap secrets - age + GPG (both recipients can decrypt)
-  # Used for the Flux age-key Secret, manually applied once per cluster rebuild.
-  - path_regex: kubernetes/bootstrap/.*\.sops\.yaml$
-    age: >-
-      age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
-    pgp: >-
-      B2266723EDB691FBB16501BC07D6E31CCAE33514
-
-  # Flux-managed k8s secrets - dual recipients (operator + cluster)
-  # Decryptable by the personal age key (operator) OR the Flux-only age key
-  # (cluster-resident as Secret/flux-system/sops-age).
-  - path_regex: kubernetes/flux-config/sops/.*\.sops\.yaml$
+  # Kubernetes Secrets/files (Flux bootstrap + flux-config secret):
+  # encrypt only the Secret values (.data/.stringData); apiVersion/kind/
+  # metadata/type stay plaintext. Recipients: personal age + Flux age + GPG
+  # (union of the keysets the two k8s secrets use).
+  - path_regex: kubernetes/.*\.sops\.yaml$
+    encrypted_regex: "^(data|stringData)$"
     age: >-
       age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl,
       age1maj5j0km9m39u7l2fxy5dyvuah79ewfvqa0wq69wdxsd6dqdtcaqe0e6dq
+    pgp: >-
+      B2266723EDB691FBB16501BC07D6E31CCAE33514
 
-  # Talos secrets - same age + GPG key set
+  # Talos secrets - a talsecret is a flat k/v tree (cluster/secrets/certs),
+  # NOT a k8s Secret, so encrypt the whole file. Personal age + GPG.
   - path_regex: talos/.*\.sops\.yaml$
     age: >-
       age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl

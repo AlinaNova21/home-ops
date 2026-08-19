@@ -1,25 +1,29 @@
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flux-sops
+  name: flux-config
   namespace: flux-system
 spec:
-  interval: 30m
-  path: "./kubernetes/flux-config/sops"
+  interval: 10m
+  path: "./kubernetes/flux-system/flux-config/app"
   sourceRef:
     kind: GitRepository
     name: home-ops
-    namespace: flux-system
-  prune: true
   decryption:
     provider: sops
     secretRef:
       name: sops-age
   healthChecks:
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: FluxInstance
+      name: flux
+      namespace: flux-system
     - apiVersion: v1
       kind: Secret
       name: onepassword-connect
       namespace: onepassword-connect
   timeout: 5m
   wait: true
+  prune: true
