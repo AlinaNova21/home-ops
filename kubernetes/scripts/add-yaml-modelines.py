@@ -11,7 +11,7 @@ a dependsOn block as a second doc) get one modeline per doc.
 
 Idempotent: skips files where every document already carries the expected
 modeline. Skips SOPS-encrypted files (``apiVersion: ENC[...]``) and files under
-``kubernetes/bootstrap/`` and ``kubernetes/flux-config/sops/``.
+``kubernetes/bootstrap/`` and ``kubernetes/flux-system/flux-config/app/``.
 
 Schemas come from https://k8s-schemas.home-operations.com for CRDs and from
 https://json.schemastore.org/kustomization for plain kustomize manifests. Add
