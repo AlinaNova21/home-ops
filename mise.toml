@@ -20,7 +20,7 @@ talosctl   = "latest"
 talhelper  = "latest"
 
 # Kubernetes
-kubectl    = "1.36.3"
+kubectl    = "1.36.4"
 helm       = "4.2.4"
 helmfile   = "1.7.4"
 flux2      = "2.9"
