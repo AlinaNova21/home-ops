@@ -14,8 +14,8 @@ on:
     # of which files the branch touches. Expensive steps are gated internally.
 
 jobs:
-  kustomize-validate:
-    name: Kustomize + Schema Validation
+  flate-validate:
+    name: Flate Kubernetes Validation
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,43 +33,25 @@ jobs:
               - 'kubernetes/**'
               - '.github/workflows/validate-kubernetes.yml'
 
-      - name: Install kustomize
+      - name: Run flate test
         if: steps.filter.outputs.kubernetes == 'true'
-        uses: imranismail/setup-kustomize@53f941b41dca13ed61874bbc6b4b6e1562877530 # v3
-
-      - name: Install kubeconform
-        if: steps.filter.outputs.kubernetes == 'true'
-        env:
-          KUBECONFORM_VERSION: 0.6.7
-        run: |
-          curl -sL "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
-            | tar xz -C /usr/local/bin
-
-      - name: Validate kustomize builds and schemas
-        if: steps.filter.outputs.kubernetes == 'true'
-        run: |
-          for dir in kubernetes/flux-config kubernetes; do
-            echo "=== Building $dir ==="
-            kustomize build "$dir" | kubeconform \
-              -strict \
-              -ignore-missing-schemas \
-              -schema-location default \
-              -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-          done
+        uses: home-operations/flate/action@1f469c236890b0ffb06dbd8ab19f7e446b8623ac # main
+        with:
+          command: test all --path ./kubernetes
 
   # Single gate job that branch protection / Renovate automerge should require.
-  # Passes when kustomize-validate succeeded or was skipped (no k8s changes).
-  # Fails only when kustomize-validate failed or was cancelled.
+  # Passes when flate-validate succeeded or was skipped (no k8s changes).
+  # Fails only when flate-validate failed or was cancelled.
   ci:
     name: CI
     runs-on: ubuntu-latest
-    needs: [kustomize-validate]
+    needs: [flate-validate]
     if: always()
     steps:
       - name: Check result
         run: |
-          result="${{ needs.kustomize-validate.result }}"
-          echo "kustomize-validate: $result"
+          result="${{ needs.flate-validate.result }}"
+          echo "flate-validate: $result"
           if [[ "$result" == "failure" || "$result" == "cancelled" ]]; then
             exit 1
           fi
