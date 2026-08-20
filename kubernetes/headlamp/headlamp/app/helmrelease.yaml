@@ -23,11 +23,6 @@ spec:
     strategy:
       name: RetryOnFailure
       retryInterval: 5m
-  valuesFrom:
-    - kind: Secret
-      name: headlamp-oidc-secret
-      valuesKey: clientSecret
-      targetPath: config.oidc.clientSecret
   values:
     config:
       baseURL: ""
