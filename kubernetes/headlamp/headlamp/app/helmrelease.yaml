@@ -31,6 +31,7 @@ spec:
         clientID: "kubernetes"
         issuerURL: "https://idm.whoverse.nexus/oauth2/openid/kubernetes"
         scopes: "openid,profile,email"
+        usePKCE: true
     pluginsManager:
       enabled: true
       configContent: |
