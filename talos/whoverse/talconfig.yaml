@@ -104,6 +104,7 @@ controlPlane:
             oidc-client-id: kubernetes
             oidc-username-claim: email
             oidc-groups-claim: groups
+            oidc-signing-algs: ES256
     - |-
       machine:
         features:
