@@ -162,7 +162,7 @@ Meta directories (not reconciled as namespaces):
 |---|---|
 | `components/` | Cross-cutting Kustomize components (e.g. `kopiur/backup`), referenced via component `ks.yaml` `components:` |
 | `bootstrap/` | Cilium + Flux helmfile, one-shot first install |
-| `flux-config/` | Flux self-management: GitRepository, registry sources, sops (`flux-sops` Kustomization) |
+| `flux-system/flux-config/` | Flux component: GitRepository (root source), SOPS secret (`Kustomization/flux-config`) |
 | `scripts/` | deploy-infrastructure.sh, add-yaml-modelines.py |
 
 ## Deployment Workflow
@@ -219,26 +219,13 @@ See `talos/AGENTS.md` for Talos recipes (`talos-gen`, `talos-apply`, `talos-boot
 
 ## Validation
 
-**CI** runs in `.github/workflows/validate-kubernetes.yml`: `kustomize build` + `kubeconform` against `kubernetes/flux-config` and `kubernetes/` (root aggregator).
-
-**Local equivalent** — flate is the primary gate (no `helm`/`kustomize`/`flux` binaries needed):
+**CI** runs flate in `.github/workflows/validate-kubernetes.yml` (the same local gate):
 
 ```bash
 just flate-test                    # validate every Kustomization/HelmRelease/source
 just flate-test --allow-missing-secrets   # skip refs that only exist in the cluster
 just flate-build                   # render all resources
 just flate-diff                    # diff against main
-```
-
-CI-equivalent kubeconform check (matches `.github/workflows/validate-kubernetes.yml`):
-
-```bash
-for dir in kubernetes/flux-config kubernetes; do
-  echo "=== $dir ==="
-  kustomize build "$dir" | kubeconform -strict -ignore-missing-schemas \
-    -schema-location default \
-    -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
-done
 ```
 
 ## See Also
@@ -271,16 +258,16 @@ mise exec -- kopia snapshot ls
 
 ## SOPS for Flux
 
-Flux decrypts `kubernetes/flux-config/sops/*.sops.yaml` using a dedicated age key that lives in the cluster as `Secret/flux-system/sops-age`. The key is generated once during initial setup and bootstrapped manually after a fresh cluster install.
+Flux decrypts `kubernetes/flux-system/flux-config/app/*.sops.yaml` using a dedicated age key that lives in the cluster as `Secret/flux-system/sops-age`. The key is generated once during initial setup and bootstrapped manually after a fresh cluster install.
 
 ### Keys
 
 | File | Purpose | `.sops.yaml` rule |
 |---|---|---|
 | `~/.config/sops/age/keys.txt` | Personal age key — decrypts k8s bootstrap + Talos | `kubernetes/bootstrap/`, `talos/` |
-| `Secret/flux-system/sops-age` (in cluster) | Flux-only age key — decrypts Flux-managed k8s | `kubernetes/flux-config/sops/` |
+| `Secret/flux-system/sops-age` (in cluster) | Flux-only age key — decrypts Flux-managed k8s | `kubernetes/flux-system/flux-config/app/` |
 
-The personal key is also a recipient on `kubernetes/flux-config/sops/*.sops.yaml` (dual recipients) so the operator can decrypt locally without touching the cluster Secret.
+The personal key is also a recipient on `kubernetes/flux-system/flux-config/app/*.sops.yaml` (dual recipients) so the operator can decrypt locally without touching the cluster Secret.
 
 ### One-shot bootstrap (per cluster rebuild)
 
@@ -288,15 +275,15 @@ The personal key is also a recipient on `kubernetes/flux-config/sops/*.sops.yaml
 just bootstrap-sops-key
 ```
 
-This decrypts `kubernetes/bootstrap/flux-age-key.sops.yaml` with the personal key, applies `Secret/flux-system/sops-age` to the cluster, and forces Flux to reconcile `Kustomization/flux-sops` — which then decrypts and applies the 1Password Connect credentials Secret from `kubernetes/flux-config/sops/`.
+This decrypts `kubernetes/bootstrap/flux-age-key.sops.yaml` with the personal key, applies `Secret/flux-system/sops-age` to the cluster, and forces Flux to reconcile `Kustomization/flux-config` — which then decrypts and applies the 1Password Connect credentials Secret from `kubernetes/flux-system/flux-config/app/`.
 
 ### Adding a new k8s SOPS file
 
-Drop the file under `kubernetes/flux-config/sops/`, add it to `kubernetes/flux-config/sops/kustomization.yaml`. The matching `.sops.yaml` rule already covers any new file in that directory — no rule edit needed.
+Drop the file under `kubernetes/flux-system/flux-config/app/`, add it to `kubernetes/flux-system/flux-config/app/kustomization.yaml`. The matching `.sops.yaml` rule already covers any new file in that directory — no rule edit needed.
 
 ```bash
 # Encrypt in place after authoring the Secret manifest
-SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -e -i kubernetes/flux-config/sops/<name>.sops.yaml
+SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -e -i kubernetes/flux-system/flux-config/app/<name>.sops.yaml
 ```
 
 ### Flux age key rotation
@@ -306,10 +293,10 @@ SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops -e -i kubernetes/flux-config/
 age-keygen -o /tmp/flux-home-ops.txt.new
 NEW_PUB=$(grep '# public key:' /tmp/flux-home-ops.txt.new | awk '{print $NF}')
 
-# 2. Update .sops.yaml with the new public key in the flux-config/sops rule
-# 3. Re-encrypt all files under kubernetes/flux-config/sops/
+# 2. Update .sops.yaml with the new public key in the kubernetes rule
+# 3. Re-encrypt all files under kubernetes/flux-system/flux-config/app/
 SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt:/tmp/flux-home-ops.txt \
-  sops updatekeys -y kubernetes/flux-config/sops/*.sops.yaml
+  sops updatekeys -y kubernetes/flux-system/flux-config/app/*.sops.yaml
 
 # 4. Re-encrypt the bootstrap Secret with the new private key
 python3 -c "
@@ -333,7 +320,7 @@ SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt \
 rm -f /tmp/flux-home-ops.txt.new
 
 # 6. Commit + push, then re-run the bootstrap
-git add .sops.yaml kubernetes/bootstrap/flux-age-key.sops.yaml kubernetes/flux-config/sops/
+git add .sops.yaml kubernetes/bootstrap/flux-age-key.sops.yaml kubernetes/flux-system/flux-config/app/
 git commit -m "chore(sops): rotate Flux age key"
 git push
 just bootstrap-sops-key

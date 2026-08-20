@@ -87,12 +87,12 @@ bootstrap: bootstrap-helmfile bootstrap-sops-key
 # Install the Flux SOPS age key Secret (one-shot per cluster rebuild).
 # Decrypts kubernetes/bootstrap/flux-age-key.sops.yaml with the personal age key
 # and applies Secret/flux-system/sops-age, then forces Flux to reconcile the
-# flux-sops Kustomization which decrypts and applies the 1Password Connect
-# credentials Secret from kubernetes/flux-config/sops/.
+# flux-config Kustomization which decrypts and applies the 1Password Connect
+# credentials Secret from kubernetes/flux-system/flux-config/app/.
 bootstrap-sops-key:
     SOPS_AGE_KEY_FILE={{ sops_age_key_file }} \
         sops -d kubernetes/bootstrap/flux-age-key.sops.yaml | kubectl apply -f -
-    flux reconcile kustomization flux-sops -n flux-system
+    flux reconcile kustomization flux-config -n flux-system
 
 # =============================================================================
 # Flux Operations
