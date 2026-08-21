@@ -39,10 +39,14 @@ jobs:
           for d in $dirs; do
             [ -f "images/$d/Dockerfile" ] || continue
             ver=$(cat "images/$d/VERSION" 2>/dev/null || echo latest)
-            json=$(echo "$json" | jq --arg n "$d" --arg v "$ver" \
+            json=$(echo "$json" | jq -c --arg n "$d" --arg v "$ver" \
               '. + [{name:$n, version:$v}]')
           done
-          echo "matrix=$json" >> "$GITHUB_OUTPUT"
+          {
+            echo "matrix<<GH_MATRIX"
+            echo "$json"
+            echo "GH_MATRIX"
+          } >> "$GITHUB_OUTPUT"
 
   build:
     needs: changed-images
