@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mcp-victoriametrics
-          image: ghcr.io/victoriametrics/mcp-victoriametrics:v1.20.2
+          image: ghcr.io/victoriametrics/mcp-victoriametrics:v1.120.1@sha256:16d9a30a6629319a8e84a73b9b54e1e9b9e5bf229bc40a7f1717c8602b0c1c09
           env:
             - name: VM_INSTANCE_ENTRYPOINT
               value: "http://vmselect-victoria-metrics.monitoring.svc.cluster.local:8481"
