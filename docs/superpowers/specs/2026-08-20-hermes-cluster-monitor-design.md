@@ -231,17 +231,30 @@ therefore requires a **derived image** that bakes it in via uv:
   image** (verified: `ModuleNotFoundError`). A derived image
   `FROM nousresearch/hermes-agent` + `uv pip install --python
   /opt/hermes/.venv/bin/python trafilatura` is **required** (verified: builds and
-  imports trafilatura 2.2.0; httpx 0.28.1 is already present). The hermes
-  Deployment uses this derived image, pushed to the cluster registry (zot) or
-  ghcr.
+  imports trafilatura 2.2.0; httpx 0.28.1 is already present).
 
-## Open Item
+**Decision:** bundle local-extract **in the same derived image** at
+`/opt/hermes/plugins/web/local-extract/` (the bundled-plugin dir Hermes scans via
+`HERMES_BUNDLED_PLUGINS`/`plugins.py::get_bundled_plugins_dir`). One build
+artifact carries both trafilatura (venv) and the plugin (immutable `/opt/hermes`
+tree), so the plugin is **not self-modifiable** by the agent (stronger than the
+writable `/opt/data/plugins/`), and needs no external repo, ConfigMap, or runtime
+`hermes plugins install`. Trade-off: plugin updates require an image rebuild +
+Flux image bump. The hermes Deployment uses this derived image, pushed to the
+cluster registry (zot) or ghcr.
 
-- **web/local-extract provenance** — `hermes plugins install <owner/repo>` clones
-  a repo whose **root** is the plugin (reads `plugin.yaml`/`__init__.py` at the
-  root); a single repo cannot host multiple plugins. local-extract is a
-  self-contained plugin dir (`plugin.yaml`/`__init__.py`/`provider.py`).
-  Options: (a) publish as its own repo `alinanova21/hermes-local-extract` and
-  `hermes plugins install` it; or (b) vendor the plugin files in-repo (home-ops
-  ConfigMap) mounted into `/opt/data/plugins/web/local-extract` with no separate
-  repo. Choose (a) or (b) during implementation.
+**memini** stays a normal `/opt/data/plugins/` install (stdlib-only, independent
+update cadence and upstream repo `eleboucher/memini-hermes`); it can also be
+bundled for uniformity if desired.
+
+## Open Item — resolved
+
+- **web/local-extract provenance**: resolved to **bundle it in the derived image**
+  at `/opt/hermes/plugins/web/local-extract/` (option c). This supersedes (a)
+  separate repo `alinanova21/hermes-local-extract` or (b) ConfigMap vendoring:
+  `hermes plugins install` treats a repo root as one plugin (a single repo can't
+  host multiple), and bundling removes the runtime-install step, makes the plugin
+  immutable, and version-syncs it with the trafilatura image build. The one thing
+  to verify during implementation is that Hermes registers the nested
+  `web/local-extract` bundled path (the in-tree `web/<name>` plugins already
+  register this way).
