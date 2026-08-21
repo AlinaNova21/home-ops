@@ -45,7 +45,7 @@ spec:
               repository: ghcr.io/alinanova21/hermes-agent
               tag: latest
               pullPolicy: Always
-            command: ["gateway", "run"]
+            args: ["gateway", "run"]
             env:
               TZ: "America/Chicago"
               HERMES_CONFIG: "/etc/hermes/config.yaml"
