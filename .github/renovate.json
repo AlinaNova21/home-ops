@@ -6,6 +6,16 @@
     ":timezone(America/Chicago)"
   ],
   "pinDigests": true,
+  "customManagers": [
+    {
+      "description": "Upstream nousresearch/hermes-agent calendar image tag (vYYYY.M.D, stored in images/hermes-agent/VERSION without the leading v) so a release bumps the derived image's base build-arg and tag.",
+      "fileMatch": ["^images/hermes-agent/VERSION$"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)$"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "nousresearch/hermes-agent",
+      "versioningTemplate": "semver"
+    }
+  ],
   "packageRules": [
     {
       "description": "Auto-merge patch updates silently",
@@ -118,6 +128,13 @@
       "matchPackageNames": [
         "/^ghcr\\.io/home-operations//"
       ]
+    },
+    {
+      "description": "Derived hermes-agent image: bump the cluster HelmRelease ref to the newest ${VERSION}-${run.number} tag. Disable digest-only churn (tags are immutable-ish per build).",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/alinanova21/hermes-agent"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
     },
     {
       "description": "yuvomi: auto-merge minor and digest (updates frequently, patches flow via general rules)",
