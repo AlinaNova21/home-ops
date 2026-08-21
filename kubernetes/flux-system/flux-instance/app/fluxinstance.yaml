@@ -18,17 +18,28 @@ spec:
     - image-reflector-controller
     - image-automation-controller
   cluster:
-    size: medium
+    size: small
   kustomize:
     patches:
-      # Controllers run at Flux defaults (concurrency 4, requeue-dependency 30s).
-      # The previous --concurrent=16 / --requeue-dependency=5s overloaded the
-      # 4-core Celeron control-plane nodes (etcd/API-server timeouts, lost
-      # leader leases). Soft-pin the busiest controllers to whoverse-w1
-      # (Intel N150, 16GB) to keep them off the etcd hosts.
+      # size:small is the operator-native vertical profile: concurrency 5,
+      # requeue-dependency 10s (medium was 10 / 5s). These patches only do
+      # what the FluxInstance CRD can't express natively and use the
+      # documented `name` regex target — a labelSelector on
+      # app.kubernetes.io/name matched no generated Deployment (they carry
+      # app.kubernetes.io/component), so the previous patch never applied.
+      # Requeue deps at 30s (Flux default) to prevent dependency retry
+      # storms, and soft-pin controllers to whoverse-w1 (Intel N150, 16GB)
+      # to keep them off the 4-core Celeron etcd hosts.
       - target:
           kind: Deployment
-          labelSelector: "app.kubernetes.io/name in (source-controller, kustomize-controller, helm-controller)"
+          name: "(kustomize-controller|helm-controller|source-controller)"
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --requeue-dependency=30s
+      - target:
+          kind: Deployment
+          name: "(kustomize-controller|helm-controller|source-controller)"
         patch: |
           - op: add
             path: /spec/template/spec/affinity
