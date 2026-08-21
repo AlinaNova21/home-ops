@@ -205,7 +205,9 @@ agent cannot escalate via its own identity.
 
 ## Decided during review (no longer open)
 
-- **Image:** published `nousresearch/hermes-agent` (no local build).
+- **Image:** published `nousresearch/hermes-agent` is the base, but the hermes
+  Deployment uses a **derived image that bakes `trafilatura` into the uv-managed
+  venv** (the published image lacks it and has no pip).
 - **konflate MCP:** `http://konflate.default.svc.cluster.local:8080/mcp`
   (streamable HTTP, read-only).
 - **gVisor class:** `gvisor`.
@@ -218,15 +220,20 @@ agent cannot escalate via its own identity.
 ## Plugins vs. the immutable install tree
 
 The published image's read-only env is `/opt/hermes` (source, bundled venv,
-node_modules). Plugins do **not** need to be baked into the image — they install
-into the writable `/opt/data/plugins/` volume (where memini + local-extract
-already live on moltbot). The immutability only matters if a plugin requires a
-Python package absent from the published image's venv (runtime `pip` into the
-code venv is disabled):
+node_modules) and has **no `pip`** — Hermes uses **uv** (`/usr/local/bin/uv`, venv
+`/opt/hermes/.venv`; baked at build via `uv sync --frozen`). Plugins do **not**
+need to be baked into the image — they install into the writable
+`/opt/data/plugins/` volume. But a plugin needing a **Python package absent from
+the published venv** cannot add it at runtime (no pip, code venv read-only) and
+therefore requires a **derived image** that bakes it in via uv:
 - **memini** — stdlib-only (`urllib.request`, `subprocess`): no extra deps, no bake.
-- **local-extract** — lazy-imports `trafilatura`; present in the venv and used by
-  Hermes's own web extraction, so near-certainly in the published image — verify
-  at deploy; a small derived image adding trafilatura is the fallback if absent.
+- **local-extract** — lazy-imports `trafilatura`, which is **NOT in the published
+  image** (verified: `ModuleNotFoundError`). A derived image
+  `FROM nousresearch/hermes-agent` + `uv pip install --python
+  /opt/hermes/.venv/bin/python trafilatura` is **required** (verified: builds and
+  imports trafilatura 2.2.0; httpx 0.28.1 is already present). The hermes
+  Deployment uses this derived image, pushed to the cluster registry (zot) or
+  ghcr.
 
 ## Open Item
 
