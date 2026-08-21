@@ -86,7 +86,12 @@ spec:
       ports:
         - port: 80
           protocol: TCP
-    # moltbot tailscale egress proxy (searxng :8080, memini :8081)
+    # moltbot tailscale egress proxy (searxng, memini). The tailscale operator
+    # allocates per-proxygroup dynamic targetPorts (e.g. searxng 10266, memini
+    # 10750) that it rewrites in the ts-* ClusterIP Service, and Cilium enforces
+    # egress policy on the post-DNAT targetPort. Pinning 8080/8081 (the Service
+    # ports) breaks because the SYNs arrive at the targetPorts and get dropped.
+    # So allow ALL ports to the narrowly-scoped moltbot-egress proxy pods.
     - to:
         - namespaceSelector:
             matchLabels:
@@ -94,11 +99,6 @@ spec:
           podSelector:
             matchLabels:
               tailscale.com/parent-resource: moltbot-egress
-      ports:
-        - port: 8080
-          protocol: TCP
-        - port: 8081
-          protocol: TCP
     # General internet (model API, OIDC issuer, web tools) EXCEPT local ranges.
     - to:
         - ipBlock:
