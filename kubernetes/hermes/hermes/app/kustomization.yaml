@@ -12,3 +12,5 @@ resources:
   - helmrelease.yaml
   - pvc.yaml
   - config.yaml
+  - externalsecret.yaml
+  - httproute.yaml
