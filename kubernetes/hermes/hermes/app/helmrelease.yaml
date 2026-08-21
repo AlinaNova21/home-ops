@@ -26,34 +26,25 @@ spec:
       retryInterval: 5m
   values:
     defaultPodOptions:
-      serviceAccountName: hermes
       runtimeClassName: gvisor
-      volumes:
-        - name: config
-          configMap:
-            name: hermes-config
-            items:
-              - key: config.yaml
-                path: config.yaml
       securityContext:
-        # NOTE: the Hermes image starts PID 1 as root (s6-overlay) then drops to
-        # the UID-10000 'hermes' user internally, so we must NOT force
+        # The Hermes image starts PID 1 as root (s6-overlay) then drops to the
+        # UID-10000 'hermes' user internally, so we must NOT force
         # runAsNonRoot/runAsUser here. gVisor isolates the root PID 1.
         fsGroup: 10000
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: [ALL]
         seccompProfile:
           type: RuntimeDefault
 
     controllers:
       hermes:
+        serviceAccount:
+          name: hermes
         containers:
           hermes:
             image:
               repository: ghcr.io/alinanova21/hermes-agent
               tag: latest
-            imagePullPolicy: Always
+              pullPolicy: Always
             command: ["gateway", "run"]
             env:
               TZ: "America/Chicago"
@@ -68,14 +59,13 @@ spec:
               MEMINI_BASE_URL: "http://moltbot-egress.network.svc.cluster.local:8081"
               MEMINI_HOME: "personal/hermes"
               MEMINI_NAMESPACE: "home-ops/hermes"
-            volumeMounts:
-              - name: config
-                mountPath: /etc/hermes/config.yaml
-                subPath: config.yaml
-                readOnly: true
             envFrom:
               - secretRef:
                   name: hermes-secrets
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             resources:
               requests:
                 cpu: 500m
@@ -87,11 +77,6 @@ spec:
                 enabled: true
               startup:
                 enabled: true
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: [ALL]
-              readOnlyRootFilesystem: false
 
     service:
       hermes:
@@ -102,6 +87,14 @@ spec:
 
     persistence:
       data:
-        existingClaim: hermes-data
+        existingClaim: hermes
         globalMounts:
           - path: /opt/data
+      config:
+        type: configMap
+        name: hermes-config
+        defaultMode: 0444
+        globalMounts:
+          - path: /etc/hermes/config.yaml
+            subPath: config.yaml
+            readOnly: true

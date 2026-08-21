@@ -3,6 +3,7 @@ name: Build Images
 
 on:
   push:
+    branches: [main]
     paths:
       - "images/**"
       - ".github/workflows/images.yml"
@@ -71,7 +72,7 @@ jobs:
             list="${list}HERMES_VERSION=${{ matrix.version }}"
           fi
           [ -n "$list" ] && echo "list=$list" >> "$GITHUB_OUTPUT"
-          echo "tag=${matrix.version}-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "tag=${{ matrix.version }}-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
       - name: Docker metadata
         id: meta
         uses: docker/metadata-action@v5
