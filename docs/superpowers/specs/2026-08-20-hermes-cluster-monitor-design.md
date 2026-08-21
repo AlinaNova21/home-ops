@@ -64,17 +64,28 @@ spawning slow sessions on frequent alerts.
 
 ### Components (all in new `hermes` namespace unless noted)
 
-1. **`hermes` Deployment** — the Hermes Agent (container from the hermes-agent
-   repo Dockerfile; run `HERMES_HOME=/opt/data gateway`). gVisor runtime class.
+1. **`hermes` Deployment** — the Hermes Agent, official published image
+   **`nousresearch/hermes-agent`**, command `gateway run` (s6-overlay supervises
+   the gateway + dashboard). `HERMES_HOME=/opt/data`. gVisor runtime class
+   (`gvisor`). The published image's `/opt/hermes` install tree is immutable
+   (root-owned, read-only to the runtime `hermes` UID 10000); the container
+   starts PID 1 as root (s6) to seed/chown `/opt/data`, then drops to `hermes`.
 2. **`flux-operator-mcp` Deployment** (separate) — carries all cluster
    authority via its own ServiceAccount. gVisor. Flags: `--mask-secrets`.
-3. **konflate MCP** — existing `default/konflate` app exposed `mcp: true`;
-   Hermes adds it as an MCP server via its in-cluster URL (no new workload).
+3. **konflate MCP** — existing `default/konflate` app (`mcp: true`); serves a
+   read-only streamable-HTTP MCP at
+   `http://konflate.default.svc.cluster.local:8080/mcp` (`list_pull_requests`,
+   `get_pr_summary`, `get_pr_diff`). Hermes adds it as an MCP server; no new
+   workload.
 4. **`network/moltbot-egress`** — Tailscale egress Service (ExternalName +
    `tailscale.com` annotations + egress ProxyGroup) exposing two ports to
    moltbot: **8080** (SearXNG) and **8081** (memini). Modeled on `pve-egress`.
 5. **HTTPRoute** — built-in Hermes dashboard at `hermes.whoverse.dev`
    (internal Tailscale gateway only; **not** on the external Cloudflare gateway).
+   Dashboard binds `0.0.0.0` (`HERMES_DASHBOARD=1`) and therefore requires an
+   auth provider (serve behind the internal gateway using
+   `HERMES_DASHBOARD_BASIC_AUTH_USERNAME`/`_PASSWORD`, or bind loopback + proxy)
+   — the published image fails closed without one.
 
 ## Cluster Access: MCP-Only
 
@@ -130,8 +141,8 @@ agent cannot escalate via its own identity.
 - Install + enable the **memini** plugin (`eleboucher/memini-hermes`);
   `memory.provider: memini`.
 - Env: `MEMINI_BASE_URL=http://moltbot-egress.network.svc.cluster.local:8081`,
-  `MEMINI_HOME=personal/hermes`, `MEMINI_NAMESPACE=home-ops`, `MEMINI_API_KEY`
-  (if auth required).
+  `MEMINI_HOME=personal/hermes`, `MEMINI_NAMESPACE=home-ops/hermes`,
+  `MEMINI_API_KEY` (if auth required).
 
 ## Web / Search Stack
 
@@ -152,7 +163,7 @@ agent cannot escalate via its own identity.
 
 ## Model & Secrets
 
-- Provider: **OpenRouter** (static key), model DeepSeek (exact slug "0731" TBD).
+- Provider: **OpenRouter** (static key), model **`deepseek/deepseek-v4-flash-0731`**.
 - **ExternalSecret** (1Password Connect, per home-ops convention):
   `OPENROUTER_API_KEY`, ntfy token, Hermes API/dashboard credentials.
 - Storage: PVC (`miroir`) for `HERMES_HOME`.
@@ -170,8 +181,12 @@ agent cannot escalate via its own identity.
    Roles/ClusterRoles.
 4. **GitOps** — Flux reconciles from git; any patch to its own HelmRelease/
    Kustomization is drift-reverted, so self-tampering cannot persist.
-5. **Sandbox** — gVisor, non-root UID 10000, `runAsNonRoot`,
-   `allowPrivilegeEscalation: false`, drop ALL capabilities.
+5. **Sandbox** — gVisor (`gvisor` runtime class), `allowPrivilegeEscalation:
+   false`, drop ALL capabilities. The container PID 1 is the s6 supervisor (it
+   must start as root to seed/chown `/opt/data`, then drops to the `hermes` UID
+   10000 for the gateway/dashboard) — so `runAsNonRoot` is not applied to PID
+   1; user-namespace + gVisor isolate it. (Verify s6-overlay boot path under the
+   `runsc` runtime class during implementation.)
 6. **Never YOLO** — no `HERMES_YOLO_MODE`; `approvals.mode` stays
    `smart`/`manual` (never `off`).
 7. **No lazy installs** — `security.allow_lazy_installs: false`.
@@ -185,14 +200,25 @@ agent cannot escalate via its own identity.
 - Remove stale `kubernetes/holmes/` (disabled in commit `384374b`).
 - Remove/rewire chaski `config.d/10-holmes.yaml` dead flux-alert→holmes target.
 
-## Open Items (TBD during implementation)
+## Decided during review (no longer open)
 
-- Hermes **image** source: build repo Dockerfile → push to zot/ghcr, or a
-  published image.
-- **konflate MCP** exact path on `konflate.default.svc.cluster.local:8080`.
-- **gVisor** class: `gvisor` vs `gvisor-kvm` (default `gvisor`).
-- DeepSeek **model slug** on OpenRouter ("0731" family).
-- memini **namespace** value (default `home-ops`).
-- **web/local-extract** plugin provenance: it is an in-tree/custom provider; if
-  not installable by name, copy it to a GitHub repo and install via
-  `hermes plugins install <repo>`.
+- **Image:** published `nousresearch/hermes-agent` (no local build).
+- **konflate MCP:** `http://konflate.default.svc.cluster.local:8080/mcp`
+  (streamable HTTP, read-only).
+- **gVisor class:** `gvisor`.
+- **Model:** `deepseek/deepseek-v4-flash-0731`.
+- **memini namespace:** `home-ops/hermes`.
+- **Plugins:** one plugin per repo (`hermes plugins install` treats the repo
+  root as a single plugin). memini → `eleboucher/memini-hermes`; local-extract
+  needs its own source.
+
+## Open Item
+
+- **web/local-extract provenance** — `hermes plugins install <owner/repo>` clones
+  a repo whose **root** is the plugin (reads `plugin.yaml`/`__init__.py` at the
+  root); a single repo cannot host multiple plugins. local-extract is a
+  self-contained plugin dir (`plugin.yaml`/`__init__.py`/`provider.py`).
+  Options: (a) publish as its own repo `alinanova21/hermes-local-extract` and
+  `hermes plugins install` it; or (b) vendor the plugin files in-repo (home-ops
+  ConfigMap) mounted into `/opt/data/plugins/web/local-extract` with no separate
+  repo. Choose (a) or (b) during implementation.
