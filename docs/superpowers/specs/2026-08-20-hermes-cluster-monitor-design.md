@@ -1,7 +1,7 @@
 # Design: Hermes Cluster Monitor
 
 **Date:** 2026-08-20
-**Status:** Draft for review
+**Status:** Approved for implementation
 
 ## Summary
 
@@ -214,8 +214,9 @@ agent cannot escalate via its own identity.
 - **Model:** `deepseek/deepseek-v4-flash-0731`.
 - **memini namespace:** `home-ops/hermes`.
 - **Plugins:** one plugin per repo (`hermes plugins install` treats the repo
-  root as a single plugin). memini → `eleboucher/memini-hermes`; local-extract
-  needs its own source.
+  root as a single plugin). memini → `eleboucher/memini-hermes` (installed to
+  `/opt/data/plugins`); local-extract → **bundled into the derived image** (see
+  below).
 
 ## Plugins vs. the immutable install tree
 
