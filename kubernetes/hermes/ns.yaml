@@ -3,3 +3,11 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: hermes
+  labels:
+    # The Hermes image boots PID 1 as root (s6-overlay) then drops to UID 10000
+    # internally, which the cluster's default PodSecurity 'restricted' forbids.
+    # Scope a relaxation to baseline for THIS namespace only; gVisor is the
+    # runtime sandbox. warn/audit stay on 'restricted' to surface regressions.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted

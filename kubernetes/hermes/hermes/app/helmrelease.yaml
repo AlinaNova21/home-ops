@@ -28,9 +28,13 @@ spec:
     defaultPodOptions:
       runtimeClassName: gvisor
       securityContext:
-        # The Hermes image starts PID 1 as root (s6-overlay) then drops to the
-        # UID-10000 'hermes' user internally, so we must NOT force
-        # runAsNonRoot/runAsUser here. gVisor isolates the root PID 1.
+        # The Hermes image boots PID 1 as root (s6-overlay) so it can chown
+        # /run + the data volume, then drops to UID 10000 internally. We must
+        # run the POD as root and only drop baseline-forbidden caps that s6
+        # doesn't need; gVisor is the sandbox isolating the root PID 1.
+        runAsUser: 0
+        runAsGroup: 0
+        runAsNonRoot: false
         fsGroup: 10000
         seccompProfile:
           type: RuntimeDefault
@@ -66,9 +70,8 @@ spec:
               - secretRef:
                   name: hermes-secrets
             securityContext:
-              allowPrivilegeEscalation: false
               capabilities:
-                drop: [ALL]
+                drop: [NET_RAW, MKNOD]
             resources:
               requests:
                 cpu: 500m
