@@ -19,13 +19,12 @@ spec:
       root_url: https://grafana.whoverse.dev
     auth:
       disable_login_form: "true"
-    # ${VAR} is expanded by Grafana's env provider at startup; the env vars are
+    # ${VAR} is expanded by Grafana's env provider at startup; the admin vars are
     # wired from grafana-secrets in spec.deployment below.
     "auth.generic_oauth":
       enabled: "true"
       name: "Kanidm"
       client_id: grafana
-      client_secret: ${GRAFANA_OAUTH_CLIENT_SECRET}
       scopes: "openid email profile"
       auto_login: "true"
       auth_url: https://idm.whoverse.nexus/ui/oauth2
@@ -55,11 +54,6 @@ spec:
                     secretKeyRef:
                       name: grafana-secrets
                       key: admin-password
-                - name: GRAFANA_OAUTH_CLIENT_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: grafana-secrets
-                      key: grafana-secret
                 # Install the VictoriaLogs datasource plugin directly. The VM
                 # k8s-stack chart creates the VictoriaLogs GrafanaDatasource CR
                 # without plugin info (no version in its default entry), so we
