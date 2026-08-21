@@ -83,9 +83,12 @@ spawning slow sessions on frequent alerts.
 5. **HTTPRoute** — built-in Hermes dashboard at `hermes.whoverse.dev`
    (internal Tailscale gateway only; **not** on the external Cloudflare gateway).
    Dashboard binds `0.0.0.0` (`HERMES_DASHBOARD=1`) and therefore requires an
-   auth provider (serve behind the internal gateway using
-   `HERMES_DASHBOARD_BASIC_AUTH_USERNAME`/`_PASSWORD`, or bind loopback + proxy)
-   — the published image fails closed without one.
+   auth provider — the published image fails closed without one. Use the
+   **Kanidm OIDC** provider (`dashboard_auth/self_hosted`):
+   `HERMES_DASHBOARD_OIDC_ISSUER` + `HERMES_DASHBOARD_OIDC_CLIENT_ID`, with a
+   Kanidm public OIDC client (PKCE) registered under redirect URI
+   `https://hermes.whoverse.dev/oauth2/callback` — mirroring the existing
+   headlamp/capacitor pattern.
 
 ## Cluster Access: MCP-Only
 
@@ -211,6 +214,19 @@ agent cannot escalate via its own identity.
 - **Plugins:** one plugin per repo (`hermes plugins install` treats the repo
   root as a single plugin). memini → `eleboucher/memini-hermes`; local-extract
   needs its own source.
+
+## Plugins vs. the immutable install tree
+
+The published image's read-only env is `/opt/hermes` (source, bundled venv,
+node_modules). Plugins do **not** need to be baked into the image — they install
+into the writable `/opt/data/plugins/` volume (where memini + local-extract
+already live on moltbot). The immutability only matters if a plugin requires a
+Python package absent from the published image's venv (runtime `pip` into the
+code venv is disabled):
+- **memini** — stdlib-only (`urllib.request`, `subprocess`): no extra deps, no bake.
+- **local-extract** — lazy-imports `trafilatura`; present in the venv and used by
+  Hermes's own web extraction, so near-certainly in the published image — verify
+  at deploy; a small derived image adding trafilatura is the fallback if absent.
 
 ## Open Item
 
