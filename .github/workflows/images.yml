@@ -28,10 +28,11 @@ jobs:
       - name: Compute changed image matrix
         id: matrix
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          before="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
             dirs=$(ls -d images/*/ 2>/dev/null | sed 's|images/||; s|/||')
           else
-            dirs=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- images/ \
+            dirs=$(git diff --name-only "$before" "${{ github.sha }}" -- images/ \
               | cut -d/ -f2 | sort -u)
           fi
           json='[]'
@@ -45,7 +46,7 @@ jobs:
 
   build:
     needs: changed-images
-    if: ${{ fromJSON(needs.changed-images.outputs.matrix) != '[]' }}
+    if: ${{ needs.changed-images.outputs.matrix != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
