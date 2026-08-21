@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-config
+  namespace: hermes
+data:
+  config.yaml: |
+    model:
+      provider: openrouter
+      model: deepseek/deepseek-v4-flash-0731
+    memory:
+      provider: memini
+    approvals:
+      mode: smart
+      cron_mode: deny
+      single_query_mode: deny
+      deny:
+        - "*kubectl*"
+        - "*flux *"
+        - "*talosctl*"
+        - "*helm *"
+        - "*config.yaml*"
+        - "*chmod* /opt/hermes*"
+        - "*chown* /opt/hermes*"
+        - "*>*/hermes/plugins/*"
+        - "*>*/opt/hermes/*"
+    security:
+      allow_private_urls: false
+      allow_lazy_installs: false
+      redact_secrets: true
+      tirith_enabled: true
+      tirith_fail_open: false
+      website_blocklist:
+        enabled: true
+        domains:
+          # .nexus is behind auth and allowed; restrict internal .dev surfaces.
+          - "*.whoverse.dev"
+    terminal:
+      backend: local
+      cwd: /tmp
+    web:
+      search_backend: searxng
+      extract_backend: local-extract
+    plugins:
+      enabled:
+        - web
+        - web/local-extract
+        - memini
+    mcp_servers:
+      flux:
+        type: http
+        url: http://flux-operator-mcp.hermes.svc.cluster.local:8080/mcp
+      konflate:
+        type: http
+        url: http://konflate.default.svc.cluster.local:8080/mcp

@@ -1,0 +1,7 @@
+name: web-local-extract
+version: 1.0.0
+description: "Local, self-hosted web extraction via trafilatura — fetch a URL with httpx and strip boilerplate locally. No API key, no cloud service."
+author: alina
+kind: backend
+provides_web_providers:
+  - local-extract

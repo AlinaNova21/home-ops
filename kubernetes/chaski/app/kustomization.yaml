@@ -6,7 +6,6 @@ namespace: chaski
 configMapGenerator:
   - name: chaski-config
     files:
-      - config.d/10-holmes.yaml
       - config.d/15-ntfy.yaml
       - config.d/20-alertmanager.yaml
     options:
@@ -14,5 +13,4 @@ configMapGenerator:
 resources:
   - ocirepository.yaml
   - helmrelease.yaml
-  - externalsecret.yaml
   - externalsecret-ntfy.yaml
