@@ -11,5 +11,6 @@ resources:
   - ocirepository.yaml
   - helmrelease.yaml
   - config.yaml
+  - networkpolicy.yaml
   - externalsecret.yaml
   - httproute.yaml

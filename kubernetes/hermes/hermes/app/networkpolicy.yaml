@@ -1,0 +1,112 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/networking.k8s.io/networkpolicy_v1.json
+# Hermes egress/ingress restriction (enforced by Cilium).
+# Egress: default-deny, allow-only kube-dns + the MCP/ntfy/egress backends it
+# serves, and GENERAL INTERNET on 80/443 — with all LOCAL ranges (RFC1918 LAN,
+# CGNAT/tailnet, link-local, metadata) explicitly excepted, so neither the
+# agent's tools nor a shell inside the pod can reach the LAN, other pods, or
+# the cluster API.
+# Ingress: default-deny; only the internal Envoy gateway may reach the dashboard.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hermes
+  namespace: hermes
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: hermes
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: network
+          podSelector:
+            matchLabels:
+              gateway.envoyproxy.io/owning-gateway-name: internal
+      ports:
+        - port: 9119
+          protocol: TCP
+  egress:
+    # kube-dns (names + service resolution)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # flux-operator-mcp (hermes ns)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: hermes
+          podSelector:
+            matchLabels:
+              app: flux-operator-mcp
+      ports:
+        - port: 8080
+          protocol: TCP
+    # konflate (MCP, default ns)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: default
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: konflate
+      ports:
+        - port: 8080
+          protocol: TCP
+    # ntfy (notifications ns)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: notifications
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ntfy
+      ports:
+        - port: 80
+          protocol: TCP
+    # moltbot tailscale egress proxy (searxng :8080, memini :8081)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: network
+          podSelector:
+            matchLabels:
+              tailscale.com/parent-resource: moltbot-egress
+      ports:
+        - port: 8080
+          protocol: TCP
+        - port: 8081
+          protocol: TCP
+    # General internet (model API, OIDC issuer, web tools) EXCEPT local ranges.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8        # cluster pod/services CIDR
+              - 172.16.0.0/12
+              - 192.168.0.0/16    # LAN
+              - 100.64.0.0/10     # CGNAT / tailnet-direct
+              - 169.254.0.0/16    # link-local + cloud metadata
+              - 127.0.0.0/8
+        - ipBlock:
+            cidr: ::/0
+            except:
+              - fc00::/7
+              - fe80::/10
+              - ::1/128
+      ports:
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP
