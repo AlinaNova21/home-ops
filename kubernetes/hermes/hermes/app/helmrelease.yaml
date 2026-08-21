@@ -60,6 +60,7 @@ spec:
               HERMES_WRITE_SAFE_ROOT: "/opt/data:/tmp"
               HERMES_DASHBOARD: "1"
               HERMES_DASHBOARD_HOST: "0.0.0.0"
+              HERMES_DASHBOARD_PUBLIC_URL: "https://hermes.whoverse.dev"
               HERMES_DASHBOARD_OIDC_ISSUER: "https://idm.whoverse.nexus/oauth2/openid/hermes"
               HERMES_DASHBOARD_OIDC_CLIENT_ID: "hermes"
               API_SERVER_ENABLED: "false"
