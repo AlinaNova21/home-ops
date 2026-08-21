@@ -247,6 +247,42 @@ cluster registry (zot) or ghcr.
 update cadence and upstream repo `eleboucher/memini-hermes`); it can also be
 bundled for uniformity if desired.
 
+## Image build & versioning
+
+A new `images/hermes-agent/` subfolder in the home-ops repo (new convention —
+none exists yet) holds the derived image source:
+
+```
+images/hermes-agent/
+├── Dockerfile        # FROM nousresearch/hermes-agent:${HERMES_VERSION}@sha256:…
+│                     #   uv pip install --python /opt/hermes/.venv/bin/python trafilatura
+│                     #   COPY plugins/ /opt/hermes/plugins/   (bundled local-extract)
+├── plugins/          # bundled web/local-extract plugin
+└── VERSION           # upstream semver, e.g. 0.20.4 (Renovate-managed)
+```
+
+**Registry:** `ghcr.io/alinanova21/hermes-agent` (matches existing CI registry +
+Flux cosign verification of OCI images).
+
+**CI:** mirror `.github/workflows/helm-oci.yml` — on any change under
+`images/hermes-agent/**`, build + push, tag =
+**`${VERSION}-${run.number}`** (e.g. `0.20.4-1234`). A **numeric monotonic
+prerelease** is valid semver, sorts by precedence, and lets Renovate pick the
+newest tag. No `REVISION` file and no reset — the counter is CI-derived.
+
+**Versioning (tied to upstream):**
+- `VERSION` (upstream semver) is Renovate-managed; Renovate also bumps the base
+digest pin, so the derived image tracks upstream releases automatically.
+- Renovate tracks `ghcr.io/alinanova21/hermes-agent` as its own managed image in
+the cluster HelmRelease and bumps the image ref to the newest `-N` tag.
+- Do **not** use `+build.metadata` (ignored for semver precedence); use the
+prerelease `-N` form.
+
+**Mise is skipped** (not pre-installed) to keep k8s-write CLIs (`kubectl`,
+`flux`, `talosctl`, `helm`) off the agent's PATH — preserving the MCP-only
+security boundary. The published image already ships Python, Node, git, ripgrep,
+ffmpeg.
+
 ## Open Item — resolved
 
 - **web/local-extract provenance**: resolved to **bundle it in the derived image**
