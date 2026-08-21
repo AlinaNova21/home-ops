@@ -10,7 +10,6 @@ resources:
   - clusterrolebinding.yaml
   - ocirepository.yaml
   - helmrelease.yaml
-  - pvc.yaml
   - config.yaml
   - externalsecret.yaml
   - httproute.yaml

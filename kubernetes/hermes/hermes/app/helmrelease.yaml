@@ -87,7 +87,13 @@ spec:
 
     persistence:
       data:
-        existingClaim: hermes
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: hermes
         globalMounts:
           - path: /opt/data
       config:
