@@ -11,8 +11,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "0.44.0"
-    digest: sha256:74fb03632e9a764d435c666fe5f8fbb0575c5da5a28421292355bc95476870df
+    tag: "0.45.0"
+    digest: sha256:fdb45aa18238dc550b99c5013351c421dac20b1c2aff6d24ed419c83e5d9f62d
   url: oci://ghcr.io/home-operations/charts-mirror/headlamp
   verify:
     provider: cosign
