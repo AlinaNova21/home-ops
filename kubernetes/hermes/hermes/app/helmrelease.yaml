@@ -45,7 +45,10 @@ spec:
               repository: ghcr.io/alinanova21/hermes-agent
               tag: latest
               pullPolicy: Always
-            command: ["gateway", "run"]
+            args: ["gateway", "run"]
+            ports:
+              - name: http
+                containerPort: 9119
             env:
               TZ: "America/Chicago"
               HERMES_CONFIG: "/etc/hermes/config.yaml"
