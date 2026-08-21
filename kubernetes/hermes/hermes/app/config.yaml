@@ -50,8 +50,23 @@ data:
         - memini
     mcp_servers:
       flux:
-        type: http
         url: http://flux-operator-mcp.hermes.svc.cluster.local:8080/mcp
+        tools:
+          exclude:
+            - apply_kubernetes_manifest
+            - install_flux_instance
+            - delete_kubernetes_resource
+            - get_kubeconfig_context
+            - set_kubeconfig_context
+          resources: false
+          prompts: false
       konflate:
-        type: http
         url: http://konflate.default.svc.cluster.local:8080/mcp
+        tools:
+          resources: false
+          prompts: false
+      victoriametrics:
+        url: http://mcp-victoriametrics.hermes.svc.cluster.local:8080/mcp
+        tools:
+          resources: false
+          prompts: false

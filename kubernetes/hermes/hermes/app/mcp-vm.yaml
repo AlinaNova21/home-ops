@@ -1,0 +1,64 @@
+---
+# VictoriaMetrics MCP server — gives the Hermes agent read-only access to the
+# VM query/labels/series/rules + ALERTS APIs (vmalert firing/pending), plus
+# embedded docs. Talks to vmselect over HTTP only (no k8s RBAC needed).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-victoriametrics
+  namespace: hermes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-victoriametrics
+  template:
+    metadata:
+      labels:
+        app: mcp-victoriametrics
+    spec:
+      runtimeClassName: gvisor
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mcp-victoriametrics
+          image: ghcr.io/victoriametrics/mcp-victoriametrics:v1.20.2
+          env:
+            - name: VM_INSTANCE_ENTRYPOINT
+              value: "http://vmselect-victoria-metrics.monitoring.svc.cluster.local:8481"
+            - name: VM_INSTANCE_TYPE
+              value: cluster
+            - name: MCP_SERVER_MODE
+              value: http
+            - name: MCP_LISTEN_ADDR
+              value: "0.0.0.0:8080"
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-victoriametrics
+  namespace: hermes
+spec:
+  selector:
+    app: mcp-victoriametrics
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

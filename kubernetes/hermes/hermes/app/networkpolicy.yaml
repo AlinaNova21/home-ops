@@ -53,6 +53,17 @@ spec:
       ports:
         - port: 8080
           protocol: TCP
+    # mcp-victoriametrics (hermes ns)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: hermes
+          podSelector:
+            matchLabels:
+              app: mcp-victoriametrics
+      ports:
+        - port: 8080
+          protocol: TCP
     # konflate (MCP, default ns)
     - to:
         - namespaceSelector:
