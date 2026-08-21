@@ -30,8 +30,6 @@ spec:
       existingConfigMap: chaski-config
     envFrom:
       - secretRef:
-          name: holmes-secrets
-      - secretRef:
           name: ntfy-token
     resources:
       requests:
