@@ -10,3 +10,4 @@ resources:
   - cloudflared/ks.yaml
   - tailscale/ks.yaml
   - pve-egress/ks.yaml
+  - moltbot-egress/ks.yaml
