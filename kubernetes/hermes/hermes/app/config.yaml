@@ -16,15 +16,16 @@ data:
       cron_mode: deny
       single_query_mode: deny
       deny:
-        - "*kubectl*"
-        - "*flux *"
-        - "*talosctl*"
-        - "*helm *"
-        - "*config.yaml*"
+        # Self-modification protection only: block shell edits to Hermes's own
+        # config/plugins/install tree. No k8s-write CLIs are even installed (the
+        # image ships without kubectl/flux/talosctl; cluster access is MCP-only),
+        # so blanket deny-globs for those are unnecessary and only confuse the
+        # agent's toolpath reasoning.
         - "*chmod* /opt/hermes*"
         - "*chown* /opt/hermes*"
-        - "*>*/hermes/plugins/*"
         - "*>*/opt/hermes/*"
+        - "*>*/hermes/plugins/*"
+        - "*config.yaml"
     security:
       allow_private_urls: false
       allow_lazy_installs: false
