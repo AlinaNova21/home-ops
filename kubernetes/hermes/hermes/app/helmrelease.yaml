@@ -1,0 +1,128 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hermes
+  namespace: hermes
+spec:
+  interval: 15m
+  chartRef:
+    kind: OCIRepository
+    name: hermes
+    namespace: hermes
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    defaultPodOptions:
+      serviceAccountName: hermes
+      runtimeClassName: gvisor
+      volumes:
+        - name: config
+          configMap:
+            name: hermes-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+      securityContext:
+        # NOTE: the Hermes image starts PID 1 as root (s6-overlay) then drops to
+        # the UID-10000 'hermes' user internally, so we must NOT force
+        # runAsNonRoot/runAsUser here. gVisor isolates the root PID 1.
+        fsGroup: 10000
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ALL]
+        seccompProfile:
+          type: RuntimeDefault
+
+    controllers:
+      hermes:
+        initContainers:
+          seed:
+            image:
+              repository: ghcr.io/alinanova21/hermes-agent
+              tag: latest
+            imagePullPolicy: Always
+            command:
+              - /bin/sh
+              - -ec
+              - |
+                if [ -f /opt/data/.hermes-initialized ]; then exit 0; fi
+                cp /config/config.yaml /opt/data/config.yaml
+                HERMES_HOME=/opt/data /opt/hermes/.venv/bin/hermes plugins install --enable --force eleboucher/memini-hermes 2>/dev/null || true
+                touch /opt/data/.hermes-initialized
+            volumeMounts:
+              - name: config
+                mountPath: /config
+            env:
+              - name: HERMES_HOME
+                value: /opt/data
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+        containers:
+          hermes:
+            image:
+              repository: ghcr.io/alinanova21/hermes-agent
+              tag: latest
+            imagePullPolicy: Always
+            command: ["gateway", "run"]
+            env:
+              TZ: "America/Chicago"
+              HERMES_WRITE_SAFE_ROOT: "/opt/data:/tmp"
+              HERMES_DASHBOARD: "1"
+              HERMES_DASHBOARD_HOST: "0.0.0.0"
+              API_SERVER_ENABLED: "false"
+              MEMINI_BASE_URL: "http://moltbot-egress.network.svc.cluster.local:8081"
+              MEMINI_HOME: "personal/hermes"
+              MEMINI_NAMESPACE: "home-ops/hermes"
+            envFrom:
+              - secretRef:
+                  name: hermes-secrets
+            resources:
+              requests:
+                cpu: 500m
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+            probes:
+              liveness:
+                enabled: true
+              startup:
+                enabled: true
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+              readOnlyRootFilesystem: false
+
+    service:
+      hermes:
+        controller: hermes
+        ports:
+          http:
+            port: 9119
+
+    persistence:
+      data:
+        existingClaim: hermes-data
+        globalMounts:
+          - path: /opt/data
