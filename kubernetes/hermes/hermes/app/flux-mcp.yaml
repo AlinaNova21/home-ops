@@ -1,0 +1,96 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flux-kubeconfig
+  namespace: hermes
+data:
+  kubeconfig: |
+    apiVersion: v1
+    kind: Config
+    clusters:
+      - name: in-cluster
+        cluster:
+          server: https://kubernetes.default.svc
+          certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    users:
+      - name: flux-mcp
+        user:
+          tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    contexts:
+      - name: in-cluster
+        context:
+          cluster: in-cluster
+          user: flux-mcp
+    current-context: in-cluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux-operator-mcp
+  namespace: hermes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flux-operator-mcp
+  template:
+    metadata:
+      labels:
+        app: flux-operator-mcp
+    spec:
+      serviceAccountName: flux-mcp
+      runtimeClassName: gvisor
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: flux-operator-mcp
+          image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.58.1
+          args:
+            - serve
+            - --transport
+            - http
+            - --port
+            - "8080"
+            - --mask-secrets=true
+            - --kubeconfig
+            - /config/kubeconfig
+          ports:
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - name: kubeconfig
+              mountPath: /config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 256Mi
+      volumes:
+        - name: kubeconfig
+          configMap:
+            name: flux-kubeconfig
+            items:
+              - key: kubeconfig
+                path: kubeconfig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flux-operator-mcp
+  namespace: hermes
+spec:
+  selector:
+    app: flux-operator-mcp
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

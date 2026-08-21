@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/rbac.authorization.k8s.io/clusterrole_v1.json
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hermes-flux-mcp
+rules:
+  # ---- Read (cluster-wide). Secrets are deliberately NOT included. ----
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/status
+      - pods/log
+      - services
+      - endpoints
+      - configmaps
+      - nodes
+      - nodes/status
+      - namespaces
+      - events
+      - persistentvolumes
+      - persistentvolumeclaims
+      - resourcequotas
+      - limitranges
+    verbs: [get, list, watch]
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - deployments/status
+      - replicasets
+      - replicasets/status
+      - statefulsets
+      - statefulsets/status
+      - daemonsets
+      - daemonsets/status
+    verbs: [get, list, watch]
+  - apiGroups: ["batch"]
+    resources: [jobs, cronjobs]
+    verbs: [get, list, watch]
+  - apiGroups: ["networking.k8s.io"]
+    resources: [ingresses, networkpolicies]
+    verbs: [get, list, watch]
+  - apiGroups: ["storage.k8s.io"]
+    resources: [storageclasses]
+    verbs: [get, list, watch]
+  # Flux CRs (read)
+  - apiGroups: ["fluxcd.controlplane.io"]
+    resources: [fluxinstances]
+    verbs: [get, list, watch]
+  - apiGroups: ["kustomize.toolkit.fluxcd.io"]
+    resources: [kustomizations]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: [helmreleases]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: ["source.toolkit.fluxcd.io"]
+    resources: [gitrepositories, ocirepositories, helmrepositories, helmcharts, buckets]
+    verbs: [get, list, watch, update, patch]
+  - apiGroups: ["notification.toolkit.fluxcd.io"]
+    resources: [providers, alerts, receivers]
+    verbs: [get, list, watch]
+  # ---- Write (narrow). DELETE on pods only; NO create/update on workloads. ----
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [delete]
