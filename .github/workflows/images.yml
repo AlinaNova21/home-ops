@@ -75,7 +75,7 @@ jobs:
           echo "tag=${{ matrix.version }}-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
       - name: Docker metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.REGISTRY_OWNER }}/${{ matrix.name }}
           tags: |
