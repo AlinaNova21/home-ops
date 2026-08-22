@@ -18,7 +18,7 @@ spec:
         type: Image
         image:
           # Release tag + digest pinned; eep 0.2.1 (verified via `crane digest`).
-          url: oci://ghcr.io/ishioni/eep:0.2.1
+          url: oci://ghcr.io/ishioni/eep:0.3.0
           # sha256 = amd64 platform-manifest digest, not the multi-arch index digest.
           # Plan used `crane digest` -> 0d5b4e3f (index digest) which Envoy Gateway rejected
           # (Accepted=False, "checksum does not match"). ca0a1016... is the amd64 manifest digest
