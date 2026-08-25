@@ -47,7 +47,7 @@ VM definition to mirror, plus the Talos and repo changes.
 
 - Talos node `whoverse-w2` in `talos/whoverse/talconfig.yaml` currently uses:
   - `installDisk: /dev/sda`
-  - patches: `@./miroir-disk-w2.yaml`, `@./patches/networking/common.yaml`,
+  - patches: `@./miroir-disk-vm-tiny.yaml`, `@./patches/networking/common.yaml`,
     `@./patches/networking/vm.yaml`
   - per-node `schematic` with `siderolabs/qemu-guest-agent` among a set of
     official extensions.
@@ -92,7 +92,7 @@ Add a node entry:
   controlPlane: true
   installDisk: /dev/sda
   patches:
-    - "@./miroir-disk-vm1.yaml"
+    - "@./miroir-disk-vm-tiny.yaml"
     - "@./patches/networking/common.yaml"
     - "@./patches/networking/vm.yaml"
   schematic:
@@ -117,7 +117,7 @@ Add a node entry:
 - The existing `controlPlane:` block applies automatically (kubelet-miroir,
   kernel-miroir, EPHEMERAL volume, OIDC apiserver args, proxy disabled,
   watchdog, spegel) — no changes there.
-- New patch file `miroir-disk-w2.yaml` → rename/copy to a w2-style small
+- Both VM nodes (w2 and vm1) share one small patch file `miroir-disk-vm-tiny.yaml` (DRY): a w2-style small
   carve: `minSize: 32GiB` from `system_disk` (see 5).
 
 ### 3.3 `README.md`
@@ -126,22 +126,40 @@ Add a node entry:
 - The `vm1` row mirrors w2 (QEMU virtual, same core/RAM) but role Control
   plane.
 
+
+## 4. Deployment sequence
 ## 4. Deployment sequence
 
+
+1. Create PVE VM 226 on pve1 (`qm`) with the mirror config.
 1. Create PVE VM 226 on pve1 (`qm`) with the mirror config.
 2. `just talos-gen`
+2. `just talos-gen`
+3. Boot VM in maintenance mode; Talos installs.
 3. Boot VM in maintenance mode; Talos installs.
 4. `talos-apply-insecure` → `talos-health` confirm 4th CP joined (etcd +
+4. `talos-apply-insecure` → `talos-health` confirm 4th CP joined (etcd +
+   apiserver + control-plane services).
    apiserver + control-plane services).
 5. Confirm scheduling/control-plane behavior; update README.
+5. Confirm scheduling/control-plane behavior; update README.
+
 
 ## 5. Storage decision
+## 5. Storage decision
+
 
 - vm1 gets a **32GiB `mirroir`** `RawVolumeConfig` from `system_disk`
-  (identical carve to w2, `miroir-disk-w2.yaml`).
+- vm1 gets a **32GiB `mirroir`** `RawVolumeConfig` from `system_disk`
+  (identical carve to w2, `miroir-disk-vm-tiny.yaml`).
+  (identical carve to w2, `miroir-disk-vm-tiny.yaml`).
+- vm1 gets **no `ceph-osd`** patch (rook-ceph inactive; OSDs physical-only).
 - vm1 gets **no `ceph-osd`** patch (rook-ceph inactive; OSDs physical-only).
 
+
 ## 6. Out of scope
+## 6. Out of scope
+
 
 - Renumbering w2 (future).
 - Extending miroir/ceph to this node.
