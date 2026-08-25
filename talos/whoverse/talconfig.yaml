@@ -79,6 +79,27 @@ nodes:
             - siderolabs/xe
             - siderolabs/drbd
 
+  - hostname: whoverse-vm1  # VM (libvirt) - control plane
+    ipAddress: 192.168.2.26
+    controlPlane: true
+    installDisk: /dev/sda
+    patches:
+      - "@./miroir-disk-vm1.yaml"
+      - "@./patches/networking/common.yaml"
+      - "@./patches/networking/vm.yaml"
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/iscsi-tools
+            - siderolabs/realtek-firmware
+            - siderolabs/gvisor
+            - siderolabs/qemu-guest-agent
+            - siderolabs/amdgpu
+            - siderolabs/i915
+            - siderolabs/xe
+            - siderolabs/drbd
+
 controlPlane:
   schematic:
     customization:

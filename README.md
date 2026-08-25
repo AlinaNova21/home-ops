@@ -4,7 +4,7 @@ A self-hosted Kubernetes cluster running on low-power x86 hardware, managed enti
 
 ## Hardware
 
-Five-node [Talos Linux](https://www.talos.dev/) cluster:
+Six-node [Talos Linux](https://www.talos.dev/) cluster:
 
 | Node | Role | Hardware | CPU | Cores | RAM |
 |---|---|---|---|---|---|
@@ -13,8 +13,9 @@ Five-node [Talos Linux](https://www.talos.dev/) cluster:
 | cp3 | Control plane | ZimaBoard | Intel Celeron N3450 @ 1.10GHz | 4C | 8GB |
 | w1 | Worker | ZimaBoard 2 | Intel N150 | 4C | 16GB |
 | w2 | Worker | VM (libvirt) | QEMU virtual | 4 vCPU | 8GB |
+| vm1 | Control plane | VM (libvirt) | QEMU virtual | 4 vCPU | 8GB |
 
-Storage: [miroir](https://github.com/home-operations/miroir) replicated LVM-thin CSI pool (128GiB on CPs/W1, 32GiB on W2).
+Storage: [miroir](https://github.com/home-operations/miroir) replicated LVM-thin CSI pool (128GiB on CPs/W1, 32GiB on W2/vm1).
 
 ## Core Infrastructure
 
