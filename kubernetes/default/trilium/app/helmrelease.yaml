@@ -38,7 +38,11 @@ spec:
               # 1000) itself after chowning /home/node — do NOT override via
               # securityContext (official k8s guide).
               # OIDC via Kanidm (client: trilium, group: trilium_users).
-              TRILIUM_NETWORK_TRUSTEDREVERSEPROXY: "true"
+              # Trilium's env-var parser treats "true" as an IP literal and
+              # crashes (invalid IP address: true) — config.ini accepts "true",
+              # the env var does not. uniquelocal (10/8, 172.16/12, 192.168/16)
+              # covers Envoy's pod CIDR so X-Forwarded-* is honored.
+              TRILIUM_NETWORK_TRUSTEDREVERSEPROXY: uniquelocal
               TRILIUM_OAUTH_BASE_URL: https://notes.whoverse.nexus
               TRILIUM_OAUTH_CLIENTID: trilium
               TRILIUM_OAUTH_ISSUERBASEURL: https://idm.whoverse.nexus/oauth2/openid/trilium
