@@ -9,6 +9,7 @@ resources:
   - konflate/ks.yaml
   - linkstack/ks.yaml
   - mailpit/ks.yaml
+  - trilium/ks.yaml
   #- memos/ks.yaml
   - speedtest-tracker/ks.yaml
   - yuvomi/ks.yaml

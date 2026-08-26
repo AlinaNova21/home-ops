@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trilium
+  namespace: default
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: trilium
+    namespace: default
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    controllers:
+      trilium:
+        containers:
+          trilium:
+            image:
+              repository: ghcr.io/triliumnext/trilium
+              tag: v0.105.0@sha256:1d8492b82e461f9d8cba1acab2bf89d0182821318a1fc1277656e688a6fb4ee4
+            env:
+              TZ: America/Chicago
+              # Trilium runs the container as root and drops to node (uid/gid
+              # 1000) itself after chowning /home/node — do NOT override via
+              # securityContext (official k8s guide).
+              # OIDC via Kanidm (client: trilium, group: trilium_users).
+              TRILIUM_NETWORK_TRUSTEDREVERSEPROXY: "true"
+              TRILIUM_OAUTH_BASE_URL: https://notes.whoverse.nexus
+              TRILIUM_OAUTH_CLIENTID: trilium
+              TRILIUM_OAUTH_ISSUERBASEURL: https://idm.whoverse.nexus/oauth2/openid/trilium
+              TRILIUM_OAUTH_ISSUERNAME: Kanidm
+              TRILIUM_OAUTH_SCOPE: "openid email profile"
+            envFrom:
+              - secretRef:
+                  name: trilium-oauth
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: http
+                  initialDelaySeconds: 30
+                  periodSeconds: 15
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: http
+                  initialDelaySeconds: 15
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+    service:
+      trilium:
+        controller: trilium
+        ports:
+          http:
+            port: 8080
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: trilium
+        globalMounts:
+          - path: /home/node/trilium-data
