@@ -8,11 +8,11 @@ spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
 ---
 # External Gateway - accessed via Cloudflare Tunnel
-# TLS terminated at origin using Cloudflare Origin CA certs loaded from 1Password via ExternalSecret
-# (cloudflared trusts Cloudflare Origin CA natively).
+# TLS terminated at origin using Let's Encrypt wildcard certs (DNS01 issued by
+# cert-manager from the cluster-issuer annotation, auto-created per listener).
 # Uses ClusterIP since it's only accessed by cloudflared internally.
-# Multiple HTTPS listeners on port 443 share SNI-based routing; each scoped to one wildcard hostname
-# and one origin cert, so adding a new public domain is a listener + ExternalSecret + 1Password item.
+# Multiple HTTPS listeners on port 443 share SNI-based routing; each scoped to one
+# wildcard hostname, so adding a new public domain is just a listener block.
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -20,6 +20,7 @@ metadata:
   namespace: network
   annotations:
     external-dns.alpha.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   gatewayClassName: eg
   infrastructure:
@@ -48,6 +49,18 @@ spec:
         mode: Terminate
         certificateRefs:
           - name: beee-gay-wildcard-tls
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: superstar-gay
+      protocol: HTTPS
+      port: 443
+      hostname: "*.superstar.gay"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: superstar-gay-wildcard-tls
             kind: Secret
       allowedRoutes:
         namespaces:
