@@ -46,6 +46,9 @@ spec:
       - gateway-udproute
     domainFilters:
       - whoverse.nexus
+      - beee.gay
+      - superstar.gay
+      - alinanova.dev
     policy: sync
     txtOwnerId: whoverse-k8s
     txtPrefix: k8s.
