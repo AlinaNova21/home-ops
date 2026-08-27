@@ -65,6 +65,18 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: alinanova-dev
+      protocol: HTTPS
+      port: 443
+      hostname: "*.alinanova.dev"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: alinanova-dev-wildcard-tls
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: All
 ---
 # Internal Gateway - accessed via LAN LoadBalancer
 # Uses wildcard cert for *.whoverse.dev via DNS-01 challenge (cert-manager)
