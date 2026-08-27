@@ -11,8 +11,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "0.5.0"
-    digest: sha256:09a1f398aa0d0dd01df6d39464f4c8179c56573d846a02440774e6e3438e4a14
+    tag: "0.5.1"
+    digest: sha256:3660e79b8c1bea2e1ddb45477bd4621024482b4a8fda8d192ec1a22c20969405
   url: oci://ghcr.io/home-operations/charts/chaski
   verify:
     provider: cosign
