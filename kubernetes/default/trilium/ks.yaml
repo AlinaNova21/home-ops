@@ -21,3 +21,30 @@ spec:
   timeout: 10m
   wait: true
   prune: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+# Second Trilium instance for a separate single user (echo, notes.superstar.gay).
+# Trilium isn't multi-user, so each user gets their own server sharing the same
+# Kanidm OIDC client (client: trilium); a redirect for notes.superstar.gay is
+# added on the Kanidm side.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: trilium-echo
+  namespace: default
+spec:
+  targetNamespace: default
+  components:
+    - ../../../components/kopiur/backup
+  interval: 30m
+  path: ./kubernetes/default/trilium/trilium-echo
+  postBuild:
+    substitute:
+      APP: trilium-echo
+  sourceRef:
+    kind: GitRepository
+    name: home-ops
+    namespace: flux-system
+  timeout: 10m
+  wait: true
+  prune: true

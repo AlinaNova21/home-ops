@@ -1,0 +1,100 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trilium-echo
+  namespace: default
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: trilium-echo
+    namespace: default
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    controllers:
+      trilium-echo:
+        containers:
+          trilium-echo:
+            image:
+              repository: ghcr.io/triliumnext/trilium
+              tag: v0.105.0@sha256:1d8492b82e461f9d8cba1acab2bf89d0182821318a1fc1277656e688a6fb4ee4
+            env:
+              TZ: America/Chicago
+              # Second Trilium instance (single user: echo, notes.superstar.gay).
+              # Trilium isn't multi-user, so each user gets their own server.
+              # Shares the original Kanidm OIDC client (client: trilium); a
+              # redirect for notes.superstar.gay is added on the Kanidm side.
+              # Container runs as root and drops to node (uid/gid 1000) itself
+              # after chowning /home/node — do NOT override securityContext.
+              TRILIUM_NETWORK_TRUSTEDREVERSEPROXY: uniquelocal
+              TRILIUM_OAUTH_BASE_URL: https://notes.superstar.gay
+              TRILIUM_OAUTH_CLIENT_ID: trilium
+              TRILIUM_OAUTH_ISSUER_BASE_URL: https://idm.whoverse.nexus/oauth2/openid/trilium
+              TRILIUM_OAUTH_ISSUER_NAME: Kanidm
+              TRILIUM_OAUTH_SCOPE: "openid email profile"
+            envFrom:
+              # Reuses the shared kanidm-oauth2 client secret from the original
+              # trilium (same client, shared secret, extra redirect added).
+              - secretRef:
+                  name: trilium-oauth
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 30
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 15
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+    service:
+      trilium-echo:
+        controller: trilium-echo
+        ports:
+          http:
+            port: 8080
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: trilium-echo
+        globalMounts:
+          - path: /home/node/trilium-data
