@@ -11,7 +11,7 @@ data:
       ntfy:
         url: https://ntfy.whoverse.nexus
         topic: gatus
-        token: ${NTFY_TOKEN}
+        token: $${NTFY_TOKEN}
         default-alert:
           failure-threshold: 3
           success-threshold: 2
