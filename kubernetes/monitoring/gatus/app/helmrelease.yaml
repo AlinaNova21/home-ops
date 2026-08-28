@@ -31,6 +31,8 @@ spec:
 
     controllers:
       gatus:
+        pod:
+          automountServiceAccountToken: true
         serviceAccount:
           name: gatus
         containers:
