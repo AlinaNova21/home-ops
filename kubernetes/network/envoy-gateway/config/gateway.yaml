@@ -108,23 +108,23 @@ metadata:
           success-threshold: 2
           send-on-resolved: true
           description: "Health check failed"
-  spec:
-    gatewayClassName: eg
-    infrastructure:
-      parametersRef:
-        group: gateway.envoyproxy.io
-        kind: EnvoyProxy
-        name: internal-proxy-config
-    listeners:
-      - name: https
-        protocol: HTTPS
-        port: 443
-        hostname: "*.whoverse.dev"
-        allowedRoutes:
-          namespaces:
-            from: All
-        tls:
-          mode: Terminate
-          certificateRefs:
-            - name: whoverse-dev-wildcard-tls
-              kind: Secret
+spec:
+  gatewayClassName: eg
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: internal-proxy-config
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.whoverse.dev"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: whoverse-dev-wildcard-tls
+            kind: Secret
