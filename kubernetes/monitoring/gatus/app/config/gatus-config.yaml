@@ -1,0 +1,37 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/configmap_v1.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gatus-config
+  namespace: monitoring
+data:
+  config.yaml: |
+    alerting:
+      ntfy:
+        url: https://ntfy.whoverse.nexus
+        topic: gatus
+        token: ${NTFY_TOKEN}
+        default-alert:
+          failure-threshold: 3
+          success-threshold: 2
+          send-on-resolved: true
+          description: "Health check failed"
+
+    connectivity:
+      checker:
+        target: 1.1.1.1:53
+        interval: 1m
+
+    metrics: true
+
+    storage:
+      type: sqlite
+      path: /data/gatus.db
+
+    web:
+      port: 8080
+
+    ui:
+      title: WHOVerse Status
+      dashboard-heading: Service Health
