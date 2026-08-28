@@ -18,12 +18,11 @@ cniConfig:
   name: none
 
 nodes:
-  - hostname: whoverse-cp1  # ZimaBoard
+  - hostname: whoverse-zima1  # ZimaBoard (was whoverse-cp1, repurposed as worker)
     ipAddress: 192.168.2.21
-    controlPlane: true
+    controlPlane: false
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -33,7 +32,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -43,7 +41,6 @@ nodes:
     controlPlane: true
     installDisk: /dev/sda
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard.yaml"
@@ -53,7 +50,6 @@ nodes:
     controlPlane: false
     installDisk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
     patches:
-      - "@./ceph-osd-volume.yaml"
       - "@./miroir-disk.yaml"
       - "@./patches/networking/common.yaml"
       - "@./patches/networking/zimaboard2.yaml"
@@ -83,6 +79,8 @@ nodes:
     ipAddress: 192.168.2.26
     controlPlane: true
     installDisk: /dev/sda
+    nodeLabels:
+      miroir.home-operations.com/enabled: "true"
     patches:
       - "@./miroir-disk-vm-tiny.yaml"
       - "@./patches/networking/common.yaml"
