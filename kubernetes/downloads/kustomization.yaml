@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ns.yaml
   - storage/ks.yaml
+  - profilarr/ks.yaml
   - prowlarr/ks.yaml
   - sabnzbd/ks.yaml
   - radarr-hd/ks.yaml

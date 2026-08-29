@@ -1,0 +1,122 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: profilarr
+  namespace: downloads
+spec:
+  interval: 15m
+  chartRef:
+    kind: OCIRepository
+    name: profilarr
+    namespace: downloads
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "Always"
+
+    controllers:
+      profilarr:
+        containers:
+          profilarr:
+            image:
+              repository: ghcr.io/dictionarry-hub/profilarr
+              tag: 2.2.0@sha256:a1e7abd15b354b497dd3a3501463de32314e366740f8db385db994e2d36e2555
+            env:
+              TZ: "America/Chicago"
+              AUTH: "off"
+              ORIGIN: "https://profilarr.whoverse.dev"
+              PARSER_HOST: "localhost"
+              PARSER_PORT: "5000"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/health
+                    port: 6868
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/health
+                    port: 6868
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+          parser:
+            image:
+              repository: ghcr.io/dictionarry-hub/profilarr-parser
+              tag: 2.2.0@sha256:600dfccd4b3543caf80e6e7b871e4220e139eb99adab597228a6761f635584d0
+            ports:
+              - name: http
+                containerPort: 5000
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 5000
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+
+    service:
+      profilarr:
+        controller: profilarr
+        ports:
+          http:
+            port: 6868
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: profilarr
+        globalMounts:
+          - path: /config
