@@ -68,9 +68,9 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 256Mi
-              limits:
                 memory: 512Mi
+              limits:
+                memory: 1Gi
           parser:
             image:
               repository: ghcr.io/dictionarry-hub/profilarr-parser
