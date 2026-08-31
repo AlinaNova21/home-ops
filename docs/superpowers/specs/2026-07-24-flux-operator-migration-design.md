@@ -156,7 +156,7 @@ metadata:
 spec:
   distribution:
     # renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution
-    version: "2.9.4"               # pinned; renovate bumps per Section 7
+    version: "2.9.5"               # pinned; renovate bumps per Section 7
     registry: "ghcr.io/fluxcd"
     # imagePullSecret omitted — Flux images are public
   components:
