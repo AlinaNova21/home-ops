@@ -10,8 +10,6 @@ repo_name := "home-ops"
 oci_url := registry + "/" + repo_name
 git_url := "https://github.com/AlinaNova21/home-ops"
 
-talos_dir := "talos/whoverse"
-talos_config := talos_dir + "/clusterconfig"
 bootstrap_dir := "kubernetes/bootstrap"
 sops_age_key_file := "~/.config/sops/age/keys.txt"
 
@@ -24,48 +22,12 @@ default:
     @just --list --unsorted
 
 # =============================================================================
-# Talos Cluster Management
-# =============================================================================
-
-# Generate Talos configs from talconfig.yaml
-talos-gen:
-    cd {{talos_dir}} && talhelper genconfig
-
-# Apply Talos configs to all nodes (requires existing trust)
-talos-apply: talos-gen
-    cd {{talos_dir}} && talhelper gencommand apply | bash
-
-# Apply Talos configs with --insecure flag (for initial setup)
-talos-apply-insecure: talos-gen
-    cd {{talos_dir}} && talhelper gencommand apply --extra-flags --insecure | bash
-
-# Bootstrap Talos cluster (first time only)
-talos-bootstrap: talos-apply-insecure
-    cd {{talos_dir}} && talhelper gencommand bootstrap | bash
-
-# Get Talos cluster health
-talos-health:
-    cd {{talos_dir}} && talhelper gencommand health | bash
-
-# Get kubeconfig from Talos cluster
-talos-kubeconfig:
-    cd {{talos_dir}} && talhelper gencommand kubeconfig --extra-flags "--force" | bash
-
-# Upgrade Talos on all nodes
-talos-upgrade:
-    cd {{talos_dir}} && talhelper gencommand upgrade | bash
-
-# Upgrade Kubernetes version
-talos-upgrade-k8s:
-    cd {{talos_dir}} && talhelper gencommand upgrade-k8s | bash
-
-# Reset Talos nodes (destructive!)
-talos-reset:
-    cd {{talos_dir}} && talhelper gencommand reset | bash
-
-# =============================================================================
 # Cluster Bootstrap (Cilium + Flux)
 # =============================================================================
+
+# Upgrade Kubernetes version (TOPF does not orchestrate k8s upgrades)
+talos-upgrade-k8s:
+    talosctl upgrade-k8s
 
 # Install Cilium CNI only
 bootstrap-cilium:
