@@ -69,7 +69,8 @@ talos/whoverse/
 talos/whoverse/
 ├── topf.yaml                # Cluster config (source of truth)
 ├── secrets.yaml             # Encrypted cluster secrets (renamed from talsecret.sops.yaml)
-├── schematic.yaml           # System extensions (shared by all nodes)
+├── schematic.yaml           # System extensions (physical nodes: 7 ext)
+├── schematic-vm.yaml        # System extensions (VMs: 8 ext, +qemu-guest-agent)
 ├── all/                     # Applied to all nodes
 │   ├── 00-cluster.yaml      # cniConfig, podNets, svcNets, allowSchedulingOnCP
 │   ├── 01-proxy.yaml        # cluster.proxy.disabled
@@ -118,7 +119,20 @@ nodes:
   - host: whoverse-cp2
     ip: 192.168.2.22
     role: control-plane
-  # ... (6 nodes)
+  - host: whoverse-cp3
+    ip: 192.168.2.23
+    role: control-plane
+  - host: whoverse-w1
+    ip: 192.168.2.24
+    role: worker
+  - host: whoverse-w2
+    ip: 192.168.2.225
+    role: worker
+    schematicId: "@schematic-vm.yaml"
+  - host: whoverse-vm1
+    ip: 192.168.2.26
+    role: control-plane
+    schematicId: "@schematic-vm.yaml"
 ```
 
 ### Patch split mapping
@@ -138,9 +152,13 @@ nodes:
 | CP kubeletTalosAPIAccess | `control-plane/01-talos-api.yaml` |
 | CP controllerManager/scheduler bind-address | `control-plane/02-metrics.yaml` |
 | worker nodeLabels | `worker/00-labels.yaml` |
-| schematics (system extensions) | `schematic.yaml` + `schematicId: @schematic.yaml` |
+| schematics (system extensions) | `schematic.yaml` (physical) + `schematic-vm.yaml` (VMs); cluster `schematicId: @schematic.yaml`, per-node override on w2/vm1 |
 
-**Note on schematics:** all nodes currently share the same extension set (iscsi-tools, realtek-firmware, gvisor, qemu-guest-agent, amdgpu, i915, xe, drbd). A single cluster-level `schematic.yaml` covers this. If a node ever needs a different set, TOPF supports per-node `schematicId` overrides.
+**Note on schematics:** there are **two** extension sets:
+- **Physical nodes** (zima1, cp2, cp3, w1): iscsi-tools, realtek-firmware, gvisor, amdgpu, i915, xe, drbd → schematic ID `0fb1f84d…`
+- **VMs** (w2, vm1): same + `qemu-guest-agent` → schematic ID `1a03a0b4…`
+
+Cluster-level `schematicId: "@schematic.yaml"` (physical set) + per-node `schematicId: "@schematic-vm.yaml"` override on w2 and vm1. Both IDs verified to match the live cluster's installer images.
 
 ## Secrets
 
