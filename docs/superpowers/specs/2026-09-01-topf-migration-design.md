@@ -160,6 +160,16 @@ nodes:
 
 Cluster-level `schematicId: "@schematic.yaml"` (physical set) + per-node `schematicId: "@schematic-vm.yaml"` override on w2 and vm1. Both IDs verified to match the live cluster's installer images.
 
+## Patch Merge Semantics
+
+TOPF uses **strategic merge** for patches (same as `talosctl --config-patch`). Verified empirically:
+
+- **Arrays concatenate** (they do NOT replace). Two patches setting `machine.kernel.modules` merge into one list.
+- **Maps merge** (later patches override same-key values).
+- `$patch: delete` is supported for removing array elements.
+
+Implication for the split: array fields must appear in **at most one patch per node** unless concatenation is intended. Current patches have no conflicts (`kernel.modules`, `machine.files`, `links` each appear once per node).
+
 ## Secrets
 
 ### Phase 1: keep SOPS, rename only
