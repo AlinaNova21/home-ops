@@ -2,7 +2,7 @@ clusterName: whoverse
 clusterEndpoint: https://192.168.2.20:6443
 talosVersion: v1.13.9
 kubernetesVersion: v1.36.2
-schematicId: "@schematic.yaml"
+schematicId: "@schematic.yaml.tpl"
 secretsPath: secrets.yaml
 nodes:
   - host: whoverse-zima1
@@ -20,8 +20,10 @@ nodes:
   - host: whoverse-w2
     ip: 192.168.2.225
     role: worker
-    schematicId: "@schematic-vm.yaml"
+    data:
+      vm: true
   - host: whoverse-vm1
     ip: 192.168.2.26
     role: control-plane
-    schematicId: "@schematic-vm.yaml"
+    data:
+      vm: true
