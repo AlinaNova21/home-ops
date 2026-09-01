@@ -12,3 +12,5 @@ machine:
     extraConfig:
       shutdownGracePeriod: 120s
       shutdownGracePeriodCriticalPods: 60s
+  nodeLabels:
+    miroir.home-operations.com/enabled: "true"
