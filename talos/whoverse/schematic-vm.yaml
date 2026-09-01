@@ -1,0 +1,11 @@
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/iscsi-tools
+      - siderolabs/realtek-firmware
+      - siderolabs/gvisor
+      - siderolabs/qemu-guest-agent
+      - siderolabs/amdgpu
+      - siderolabs/i915
+      - siderolabs/xe
+      - siderolabs/drbd
