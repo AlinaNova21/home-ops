@@ -1,0 +1,3 @@
+machine:
+  install:
+    disk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
