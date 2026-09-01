@@ -27,28 +27,28 @@
 - `talos/whoverse/all/06-kernel-miroir.yaml` — kernel modules + sysctls
 - `talos/whoverse/all/07-kubelet-miroir.yaml` — kubelet extraConfig
 - `talos/whoverse/all/08-vip.yaml` — Layer2VIPConfig
+- `talos/whoverse/all/09-bridge.yaml` — BridgeConfig + DHCPv4Config (shared)
+- `talos/whoverse/all/10-miroir.yaml` — miroir RawVolumeConfig (128GiB physical default)
 - `talos/whoverse/control-plane/00-oidc.yaml` — apiserver OIDC args
 - `talos/whoverse/control-plane/01-talos-api.yaml` — kubeletTalosAPIAccess
 - `talos/whoverse/control-plane/02-metrics.yaml` — controllerManager/scheduler bind-address
+- `talos/whoverse/control-plane/03-scheduling.yaml` — allowSchedulingOnControlPlanes
 - `talos/whoverse/worker/00-labels.yaml` — nodeLabels miroir.enabled
 - `talos/whoverse/node/whoverse-zima1/00-install.yaml` — installDisk
-- `talos/whoverse/node/whoverse-zima1/01-miroir.yaml` — miroir RawVolumeConfig
-- `talos/whoverse/node/whoverse-zima1/02-net.yaml` — BridgeConfig + DHCP + BondConfig
+- `talos/whoverse/node/whoverse-zima1/02-net.yaml` — BondConfig
 - `talos/whoverse/node/whoverse-cp2/00-install.yaml`
-- `talos/whoverse/node/whoverse-cp2/01-miroir.yaml`
 - `talos/whoverse/node/whoverse-cp2/02-net.yaml`
 - `talos/whoverse/node/whoverse-cp3/00-install.yaml`
-- `talos/whoverse/node/whoverse-cp3/01-miroir.yaml`
 - `talos/whoverse/node/whoverse-cp3/02-net.yaml`
 - `talos/whoverse/node/whoverse-w1/00-install.yaml`
-- `talos/whoverse/node/whoverse-w1/01-miroir.yaml`
 - `talos/whoverse/node/whoverse-w1/02-net.yaml`
 - `talos/whoverse/node/whoverse-w2/00-install.yaml`
-- `talos/whoverse/node/whoverse-w2/01-miroir.yaml`
+- `talos/whoverse/node/whoverse-w2/01-miroir.yaml` — 32GiB override
 - `talos/whoverse/node/whoverse-w2/02-net.yaml`
 - `talos/whoverse/node/whoverse-vm1/00-install.yaml`
-- `talos/whoverse/node/whoverse-vm1/01-miroir.yaml`
+- `talos/whoverse/node/whoverse-vm1/01-miroir.yaml` — 32GiB override
 - `talos/whoverse/node/whoverse-vm1/02-net.yaml`
+- `talos/whoverse/node/whoverse-vm1/03-labels.yaml` — miroir label
 
 **Modified:**
 - `talos/whoverse/talsecret.sops.yaml` → renamed to `talos/whoverse/secrets.yaml`
