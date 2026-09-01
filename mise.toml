@@ -17,7 +17,7 @@ TALOSCONFIG = "{{config_root}}/talos/whoverse/clusterconfig/talosconfig"
 [tools]
 # Talos
 talosctl   = "latest"
-talhelper  = "latest"
+"github:postfinance/topf" = "latest"
 
 # Kubernetes
 kubectl    = "1.37.0"
