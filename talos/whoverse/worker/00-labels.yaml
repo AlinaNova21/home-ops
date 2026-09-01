@@ -1,0 +1,3 @@
+machine:
+  nodeLabels:
+    miroir.home-operations.com/enabled: "true"
