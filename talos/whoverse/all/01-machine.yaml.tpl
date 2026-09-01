@@ -3,10 +3,6 @@ kind: HostnameConfig
 auto: "off"
 hostname: {{ .Node.Host }}
 ---
-cluster:
-  proxy:
-    disabled: true
----
 machine:
   files:
     - path: /var/etc/cri/conf.d/20-spegel.part
