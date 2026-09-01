@@ -1,4 +1,3 @@
----
 apiVersion: v1alpha1
 kind: RawVolumeConfig
 name: miroir

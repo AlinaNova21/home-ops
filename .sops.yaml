@@ -13,7 +13,7 @@ creation_rules:
 
   # Talos secrets - a talsecret is a flat k/v tree (cluster/secrets/certs),
   # NOT a k8s Secret, so encrypt the whole file. Personal age + GPG.
-  - path_regex: talos/.*\.sops\.yaml$
+  - path_regex: talos/.*\.yaml$
     age: >-
       age16865gej0ndnlnghdq347fur59ht8d7wrcfptdw5ja4fhc4lwdfpq59ratl
     pgp: >-

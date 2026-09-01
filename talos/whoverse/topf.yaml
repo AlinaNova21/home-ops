@@ -1,0 +1,39 @@
+clusterName: whoverse
+clusterEndpoint: https://192.168.2.20:6443
+talosVersion: v1.13.9
+kubernetesVersion: v1.36.2
+schematicId: "@schematic.yaml.tpl"
+secretsPath: secrets.yaml
+nodes:
+  - host: whoverse-zima1
+    ip: 192.168.2.21
+    role: worker
+    data:
+      disk: /dev/disk/by-id/ata-SAMSUNG_MZ7LN256HCHP-000L7_S20HNX0H430767
+  - host: whoverse-cp2
+    ip: 192.168.2.22
+    role: control-plane
+    data:
+      disk: /dev/disk/by-id/ata-SAMSUNG_SSD_PM871a_2.5_7mm_256GB_S2XNNB0J704277
+  - host: whoverse-cp3
+    ip: 192.168.2.23
+    role: control-plane
+    data:
+      disk: /dev/disk/by-id/ata-SAMSUNG_SSD_PM871a_2.5_7mm_256GB_S2XNNB0J704290
+  - host: whoverse-w1
+    ip: 192.168.2.24
+    role: worker
+    data:
+      disk: /dev/disk/by-id/wwn-0x5001b444a9bb4808
+  - host: whoverse-w2
+    ip: 192.168.2.225
+    role: worker
+    data:
+      disk: /dev/sda
+      vm: true
+  - host: whoverse-vm1
+    ip: 192.168.2.26
+    role: control-plane
+    data:
+      disk: /dev/sda
+      vm: true

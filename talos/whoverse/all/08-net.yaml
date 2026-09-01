@@ -1,3 +1,7 @@
+apiVersion: v1alpha1
+kind: Layer2VIPConfig
+name: 192.168.2.20
+link: br0
 ---
 apiVersion: v1alpha1
 kind: BridgeConfig
@@ -12,6 +16,9 @@ kind: DHCPv4Config
 name: br0
 ---
 apiVersion: v1alpha1
-kind: Layer2VIPConfig
-name: 192.168.2.20
-link: br0
+kind: BondConfig
+name: bond0
+bondMode: active-backup
+miimon: 100
+updelay: 100
+up: true

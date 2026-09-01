@@ -1,8 +1,7 @@
----
 apiVersion: v1alpha1
-kind: RawVolumeConfig
-name: miroir
+kind: VolumeConfig
+name: EPHEMERAL
 provisioning:
   diskSelector:
     match: system_disk
-  minSize: 128GiB
+  maxSize: 64GiB
