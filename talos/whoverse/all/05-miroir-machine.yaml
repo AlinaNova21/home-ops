@@ -8,3 +8,7 @@ machine:
       - name: dm_thin_pool
   sysctls:
     user.max_user_namespaces: "11255"
+  kubelet:
+    extraConfig:
+      shutdownGracePeriod: 120s
+      shutdownGracePeriodCriticalPods: 60s
