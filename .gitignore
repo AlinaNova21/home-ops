@@ -25,3 +25,4 @@ docs/docs/talos/nodes.md
 # Packer
 packer/**/*.pkrvars.hcl
 packer/**/.packer.lock
+talosconfig

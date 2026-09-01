@@ -12,7 +12,8 @@ _.file = ".env"
 # KUBECONFIG and TALOSCONFIG point at the 'whoverse' cluster; override per-shell
 # if working elsewhere (e.g., `KUBECONFIG=/path/to/other mise exec -- kubectl ...`).
 KUBECONFIG  = "{{config_root}}/kubeconfig.yaml"
-TALOSCONFIG = "{{config_root}}/talos/whoverse/clusterconfig/talosconfig"
+TOPFCONFIG  = "{{config_root}}/talos/whoverse/topf.yaml"
+TALOSCONFIG = "{{config_root}}/talos/whoverse/talosconfig"
 
 [tools]
 # Talos
