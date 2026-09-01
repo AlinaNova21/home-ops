@@ -1,0 +1,7 @@
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+bondMode: active-backup
+miimon: 100
+updelay: 100
+up: true
