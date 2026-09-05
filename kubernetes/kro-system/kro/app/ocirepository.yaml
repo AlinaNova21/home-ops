@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.9.3
-    digest: sha256:e0a333049dc8f92f1485b550554344eca90856377fa3c3868d558b5aa25880fb
+    tag: 0.9.4
+    digest: sha256:4e8de4d34b7e2c3cede958e140e26cd6d34a377062e63caf355a636d2bf4a67c
   url: oci://registry.k8s.io/kro/charts/kro
