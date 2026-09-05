@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run flate
-        uses: home-operations/flate/action@1ad27b6ccfe72f2f9dcb22d637ffe753083133fb # main
+        uses: home-operations/flate/action@cc80a29d6cebef9d52dc6199db995265bc98ba89 # main
         with:
           command: build all --path ./kubernetes -o json
           output-file: doc-site/public/flate-output.json
