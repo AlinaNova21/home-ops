@@ -12,6 +12,39 @@ spec:
     imagePullPolicy: IfNotPresent
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
+  infra:
+    nodePlacement:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: kubevirt.io
+                    operator: In
+                    values:
+                      - virt-operator
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: kubevirt.io
+                    operator: In
+                    values:
+                      - virt-api
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: kubevirt.io
+                    operator: In
+                    values:
+                      - virt-controller
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                  - key: kubevirt.io
+                    operator: In
+                    values:
+                      - virt-exportproxy
+              topologyKey: kubernetes.io/hostname
   workloadUpdateStrategy: {}
   workloads:
     nodePlacement:
