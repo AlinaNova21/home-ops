@@ -10,42 +10,29 @@ spec:
     developerConfiguration:
       featureGates: []
     imagePullPolicy: IfNotPresent
-  customizeComponents: {}
+  customizeComponents:
+    patches:
+      - resourceName: virt-api
+        resourceType: Deployment
+        type: strategic
+        patch: |-
+          {"spec":{"template":{"spec":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"kubevirt.io","operator":"In","values":["virt-api"]}]},"topologyKey":"kubernetes.io/hostname"}]}}}}}}
+      - resourceName: virt-controller
+        resourceType: Deployment
+        type: strategic
+        patch: |-
+          {"spec":{"template":{"spec":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"kubevirt.io","operator":"In","values":["virt-controller"]}]},"topologyKey":"kubernetes.io/hostname"}]}}}}}}
+      - resourceName: virt-exportproxy
+        resourceType: Deployment
+        type: strategic
+        patch: |-
+          {"spec":{"template":{"spec":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"kubevirt.io","operator":"In","values":["virt-exportproxy"]}]},"topologyKey":"kubernetes.io/hostname"}]}}}}}}
+      - resourceName: virt-operator
+        resourceType: Deployment
+        type: strategic
+        patch: |-
+          {"spec":{"template":{"spec":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchExpressions":[{"key":"kubevirt.io","operator":"In","values":["virt-operator"]}]},"topologyKey":"kubernetes.io/hostname"}]}}}}}}
   imagePullPolicy: IfNotPresent
-  infra:
-    nodePlacement:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: kubevirt.io
-                    operator: In
-                    values:
-                      - virt-operator
-              topologyKey: kubernetes.io/hostname
-            - labelSelector:
-                matchExpressions:
-                  - key: kubevirt.io
-                    operator: In
-                    values:
-                      - virt-api
-              topologyKey: kubernetes.io/hostname
-            - labelSelector:
-                matchExpressions:
-                  - key: kubevirt.io
-                    operator: In
-                    values:
-                      - virt-controller
-              topologyKey: kubernetes.io/hostname
-            - labelSelector:
-                matchExpressions:
-                  - key: kubevirt.io
-                    operator: In
-                    values:
-                      - virt-exportproxy
-              topologyKey: kubernetes.io/hostname
-  workloadUpdateStrategy: {}
   workloads:
     nodePlacement:
       nodeSelector:
