@@ -304,3 +304,37 @@ spec:
   resources:
     requests:
       storage: 1Ti
+---
+# YouTube (downloads namespace)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-youtube-downloads
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  nfs:
+    server: 192.168.2.193
+    path: /mnt/tank/media/youtube
+  mountOptions:
+    - nfsvers=4
+    - nolock
+    - soft
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-youtube
+  namespace: downloads
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: media-youtube-downloads
+  resources:
+    requests:
+      storage: 1Ti

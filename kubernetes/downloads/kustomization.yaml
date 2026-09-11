@@ -8,6 +8,7 @@ resources:
   - profilarr/ks.yaml
   - prowlarr/ks.yaml
   - sabnzbd/ks.yaml
+  - metube/ks.yaml
   - radarr-hd/ks.yaml
   - radarr-uhd/ks.yaml
   - radarr-anime/ks.yaml

@@ -1,0 +1,92 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: metube
+  namespace: downloads
+spec:
+  interval: 15m
+  chartRef:
+    kind: OCIRepository
+    name: metube
+    namespace: downloads
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - whoverse-w1
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+    controllers:
+      metube:
+        strategy: Recreate
+        containers:
+          metube:
+            image:
+              repository: ghcr.io/alexta69/metube
+              tag: 2026.08.28@sha256:397778fccf13d83adf9325fe813b260617a082d1772aff6d678c5b9256dd01fb
+            env:
+              TZ: "America/Chicago"
+              CHOWN_DIRS: "false"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: http
+                  initialDelaySeconds: 20
+                  periodSeconds: 10
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: http
+                  initialDelaySeconds: 20
+                  periodSeconds: 10
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 2Gi
+    service:
+      metube:
+        controller: metube
+        ports:
+          http:
+            port: 8081
+    persistence:
+      downloads:
+        type: persistentVolumeClaim
+        existingClaim: media-youtube
+        globalMounts:
+          - path: /downloads
