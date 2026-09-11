@@ -144,3 +144,8 @@ spec:
         existingClaim: media-tv-old
         globalMounts:
           - path: /data/tv/old
+      media-youtube:
+        type: persistentVolumeClaim
+        existingClaim: media-youtube
+        globalMounts:
+          - path: /data/youtube
