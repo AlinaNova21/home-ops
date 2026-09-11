@@ -70,8 +70,10 @@ spec:
               requests:
                 cpu: 100m
                 memory: 512Mi
+                gpu.intel.com/i915: "1"
               limits:
                 memory: 2Gi
+                gpu.intel.com/i915: "1"
     service:
       tunarr:
         controller: tunarr
@@ -94,6 +96,11 @@ spec:
         sizeLimit: 8Gi
         globalMounts:
           - path: /transcode
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        globalMounts:
+          - path: /dev/dri
       media-movies-anime:
         type: persistentVolumeClaim
         existingClaim: media-movies-anime
