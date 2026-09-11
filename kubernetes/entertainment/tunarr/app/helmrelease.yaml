@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tunarr
+  namespace: entertainment
+spec:
+  interval: 15m
+  chartRef:
+    kind: OCIRepository
+    name: tunarr
+    namespace: entertainment
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  upgrade:
+    remediation:
+      retries: 3
+    strategy:
+      name: RetryOnFailure
+      retryInterval: 5m
+  values:
+    controllers:
+      tunarr:
+        strategy: Recreate
+        pod:
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values:
+                          - whoverse-w1
+        containers:
+          tunarr:
+            image:
+              repository: ghcr.io/chrisbenincasa/tunarr
+              tag: 1.3.14@sha256:4f7e682d2ab5d595490b3a25b046283fb99d4d88706764941c099ba04e011b78
+            env:
+              TZ: "America/Chicago"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8000
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8000
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+                gpu.intel.com/i915: "1"
+              limits:
+                memory: 2Gi
+                gpu.intel.com/i915: "1"
+    service:
+      tunarr:
+        controller: tunarr
+        ports:
+          http:
+            port: 8000
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        size: 5Gi
+        accessMode: ReadWriteOnce
+        dataSourceRef:
+          apiGroup: kopiur.home-operations.com
+          kind: Restore
+          name: tunarr
+        globalMounts:
+          - path: /config
+      transcode:
+        type: emptyDir
+        sizeLimit: 8Gi
+        globalMounts:
+          - path: /transcode
+      dri:
+        type: hostPath
+        hostPath: /dev/dri
+        globalMounts:
+          - path: /dev/dri
+      media-movies-anime:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-anime
+        globalMounts:
+          - path: /data/movies/anime
+      media-movies-hd:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-hd
+        globalMounts:
+          - path: /data/movies/hd
+      media-movies-uhd:
+        type: persistentVolumeClaim
+        existingClaim: media-movies-uhd
+        globalMounts:
+          - path: /data/movies/uhd
+      media-tv-anime:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-anime
+        globalMounts:
+          - path: /data/tv/anime
+      media-tv-hd:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-hd
+        globalMounts:
+          - path: /data/tv/hd
+      media-tv-kids:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-kids
+        globalMounts:
+          - path: /data/tv/kids
+      media-tv-old:
+        type: persistentVolumeClaim
+        existingClaim: media-tv-old
+        globalMounts:
+          - path: /data/tv/old
