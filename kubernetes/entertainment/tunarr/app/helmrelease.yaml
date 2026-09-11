@@ -45,6 +45,7 @@ spec:
               tag: 1.3.14@sha256:4f7e682d2ab5d595490b3a25b046283fb99d4d88706764941c099ba04e011b78
             env:
               TZ: "America/Chicago"
+              TUNARR_DATABASE_PATH: "/config/tunarr"
             probes:
               liveness:
                 enabled: true
@@ -98,7 +99,7 @@ spec:
           kind: Restore
           name: tunarr
         globalMounts:
-          - path: /config
+          - path: /config/tunarr
       transcode:
         type: emptyDir
         sizeLimit: 8Gi
