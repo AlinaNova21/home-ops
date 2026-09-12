@@ -35,7 +35,7 @@ jobs:
 
       - name: Run flate test
         if: steps.filter.outputs.kubernetes == 'true'
-        uses: home-operations/flate/action@e8151a027bc6cfc3e530d3a6a972bd4a4596fd36 # main
+        uses: home-operations/flate/action@123366dc5c17f0f86418be95b55e000d9b29040f # main
         with:
           command: test all --path ./kubernetes
 
