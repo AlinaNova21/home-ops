@@ -36,7 +36,7 @@ spec:
           yuvomi:
             image:
               repository: ghcr.io/ulsklyc/yuvomi
-              tag: 2.65.2@sha256:1d2cd32f316d9ee33cb4432fd0acde3d4b25210eb5ceb774af0a7b5e7e6bcea3
+              tag: 2.65.3@sha256:c34413957c408fcc1aacc156828029b7a43717226cce80d456cb0e3cfc309b0f
             env:
               TZ: America/Chicago
               TRUST_PROXY: "2"
