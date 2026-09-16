@@ -1,6 +1,6 @@
 clusterName: whoverse
 clusterEndpoint: https://192.168.2.20:6443
-talosVersion: v1.14.0
+talosVersion: v1.14.1
 kubernetesVersion: v1.37.0
 schematicId: "@schematic.yaml.tpl"
 secretsPath: secrets.yaml
