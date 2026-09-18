@@ -143,7 +143,7 @@ spec:
           mariadb:
             image:
               repository: mariadb
-              tag: "12.3@sha256:759869cb6f003234a95c6384cdee245b4bce7de26913fe607a8110362c0c007d"
+              tag: "12.3@sha256:805c8e104bd563d5bfa24fadd3f31cd419ea859cb5277f32b5dbf2db714f9ed1"
             env:
               MYSQL_ROOT_PASSWORD:
                 valueFrom:
