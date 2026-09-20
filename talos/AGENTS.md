@@ -23,7 +23,7 @@ talos/
     ├── secrets.yaml         # Encrypted cluster secrets (SOPS: age + GPG)
     ├── schematic.yaml.tpl   # Templated schematic (system extensions; VM nodes get qemu-guest-agent via data.vm)
     ├── all/                 # Patches applied to all nodes
-    │   ├── 00-cluster.yaml  # cniConfig, podNets, svcNets, allowSchedulingOnCP
+    │   ├── 00-cluster.yaml  # drop generated Flannel document
     │   ├── 01-hostname.yaml.tpl  # HostnameConfig from .Node.Host
     │   ├── 02-proxy.yaml    # cluster.proxy.disabled
     │   ├── 03-volumes.yaml  # EPHEMERAL VolumeConfig
@@ -36,8 +36,8 @@ talos/
     │   ├── 00-oidc.yaml     # apiserver OIDC args
     │   ├── 01-talos-api.yaml
     │   ├── 02-metrics.yaml  # controllerManager/scheduler bind-address
-    │   ├── 03-scheduling.yaml    # allowSchedulingOnControlPlanes
-    │   └── 04-apiserver.yaml     # apiserver goaway-chance (rebalance long-lived clients)
+    │   ├── 04-apiserver.yaml     # apiserver goaway-chance
+    │   └── 05-proxy.yaml    # KubeProxyConfig disabled
     ├── worker/               # Patches for worker nodes
     │   └── 00-labels.yaml   # nodeLabels miroir.enabled
     ├── node/                 # Per-host patches
@@ -62,6 +62,8 @@ TOPF merges patches in this order (later overrides earlier for same keys):
 Within each folder, patches apply in **lexicographical order** (hence the `00-`, `01-` prefixes).
 
 **Merge semantics:** strategic merge — maps merge (later wins), **arrays concatenate**. So an array field (e.g. `kernel.modules`, `machine.files`) must appear in at most one patch per node unless concatenation is intended.
+
+**Talos 1.14 documents:** topf generates the new `Kube*Config` / `KubeletConfig` / `UnattendedInstallConfig` documents. Do not set the deprecated legacy fields (`.cluster.apiServer`, `.cluster.controllerManager`, `.cluster.scheduler`, `.cluster.network`, `.cluster.proxy`, `.cluster.allowSchedulingOnControlPlanes`, `.machine.kubelet`, `.machine.install`, `.machine.nodeLabels`); Talos rejects the overlap. Patch the matching document instead. Control-plane nodes are unschedulable by default via `KubeNodeConfig`.
 
 **Templating:** patches ending `.yaml.tpl` are Go templates with sprig. Context: `.ClusterName`, `.ClusterEndpoint`, `.KubernetesVersion`, `.TalosVersion`, `.SchematicID`, `.Data.<key>`, `.Node.Host`, `.Node.Role`, `.Node.IP`, `.Node.Data.<key>`. The schematic template uses `hasKey .Node.Data "vm"` to conditionally add `qemu-guest-agent` for VM nodes.
 
