@@ -13,6 +13,10 @@ spec:
       containers:
         - name: kube-multus
           image: ghcr.io/k8snetworkplumbingwg/multus-cni:v4.3.1-thick@sha256:a357a79359b80ddd5f4699117946cacf3b54f5baecf7944535594863e875fc25
+          resources:
+            limits:
+              cpu: null
+              memory: 150Mi
       volumes:
         - name: host-run-netns
           hostPath:
