@@ -1,0 +1,6 @@
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: ETCD
+provisioning:
+  minSize: 4GiB
+  maxSize: 8GiB
