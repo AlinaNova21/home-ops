@@ -1,0 +1,10 @@
+apiVersion: v1alpha1
+kind: RawVolumeConfig
+name: miroir
+$patch: delete
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  miroir.home-operations.com/enabled:
+    $patch: delete

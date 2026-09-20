@@ -37,3 +37,15 @@ nodes:
     data:
       disk: /dev/sda
       vm: true
+  - host: whoverse-vm2
+    ip: 192.168.2.27
+    role: control-plane
+    data:
+      disk: /dev/sda
+      vm: true
+  - host: whoverse-vm3
+    ip: 192.168.2.28
+    role: control-plane
+    data:
+      disk: /dev/sda
+      vm: true

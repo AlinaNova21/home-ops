@@ -128,6 +128,19 @@ topf render    # Preview the diff
 topf apply     # Apply to all nodes (confirmation prompt)
 ```
 
+### Add a control-plane VM
+
+1. Create the VM (Talos ISO, 32 GB disk with `discard=on,ssd=1`) and reserve its DHCP address.
+2. Add the node to `topf.yaml` and create `node/<host>/` patches (see `whoverse-vm2`: bond, dedicated `ETCD` volume, no miroir).
+3. Apply only that node, without `--auto-bootstrap`, then confirm it joined:
+
+```bash
+topf apply --nodes-filter '<host>$' --mode no-reboot
+talosctl -n <ip> etcd members
+```
+
+The etcd volume backing is fixed at provisioning, so existing nodes cannot be converted to a dedicated `ETCD` partition. Resetting such a node also needs the `ETCD` volume wiped.
+
 ### Upgrade Talos / Kubernetes
 
 1. Update `talosVersion` or `kubernetesVersion` in `topf.yaml`
