@@ -1,7 +1,5 @@
-cluster:
-  apiServer:
-    extraArgs:
-      # Randomly send GOAWAY on ~0.1% of HTTP/2 requests so long-lived clients
-      # (kubelets, controllers via KubePrism) periodically reconnect and rebalance
-      # across the three apiservers instead of piling onto whichever was up first.
-      goaway-chance: "0.001"
+apiVersion: v1alpha1
+kind: KubeAPIServerConfig
+extraArgs:
+  # rebalance long-lived clients across apiservers
+  goaway-chance: "0.001"

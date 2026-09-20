@@ -1,0 +1,4 @@
+# keep pre-1.14 behavior (no sandboxd workload isolation)
+apiVersion: v1alpha1
+kind: SecurityProfileConfig
+$patch: delete

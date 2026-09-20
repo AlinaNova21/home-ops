@@ -1,8 +1,15 @@
-cluster:
-  apiServer:
-    extraArgs:
-      oidc-issuer-url: https://idm.whoverse.nexus/oauth2/openid/kubernetes
-      oidc-client-id: kubernetes
-      oidc-username-claim: email
-      oidc-groups-claim: groups
-      oidc-signing-algs: ES256
+apiVersion: v1alpha1
+kind: KubeAuthenticationConfig
+configuration:
+  jwt:
+    - issuer:
+        url: https://idm.whoverse.nexus/oauth2/openid/kubernetes
+        audiences:
+          - kubernetes
+      claimMappings:
+        username:
+          claim: email
+          prefix: ""
+        groups:
+          claim: groups
+          prefix: ""
