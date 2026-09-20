@@ -35,7 +35,9 @@ talos/
     ├── control-plane/       # Patches for control-plane nodes
     │   ├── 00-oidc.yaml     # apiserver OIDC args
     │   ├── 01-talos-api.yaml
-    │   └── 02-metrics.yaml  # controllerManager/scheduler bind-address
+    │   ├── 02-metrics.yaml  # controllerManager/scheduler bind-address
+    │   ├── 03-scheduling.yaml    # allowSchedulingOnControlPlanes
+    │   └── 04-apiserver.yaml     # apiserver goaway-chance (rebalance long-lived clients)
     ├── worker/               # Patches for worker nodes
     │   └── 00-labels.yaml   # nodeLabels miroir.enabled
     ├── node/                 # Per-host patches
