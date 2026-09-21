@@ -33,7 +33,7 @@ spec:
           seafile:
             image:
               repository: seafileltd/seafile-pro-mc
-              tag: 13.0-latest@sha256:4463ab7608171ed8507d1863483de656fa16eb30bd049370c814624c35ef9c1c
+              tag: 13.0-latest@sha256:5796f38804942a3adf6fb08d078dc9e0707146d24dc2f546e236aaa36a626272
             env:
               TIME_ZONE: "America/Chicago"
               SEAFILE_SERVER_HOSTNAME: seafile.whoverse.dev
