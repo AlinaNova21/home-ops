@@ -19,7 +19,7 @@ metadata:
   name: external
   namespace: network
   annotations:
-    external-dns.alpha.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
+    external-dns.kubernetes.io/target: 87927ee2-ef79-4dbc-8a1f-dca865b82b79.cfargotunnel.com
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gatus.home-operations.com/endpoint: |
       conditions:
