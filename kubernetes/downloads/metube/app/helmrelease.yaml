@@ -58,7 +58,7 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: http
+                    port: 8081
                   initialDelaySeconds: 20
                   periodSeconds: 10
                   failureThreshold: 3
@@ -68,7 +68,7 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: http
+                    port: 8081
                   initialDelaySeconds: 20
                   periodSeconds: 10
                   failureThreshold: 3
