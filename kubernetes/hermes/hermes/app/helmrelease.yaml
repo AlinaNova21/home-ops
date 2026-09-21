@@ -84,6 +84,9 @@ spec:
                 enabled: true
               startup:
                 enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
 
     service:
       hermes:
