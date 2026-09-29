@@ -47,7 +47,7 @@ spec:
           metube:
             image:
               repository: ghcr.io/alexta69/metube
-              tag: 2026.09.27@sha256:cd226eedd357697ab2efd4b5e7c5221e973326d210c1e3abc08687d58d97088c
+              tag: 2026.09.29@sha256:8e2fe9beeefc55a02f6e1d04cad0fc3c22e8f067d309188f016551dc99ec27b3
             env:
               TZ: "America/Chicago"
               CHOWN_DIRS: "false"
