@@ -246,7 +246,7 @@ metadata:
 spec:
   distribution:
     # renovate: datasource=github-releases depName=controlplaneio-fluxcd/distribution
-    version: "2.9.5"
+    version: "2.9.6"
     registry: "ghcr.io/fluxcd"
   components:
     - source-controller
