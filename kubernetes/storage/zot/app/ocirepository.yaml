@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.1.126
-    digest: sha256:0a8214e3a1cbff3179df5ce0423a43b7dcc2fb285250246d8bbb0f2a72627250
+    tag: 0.1.128
+    digest: sha256:a1983cb2f13ddd5f68d5051bf6e6ea9e38fae1135706623f24f88d59f9e69a2d
   url: oci://ghcr.io/project-zot/helm-charts/zot
