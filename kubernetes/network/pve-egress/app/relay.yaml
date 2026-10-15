@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: haproxy
-          image: haproxy:3.4-alpine@sha256:c0afc4864dca9c68694cd1290433f0ee79b5c55be80f6745a165ffe373b9a564
+          image: haproxy:3.4-alpine@sha256:251da69821897ec8c4819f12b1babbc4b71f562943addc9b9eb14bb6ece40dc6
           resources:
             requests:
               cpu: 5m
