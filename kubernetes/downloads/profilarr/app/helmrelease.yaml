@@ -39,7 +39,7 @@ spec:
           profilarr:
             image:
               repository: ghcr.io/dictionarry-hub/profilarr
-              tag: 2.2.0@sha256:a1e7abd15b354b497dd3a3501463de32314e366740f8db385db994e2d36e2555
+              tag: 2.3.1@sha256:0a735eb2b901a8a177cd07992cab5b01caa1a74a41d03aa9d30261c13cd158d4
             env:
               TZ: "America/Chicago"
               AUTH: "off"
