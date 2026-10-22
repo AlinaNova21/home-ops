@@ -74,7 +74,7 @@ spec:
           parser:
             image:
               repository: ghcr.io/dictionarry-hub/profilarr-parser
-              tag: 2.2.0@sha256:600dfccd4b3543caf80e6e7b871e4220e139eb99adab597228a6761f635584d0
+              tag: 2.3.1@sha256:408a81fa6c95a1ec3e141da5502958aab08e9f6a7bf3b0a85ba8fa4402f1428f
             ports:
               - name: http
                 containerPort: 5000
