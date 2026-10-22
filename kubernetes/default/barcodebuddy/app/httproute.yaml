@@ -7,10 +7,10 @@ metadata:
   namespace: default
 spec:
   parentRefs:
-    - name: external
+    - name: internal
       namespace: network
   hostnames:
-    - barcodebuddy.whoverse.nexus
+    - barcodebuddy.whoverse.dev
   rules:
     - matches:
         - path:
