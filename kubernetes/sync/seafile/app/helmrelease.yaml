@@ -229,7 +229,7 @@ spec:
           memcached:
             image:
               repository: memcached
-              tag: 1.6-alpine@sha256:9e4de012dc607573052061c0bcb38abc775e1dd59b24e7ac38d1892842094aaf
+              tag: 1.6-alpine@sha256:6d687bc26426d092694743054fc674fc54d3c161fefa1ad20b54192f8580a8c1
             args:
               - "-m"
               - "256"
