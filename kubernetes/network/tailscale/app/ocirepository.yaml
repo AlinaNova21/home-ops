@@ -11,8 +11,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "1.104.1"
-    digest: sha256:fad7fc14bfd3305d905ef33a3dc977cceb8536224f283edf8a90d01c34ba560e
+    tag: "1.104.2"
+    digest: sha256:10b0f74adde80c49db33768d1ece3d6eae79f25cc1b979c4e30c0b6860fc60d6
   url: oci://ghcr.io/home-operations/charts-mirror/tailscale-operator
   verify:
     provider: cosign
