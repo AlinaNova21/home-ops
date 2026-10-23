@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.19.0
-    digest: sha256:c74eeb7fe33c060e49e42cc8d588eeeddfbda6ae9bcd0835e0e398e02c5c2223
+    tag: 0.20.1
+    digest: sha256:5c4df0919041454a3a2095965e3ada6bb514095731921f3055aa539669e79e54
   url: oci://registry.k8s.io/nfd/charts/node-feature-discovery
