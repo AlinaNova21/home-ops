@@ -31,7 +31,7 @@ spec:
           speedtest-tracker:
             image:
               repository: lscr.io/linuxserver/speedtest-tracker
-              tag: 1.15.0@sha256:59518a6f2b49254b310cc2e543320dd3fbaa80381b588cd1f2bf116073698c27
+              tag: 1.15.1@sha256:14b7850d1a0c06cc49e14546717f93996ad44e90127bb01418af293ae2d98fc7
             env:
               PUID: "1000"
               PGID: "1000"
