@@ -31,7 +31,7 @@ spec:
           trilium:
             image:
               repository: ghcr.io/triliumnext/trilium
-              tag: v0.105.0@sha256:1d8492b82e461f9d8cba1acab2bf89d0182821318a1fc1277656e688a6fb4ee4
+              tag: v0.106.1@sha256:871e9332d2e29a4ca29b3337ac7568235e0326584db8828ba86a3c0b8eacd7a7
             env:
               TZ: America/Chicago
               # Trilium runs the container as root and drops to node (uid/gid
