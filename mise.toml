@@ -21,7 +21,7 @@ talosctl   = "latest"
 "github:postfinance/topf" = "latest"
 
 # Kubernetes
-kubectl    = "1.37.1"
+kubectl    = "1.37.2"
 helm       = "4.3.1"
 helmfile   = "1.8.2"
 flux2      = "2.9"
