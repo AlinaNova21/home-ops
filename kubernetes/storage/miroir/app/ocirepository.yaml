@@ -11,8 +11,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.12.7
-    digest: sha256:f1255dcfabb1c15c1b3fd89f2e64e627bdba9601fe5a96c6267741c70ef9c50d
+    tag: 0.12.9
+    digest: sha256:c382e9ef0e05e94f8c4c559b9e15a7eced4943e80877c5c1b12cffdf80c323a0
   url: oci://ghcr.io/home-operations/charts/miroir
   verify:
     provider: cosign
