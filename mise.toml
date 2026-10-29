@@ -25,7 +25,7 @@ kubectl    = "1.37.2"
 helm       = "4.3.1"
 helmfile   = "1.8.2"
 flux2      = "2.9"
-cilium-cli = "0.20.1"
+cilium-cli = "0.20.2"
 k9s        = "0.51.0"
 
 # Secrets
