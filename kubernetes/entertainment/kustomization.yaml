@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ns.yaml
   - storage/ks.yaml
-  - jellyfin/ks.yaml
+  # k8s jellyfin copy was unused; production Jellyfin runs on dockge. Kept commented out for reference.
+  # - jellyfin/ks.yaml
   # tunarr moved to compose (home-ops-priv); kept commented out for reference.
   # - tunarr/ks.yaml
