@@ -6,4 +6,5 @@ resources:
   - ns.yaml
   - storage/ks.yaml
   - jellyfin/ks.yaml
-  - tunarr/ks.yaml
+  # tunarr moved to compose (home-ops-priv); kept commented out for reference.
+  # - tunarr/ks.yaml
