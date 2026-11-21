@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "1.13.7"
-    digest: sha256:b2c3e2f8028bd3afb0897c6998efd43936c5566c1b34e16c6998c416b4b98b74
+    tag: "1.15.1"
+    digest: sha256:2470f95fb45d5dfd4af98764e548f3758a39d3fe2097c0da326bf5b45a19f121
   url: oci://codeberg.org/towonel/charts/towonel-node
