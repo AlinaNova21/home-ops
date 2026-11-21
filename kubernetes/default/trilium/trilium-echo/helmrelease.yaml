@@ -31,7 +31,7 @@ spec:
           trilium-echo:
             image:
               repository: ghcr.io/triliumnext/trilium
-              tag: v0.105.0@sha256:1d8492b82e461f9d8cba1acab2bf89d0182821318a1fc1277656e688a6fb4ee4
+              tag: v0.107.0@sha256:ac72ce66f562a1d6d1baedf7d5c1672f19c3ba1b048603e50c8fc8114c80c502
             env:
               TZ: America/Chicago
               # Second Trilium instance (single user: echo, notes.superstar.gay).
