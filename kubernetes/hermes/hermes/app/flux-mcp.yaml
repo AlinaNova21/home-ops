@@ -48,7 +48,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: flux-operator-mcp
-          image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.61.0@sha256:b253ef07502413bcad89d8fb8f9c01d3cfa070331698323fbd8fe0ae9cfa1cb4
+          image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.64.0@sha256:b46002c29618df79b708872c9380129481afd17ad1423940cc3b16b81f4282fe
           args:
             - serve
             - --transport
