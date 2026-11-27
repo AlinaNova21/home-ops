@@ -12,5 +12,5 @@ spec:
     operation: copy
   ref:
     tag: "0.37.1"
-    digest: sha256:97008939007a281496381b58088229744a74618fdf6cd416742daa197cd98edd
+    digest: sha256:05627de4c164df42f32f4829d6f3003d64ab5492b16c73deadcf89fd05d04acf
   url: oci://ghcr.io/intel/helm-charts/intel-device-plugins-operator
