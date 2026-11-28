@@ -11,6 +11,6 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: "0.37.1"
-    digest: sha256:97008939007a281496381b58088229744a74618fdf6cd416742daa197cd98edd
+    tag: "0.37.2"
+    digest: sha256:21c5b4c31db35952b32d17ea95f4656fb999a7327116185a0ad105252384b37d
   url: oci://ghcr.io/intel/helm-charts/intel-device-plugins-operator
